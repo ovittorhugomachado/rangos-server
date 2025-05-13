@@ -1,9 +1,14 @@
 import express from 'express'
 import cors from 'cors'
-import { PrismaClient } from './generated/prisma/index';
+import bcrypt from 'bcrypt'
+import jwt from 'jsonwebtoken'
+import dotenv from 'dotenv';
+import { PrismaClient } from '../.prisma/client/index'
 
+dotenv.config();
 const app = express()
 const prisma = new PrismaClient()
+const JWT_SECRET = process.env.JWT_SECRET || 'secretao'
 const port = 3000
 
 app.use(express.json())
@@ -42,12 +47,12 @@ app.post('/categories', async (req, res) => {
         console.error('[ERRO AO CRIAR CATEGORIA]', error)
         res.status(500).send({ message: "Ocorreu um erro ao criar nova categoria" })
     }
-})
+});
 
 app.delete('/categories/:id', async (req, res) => {
     const id = Number(req.params.id)
 
-    if(isNaN(id)) {
+    if (isNaN(id)) {
         res.status(400).send({ message: 'ID inválido' })
         return
     }
@@ -57,7 +62,7 @@ app.delete('/categories/:id', async (req, res) => {
             where: { id }
         })
 
-        if(!category) {
+        if (!category) {
             res.status(404).send({ message: 'Categoria não encontrada' })
         }
 
@@ -70,7 +75,7 @@ app.delete('/categories/:id', async (req, res) => {
         console.error('[ERRO AO DELETAR CATEGORIA]', error)
         res.status(500).send({ message: 'Erro ao deletar categoria' })
     }
-})
+});
 
 app.get('/categories', async (req, res) => {
     try {
@@ -81,8 +86,97 @@ app.get('/categories', async (req, res) => {
         res.status(500).send({ message: 'Erro ao buscar lista de categorias' })
     }
 
-})
+});
+
+app.post('/signup', async (req, res) => {
+    const { restaurantName, cnpj, ownersName, cpf, number, email, password } = req.body;
+
+    if (!restaurantName || !ownersName || !cpf || !number || !email || !password) {
+        res.status(400).json({ message: 'Campos obrigatórios' })
+        return
+    }
+
+    try {
+        const existingUser = await prisma.user.findUnique({ where: { email } });
+
+        if (existingUser) {
+            res.status(409).send({ message: 'Email já cadastrado' });
+            return
+        }
+
+        const hashedPassword = await bcrypt.hash(password, 10);
+
+        await prisma.user.create({
+            data: {
+                restaurantName,
+                cnpj,
+                ownersName,
+                cpf,
+                phoneNumber: number,
+                email,
+                password: hashedPassword,
+            },
+        });
+
+        res.status(201).json({ message: 'Usuário criado com sucesso' });
+        return
+
+    } catch (error) {
+        console.error('Erro ao criar usuário:', error);
+        res.status(500).json({ message: 'Erro interno do servidor' });
+        return
+    }
+});
+
+app.post('/auth/login', async (req, res) => {
+    const { email, password } = req.body
+
+    try {
+        const user = await prisma.user.findUnique({ where: { email } })
+        if (!user) {
+            res.status(401).json({ message: 'Email ou senha inválidos' })
+            return
+        }
+
+        const passwordMatch = await bcrypt.compare(password, user.password)
+        if (!passwordMatch) {
+            res.status(401).json({ message: 'Email ou senha inválidos' })
+            return
+        }
+
+        const token = jwt.sign(
+            {
+                userId: user.id,
+                plan: user.plan,
+                accountStatus: user.accountStatus
+            },
+            JWT_SECRET,
+            { expiresIn: '2h' }
+        )
+        res.status(200).json({ token })
+    } catch (error) {
+        console.error('[ERRO NO LOGIN]', error);
+        res.status(500).send({ message: 'Erro ao fazer login' })
+    }
+});
+
+app.post('/forgot-password', async (req, res) => {
+    const { email } = req.body
+
+    try {
+        const user = await prisma.user.findUnique({ where: { email } })
+        if (!user) {
+            res.status(401).json({ message: 'Email ou senha inválidos' })
+            return
+        }
+
+        res.status(200).json({ message: `Link enviado para ${email}` })
+    } catch (error) {
+        console.error('[ERRO]', error);
+        res.status(500).send({ message: 'Erro ao recuperar senha' })
+    }
+});
 
 app.listen(port, () => {
-    console.log(`Rodando em http://localhost:${port}/ `)
+    console.log(`Rodando na porta ${port}`)
 })
