@@ -3,6 +3,7 @@ import cors from 'cors'
 import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
 import dotenv from 'dotenv';
+import { transporter } from './utils/email';
 import { PrismaClient } from '../.prisma/client/index'
 
 dotenv.config();
@@ -160,17 +161,28 @@ app.post('/auth/login', async (req, res) => {
     }
 });
 
-app.post('/forgot-password', async (req, res) => {
+app.post('/recover-password', async (req, res) => {
     const { email } = req.body
 
     try {
         const user = await prisma.user.findUnique({ where: { email } })
         if (!user) {
-            res.status(401).json({ message: 'Email ou senha inválidos' })
+            res.status(401).json({ message: 'Usuário não encontrado' })
             return
         }
 
-        res.status(200).json({ message: `Link enviado para ${email}` })
+        const token = jwt.sign({ userId: user.id }, JWT_SECRET, { expiresIn: '1h' });
+
+        const link = `http://localhost:5173/resetar-senha?token=${token}`;
+
+        await transporter.sendMail({
+            from: '"Domus" <' + process.env.EMAIL_USER + '>',
+            to: email,
+            subject: 'Recuperação de senha',
+            html: `<p>Clique no link para redefinir sua senha:</p><a href="${link}">${link}</a>`
+        });
+
+        res.status(200).json({ message: 'Um link de redefinição de senha foi enviado para seu email' })
     } catch (error) {
         console.error('[ERRO]', error);
         res.status(500).send({ message: 'Erro ao recuperar senha' })
