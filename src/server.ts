@@ -174,12 +174,14 @@ app.post('/recover-password', async (req, res) => {
             select: { restaurantName: true }
         })
 
-        console.log(resturant?.restaurantName)
-
         if (!user) {
             res.status(401).json({ message: 'Usuário não encontrado' })
             return
         }
+
+        await prisma.passwordResetToken.deleteMany({
+            where: { userId: user.id }
+        });
 
         const token = randomUUID();
         const expiresAt = new Date(Date.now() + 3600000);
@@ -214,21 +216,43 @@ app.post('/recover-password', async (req, res) => {
         res.status(200).json({ message: 'Um link de redefinição de senha foi enviado para seu email' })
     } catch (error) {
         console.error('[ERRO]', error);
-        res.status(500).send({ message: 'Erro ao recuperar senhaserver' })
+        res.status(500).send({ message: 'Erro ao recuperar senha' })
     }
 });
 
-// app.patch('/create-new-password/:token', async (req, res) => {
-//     const { newPassword } = req.body
+app.patch('/create-new-password/:token', async (req, res) => {
+    const { newPassword } = req.body;
+    const { token } = req.params;
 
-//     try {
-//         const password = await prisma.user.update({
-//             data: 
-//         })
-//     } catch {
+    try {
+        const resetToken = await prisma.passwordResetToken.findUnique({
+            where: { token },
+            include: { user: true }
+        });
 
-//     }
-// })
+        if (!resetToken || resetToken.expiresAt < new Date()) {
+            res.status(400).json({ message: "Link inválido ou expirado" })
+            return
+        };
+
+        const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+        await prisma.user.update({
+            where: { id: resetToken.userId },
+            data: { password: hashedPassword }
+        })
+
+        await prisma.passwordResetToken.delete({
+            where: { token }
+        })
+
+        res.status(200).json({ message: "Senha redefinida com sucesso" })
+
+    } catch (error) {
+        console.error('[ERRO]', error);
+        res.status(500).json({ message: 'Erro ao cria nova senha' })
+    }
+})
 
 app.listen(port, () => {
     console.log(`Rodando na porta ${port}`)
