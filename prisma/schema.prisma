@@ -1,56 +1,68 @@
 generator client {
-    provider = "prisma-client-js"
-    output   = "../node_modules/.prisma/client"
+  provider = "prisma-client-js"
+  output   = "../node_modules/.prisma/client"
 }
 
 datasource db {
-    provider = "postgresql"
-    url      = env("DATABASE_URL")
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
 }
 
 model User {
-    id             Int           @id @default(autoincrement())
-    restaurantName String
-    cnpj           String?
-    ownersName     String
-    cpf            String
-    phoneNumber    String
-    email          String        @unique
-    password       String
-    accountStatus  AccountStatus @default(ACTIVE)
-    plan           PlanType      @default(PROFESSIONAL)
-    createdAt      DateTime      @default(now())
+  id             Int           @id @default(autoincrement())
+  email          String        @unique
+  password       String
+  restaurantName String
+  accountStatus  AccountStatus @default(ACTIVE)
+  plan           PlanType      @default(PROFESSIONAL)
+  createdAt      DateTime      @default(now())
+  cnpj           String?
+  cpf            String
+  ownersName     String
+  phoneNumber    String
+  PasswordResetToken PasswordResetToken[]
 
-    @@map("users")
+  @@map("users")
+}
+
+model PasswordResetToken {
+  id        Int      @id @default(autoincrement())  
+  token     String   @unique                       
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id])
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  @@map("password_reset_tokens")
 }
 
 model MenuCategory {
-    id        Int        @id @default(autoincrement())
-    name      String     @db.VarChar(100)
-    menu_item MenuItem[]
+  id        Int        @id @default(autoincrement())
+  name      String     @db.VarChar(100)
+  menu_item MenuItem[]
 
-    @@map("menu_category")
+  @@map("menu_category")
 }
 
 model MenuItem {
-    id            Int          @id @default(autoincrement())
-    name          String       @db.VarChar(150)
-    description   String?
-    price         Decimal?     @db.Decimal(10, 2)
-    photo_url     String?
-    category_id   Int
-    menu_category MenuCategory @relation(fields: [category_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  id            Int          @id @default(autoincrement())
+  name          String       @db.VarChar(150)
+  description   String?
+  price         Decimal?     @db.Decimal(10, 2)
+  photo_url     String?
+  category_id   Int
+  menu_category MenuCategory @relation(fields: [category_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
 
-    @@map("menu_item")
+  @@map("menu_item")
 }
 
 enum AccountStatus {
-    ACTIVE
-    SUSPENDED
-    OVERDUE
+  ACTIVE
+  SUSPENDED
+  OVERDUE
 }
 
 enum PlanType {
-    PROFESSIONAL
-    PROFESSIONAL_MORE_GPT
+  PROFESSIONAL
+  PROFESSIONAL_MORE_GPT
 }

@@ -2,14 +2,15 @@ import express from 'express'
 import cors from 'cors'
 import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
+import { randomUUID } from 'crypto';
 import dotenv from 'dotenv';
 import { transporter } from './utils/email';
-import { PrismaClient } from '../.prisma/client/index'
+import { PrismaClient } from '../node_modules/.prisma/client/index';
 
 dotenv.config();
 const app = express()
 const prisma = new PrismaClient()
-const JWT_SECRET = process.env.JWT_SECRET || 'secretao'
+const JWT_SECRET = process.env.JWT_SECRET || 'secreto'
 const port = 3000
 
 app.use(express.json())
@@ -161,33 +162,73 @@ app.post('/auth/login', async (req, res) => {
     }
 });
 
+//Rota para enviar email de recuperação de senha
 app.post('/recover-password', async (req, res) => {
     const { email } = req.body
 
     try {
+
         const user = await prisma.user.findUnique({ where: { email } })
+        const resturant = await prisma.user.findFirst({
+            where: { email },
+            select: { restaurantName: true }
+        })
+
+        console.log(resturant?.restaurantName)
+
         if (!user) {
             res.status(401).json({ message: 'Usuário não encontrado' })
             return
         }
 
-        const token = jwt.sign({ userId: user.id }, JWT_SECRET, { expiresIn: '1h' });
+        const token = randomUUID();
+        const expiresAt = new Date(Date.now() + 3600000);
 
-        const link = `http://localhost:5173/resetar-senha?token=${token}`;
+        await prisma.passwordResetToken.create({
+            data: {
+                token,
+                userId: user?.id,
+                expiresAt,
+            }
+        })
+
+        const link = `http://localhost:5173/create-new-password/${token}`;
 
         await transporter.sendMail({
-            from: '"Domus" <' + process.env.EMAIL_USER + '>',
+            from: '"Meu Menu" <' + process.env.EMAIL_USER + '>',
             to: email,
             subject: 'Recuperação de senha',
-            html: `<p>Clique no link para redefinir sua senha:</p><a href="${link}">${link}</a>`
+            html: `
+            <p>Olá <strong>${resturant?.restaurantName}</strong>,</p>
+            <p>Recebemos uma solicitação de redefinição de senha, clique no link abaixo para criar uma nova senha</p>
+            <a href="${link}">Redefinir senha</a>
+            <br>
+            <p>Se você não solicitou uma nova senha desconsidere o email.</p>
+            <p>Caso precise de ajuda é só entrar em contato conosco respondendo esse email</p>
+            <br>
+            <p>Atenciosamente,</p>
+            <p><strong>Equipe Meu Menu</strong></p>
+            `
         });
 
         res.status(200).json({ message: 'Um link de redefinição de senha foi enviado para seu email' })
     } catch (error) {
         console.error('[ERRO]', error);
-        res.status(500).send({ message: 'Erro ao recuperar senha' })
+        res.status(500).send({ message: 'Erro ao recuperar senhaserver' })
     }
 });
+
+// app.patch('/create-new-password/:token', async (req, res) => {
+//     const { newPassword } = req.body
+
+//     try {
+//         const password = await prisma.user.update({
+//             data: 
+//         })
+//     } catch {
+
+//     }
+// })
 
 app.listen(port, () => {
     console.log(`Rodando na porta ${port}`)
