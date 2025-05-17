@@ -2,6 +2,7 @@ import express from 'express'
 import cors from 'cors'
 import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
+import cron from 'node-cron';
 import { randomUUID } from 'crypto';
 import dotenv from 'dotenv';
 import { transporter } from './utils/email';
@@ -20,74 +21,19 @@ app.get('/', (req, res) => {
     res.send('Hello World!')
 });
 
-app.post('/categories', async (req, res) => {
-    const { name } = req.body;
+cron.schedule('*/10 * * * *', async () => {
 
-    if (!name || typeof name !== 'string' || name.trim().length === 0) {
-        res.status(400).send({ message: 'O nome da categoria é obrigatório' })
-        return
-    }
-
-    const categoryWithSameName = await prisma.menuCategory.findFirst({
-        where: {
-            name: { equals: name.trim(), mode: 'insensitive' }
-        }
+  try {
+    const result = await prisma.passwordResetToken.deleteMany({
+      where: {
+        expiresAt: { lt: new Date() }
+      }
     });
 
-    if (categoryWithSameName) {
-        res.status(409).send({ message: `Categoria ${name} já existe` })
-        return
-    };
-
-    try {
-        await prisma.menuCategory.create({
-            data: { name }
-        })
-
-        res.status(201).send({ message: `Categoria ${name} criada com sucesso` })
-    } catch (error) {
-        console.error('[ERRO AO CRIAR CATEGORIA]', error)
-        res.status(500).send({ message: "Ocorreu um erro ao criar nova categoria" })
-    }
-});
-
-app.delete('/categories/:id', async (req, res) => {
-    const id = Number(req.params.id)
-
-    if (isNaN(id)) {
-        res.status(400).send({ message: 'ID inválido' })
-        return
-    }
-
-    try {
-        const category = await prisma.menuCategory.findUnique({
-            where: { id }
-        })
-
-        if (!category) {
-            res.status(404).send({ message: 'Categoria não encontrada' })
-        }
-
-        await prisma.menuCategory.delete({
-            where: { id }
-        })
-
-        res.status(204).send()
-    } catch (error) {
-        console.error('[ERRO AO DELETAR CATEGORIA]', error)
-        res.status(500).send({ message: 'Erro ao deletar categoria' })
-    }
-});
-
-app.get('/categories', async (req, res) => {
-    try {
-        const categories = await prisma.menuCategory.findMany()
-
-        res.status(200).json(categories)
-    } catch {
-        res.status(500).send({ message: 'Erro ao buscar lista de categorias' })
-    }
-
+    console.log(`[CRON] Tokens removidos: ${result.count}`);
+  } catch (error) {
+    console.error('[CRON] Erro ao limpar tokens:', error);
+  }
 });
 
 app.post('/signup', async (req, res) => {
@@ -235,6 +181,12 @@ app.patch('/create-new-password/:token', async (req, res) => {
             return
         };
 
+        await prisma.passwordResetToken.deleteMany({
+            where: {
+                expiresAt: { lt: new Date() }
+            }
+        });
+
         const hashedPassword = await bcrypt.hash(newPassword, 10);
 
         await prisma.user.update({
@@ -253,6 +205,76 @@ app.patch('/create-new-password/:token', async (req, res) => {
         res.status(500).json({ message: 'Erro ao cria nova senha' })
     }
 })
+
+app.post('/categories', async (req, res) => {
+    const { name } = req.body;
+
+    if (!name || typeof name !== 'string' || name.trim().length === 0) {
+        res.status(400).send({ message: 'O nome da categoria é obrigatório' })
+        return
+    }
+
+    const categoryWithSameName = await prisma.menuCategory.findFirst({
+        where: {
+            name: { equals: name.trim(), mode: 'insensitive' }
+        }
+    });
+
+    if (categoryWithSameName) {
+        res.status(409).send({ message: `Categoria ${name} já existe` })
+        return
+    };
+
+    try {
+        await prisma.menuCategory.create({
+            data: { name }
+        })
+
+        res.status(201).send({ message: `Categoria ${name} criada com sucesso` })
+    } catch (error) {
+        console.error('[ERRO AO CRIAR CATEGORIA]', error)
+        res.status(500).send({ message: "Ocorreu um erro ao criar nova categoria" })
+    }
+});
+
+app.delete('/categories/:id', async (req, res) => {
+    const id = Number(req.params.id)
+
+    if (isNaN(id)) {
+        res.status(400).send({ message: 'ID inválido' })
+        return
+    }
+
+    try {
+        const category = await prisma.menuCategory.findUnique({
+            where: { id }
+        })
+
+        if (!category) {
+            res.status(404).send({ message: 'Categoria não encontrada' })
+        }
+
+        await prisma.menuCategory.delete({
+            where: { id }
+        })
+
+        res.status(204).send()
+    } catch (error) {
+        console.error('[ERRO AO DELETAR CATEGORIA]', error)
+        res.status(500).send({ message: 'Erro ao deletar categoria' })
+    }
+});
+
+app.get('/categories', async (req, res) => {
+    try {
+        const categories = await prisma.menuCategory.findMany()
+
+        res.status(200).json(categories)
+    } catch {
+        res.status(500).send({ message: 'Erro ao buscar lista de categorias' })
+    }
+
+});
 
 app.listen(port, () => {
     console.log(`Rodando na porta ${port}`)
