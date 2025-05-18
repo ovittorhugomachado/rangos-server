@@ -7,6 +7,7 @@ import { randomUUID } from 'crypto';
 import dotenv from 'dotenv';
 import { transporter } from './utils/email';
 import { PrismaClient } from '../node_modules/.prisma/client/index';
+import { authenticateToken } from './middlewares/authenticate-token';
 
 dotenv.config();
 const app = express()
@@ -274,6 +275,32 @@ app.get('/categories', async (req, res) => {
         res.status(500).send({ message: 'Erro ao buscar lista de categorias' })
     }
 
+});
+
+app.get('/me', authenticateToken, async (req: any, res) => {
+    try {
+        const user = await prisma.user.findUnique({
+            where: { id: req.user.userId },
+            select: {
+                id: true,
+                email: true,
+                restaurantName: true,
+                plan: true,
+                accountStatus: true,
+                createdAt: true
+            }
+        });
+
+        if (!user) {
+            res.status(404).json({ message: 'Usuário não encontrado' });
+            return
+        }
+
+        res.status(200).json(user);
+    } catch (error) {
+        console.error('[ERRO /me]', error);
+        res.status(500).json({ message: 'Erro ao buscar dados do usuário' });
+    }
 });
 
 app.listen(port, () => {

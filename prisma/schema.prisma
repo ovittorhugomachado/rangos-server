@@ -20,9 +20,24 @@ model User {
   cpf            String
   ownersName     String
   phoneNumber    String
+
   PasswordResetToken PasswordResetToken[]
+  userPreference     UserPreference?
 
   @@map("users")
+}
+
+model UserPreference {
+  id             Int    @id @default(autoincrement())
+  primaryColor   String
+  secondaryColor String
+  backgroundColor String
+  logoUrl        String
+  bannerUrl      String
+  userId         Int    @unique
+  user           User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("user_preferences")
 }
 
 model PasswordResetToken {
