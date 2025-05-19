@@ -24,17 +24,17 @@ app.get('/', (req, res) => {
 
 cron.schedule('*/10 * * * *', async () => {
 
-  try {
-    const result = await prisma.passwordResetToken.deleteMany({
-      where: {
-        expiresAt: { lt: new Date() }
-      }
-    });
+    try {
+        const result = await prisma.passwordResetToken.deleteMany({
+            where: {
+                expiresAt: { lt: new Date() }
+            }
+        });
 
-    console.log(`[CRON] Tokens removidos: ${result.count}`);
-  } catch (error) {
-    console.error('[CRON] Erro ao limpar tokens:', error);
-  }
+        console.log(`[CRON] Tokens removidos: ${result.count}`);
+    } catch (error) {
+        console.error('[CRON] Erro ao limpar tokens:', error);
+    }
 });
 
 app.post('/signup', async (req, res) => {
@@ -205,6 +205,26 @@ app.patch('/create-new-password/:token', async (req, res) => {
         console.error('[ERRO]', error);
         res.status(500).json({ message: 'Erro ao cria nova senha' })
     }
+})
+
+app.get('/validate-token/:token', async (req, res) => {
+    const { token } = req.params;
+
+    try {
+        const tokenIsValid = await prisma.passwordResetToken.findFirst({
+            where: { token }
+        })
+
+        if(!tokenIsValid) {
+            res.status(401).json({message: 'Token inválido'})
+        }
+
+        res.status(200).json({message: 'Token válido'})
+    } catch (error) {
+        console.error('[ERRO]', error);
+        res.status(500).json({ message: 'Erro ao verificar token' })
+    }
+
 })
 
 app.post('/categories', async (req, res) => {
