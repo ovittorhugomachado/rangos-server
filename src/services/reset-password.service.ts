@@ -26,7 +26,7 @@ export const sendResetEmailService = async (email: string, token: string, restau
     const resetLink = `http://localhost:5173/create-new-password/${token}`;
 
     await transporter.sendMail({
-        from: '"Meu Menu" <' + process.env.EMAIL_USER + '>',
+        from: '"Rangos" <' + process.env.EMAIL_USER + '>',
         to: email,
         subject: 'Recuperação de senha',
         html: `
@@ -38,7 +38,7 @@ export const sendResetEmailService = async (email: string, token: string, restau
             <p>Caso precise de ajuda é só entrar em contato conosco respondendo esse email</p>
             <br>
             <p>Atenciosamente,</p>
-            <p><strong>Equipe Meu Menu</strong></p>
+            <p><strong>Equipe Rangos</strong></p>
             `
     });
 };

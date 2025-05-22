@@ -2,11 +2,11 @@ import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import cron from 'node-cron';
-import { PrismaClient } from '../node_modules/.prisma/client/index';
-import { cleanExpiredTokens } from './services/reset-password.service';
 import authRoutes from './routes/auth.routes';
 import resetPasswordRoutes from './routes/reset-password.routes';
 import userDataRouter from './routes/user.routes';
+import { PrismaClient } from '../node_modules/.prisma/client/index';
+import { cleanExpiredTokens } from './services/reset-password.service';
 
 dotenv.config();
 

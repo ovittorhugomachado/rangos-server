@@ -9,66 +9,89 @@ datasource db {
 }
 
 model User {
-  id             Int           @id @default(autoincrement())
-  email          String        @unique
-  password       String
-  restaurantName String
-  accountStatus  AccountStatus @default(ACTIVE)
-  plan           PlanType      @default(PROFESSIONAL)
-  createdAt      DateTime      @default(now())
-  cnpj           String?
-  cpf            String
-  ownersName     String
-  phoneNumber    String
+  id                Int                 @id @default(autoincrement())
+  email             String              @unique
+  password          String
+  restaurantName    String
+  accountStatus     AccountStatus       @default(ACTIVE)
+  plan              PlanType            @default(PROFESSIONAL)
+  createdAt         DateTime            @default(now())
+  cnpj              String?
+  cpf               String
+  ownersName        String
+  phoneNumber       String
 
   PasswordResetToken PasswordResetToken[]
   userPreference     UserPreference?
+  openingHours       OpeningHour[]
 
   @@map("users")
 }
 
 model UserPreference {
-  id             Int    @id @default(autoincrement())
-  primaryColor   String
-  secondaryColor String
-  backgroundColor String
-  logoUrl        String
-  bannerUrl      String
-  userId         Int    @unique
-  user           User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id               Int     @id @default(autoincrement())
+  primaryColor     String
+  backgroundColor  String
+  textColor        String
+  textButtonColor  String
+  logoUrl          String
+  bannerUrl        String
+  userId           Int     @unique
+  user             User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("user_preferences")
 }
 
-model PasswordResetToken {
-  id        Int      @id @default(autoincrement())  
-  token     String   @unique                       
+model OpeningHour {
+  id        Int     @id @default(autoincrement())
+  day       WeekDay
+  open      String  // Consider usar Time se suportado e desejado
+  close     String
   userId    Int
-  user      User     @relation(fields: [userId], references: [id])
-  expiresAt DateTime
-  createdAt DateTime @default(now())
+  user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("opening_hours")
+}
+
+model PasswordResetToken {
+  id         Int      @id @default(autoincrement())  
+  token      String   @unique                       
+  userId     Int
+  user       User     @relation(fields: [userId], references: [id])
+  expiresAt  DateTime
+  createdAt  DateTime @default(now())
 
   @@map("password_reset_tokens")
 }
 
 model MenuCategory {
-  id        Int        @id @default(autoincrement())
-  name      String     @db.VarChar(100)
-  menu_item MenuItem[]
+  id         Int         @id @default(autoincrement())
+  name       String      @db.VarChar(100)
+  menuItems  MenuItem[]
 
   @@map("menu_category")
 }
 
 model MenuItem {
-  id            Int          @id @default(autoincrement())
-  name          String       @db.VarChar(150)
-  description   String?
-  price         Decimal?     @db.Decimal(10, 2)
-  photo_url     String?
-  category_id   Int
-  menu_category MenuCategory @relation(fields: [category_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  id             Int          @id @default(autoincrement())
+  name           String       @db.VarChar(150)
+  description    String?
+  price          Decimal?     @db.Decimal(10, 2)
+  photoUrl       String?
+  categoryId     Int
+  menuCategory   MenuCategory @relation(fields: [categoryId], references: [id], onDelete: Cascade)
 
   @@map("menu_item")
+}
+
+enum WeekDay {
+  segunda
+  terca
+  quarta
+  quinta
+  sexta
+  sabado
+  domingo
 }
 
 enum AccountStatus {

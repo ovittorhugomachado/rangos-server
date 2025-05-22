@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { signUpService, loginService } from "../services/auth.service";
-import { validateSignUpFields, validateLoginFields } from "../middlewares/validation";
+import { validateSignUpFields, validateLoginFields } from "../middlewares/validation.middleware";
 
 export const signUp = async (req: Request, res: Response) => {
 
