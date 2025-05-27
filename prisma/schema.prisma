@@ -22,13 +22,13 @@ model User {
   phoneNumber       String
 
   PasswordResetToken PasswordResetToken[]
-  userPreference     UserPreference?
+  storeCustomization StoreCustomization?
   openingHours       OpeningHour[]
 
   @@map("users")
 }
 
-model UserPreference {
+model StoreCustomization { 
   id               Int     @id @default(autoincrement())
   primaryColor     String
   backgroundColor  String
@@ -39,13 +39,13 @@ model UserPreference {
   userId           Int     @unique
   user             User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  @@map("user_preferences")
+  @@map("store_customizations")  
 }
 
 model OpeningHour {
   id        Int     @id @default(autoincrement())
   day       WeekDay
-  open      String  // Consider usar Time se suportado e desejado
+  open      String 
   close     String
   userId    Int
   user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
