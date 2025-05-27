@@ -2,7 +2,7 @@ import bcrypt from 'bcrypt';
 import dotenv from 'dotenv';
 import jwt from 'jsonwebtoken'
 import { stripNonDigits } from '../utils/stripFormating';
-import { PrismaClient } from '../../node_modules/.prisma/client/index';
+import { PrismaClient } from '.prisma/client';
 
 dotenv.config();
 const prisma = new PrismaClient();
@@ -27,18 +27,18 @@ export const signUpService = async (data: AccountData) => {
     const rawPhoneNumber = stripNonDigits(phoneNumber
 
     )
-    if (password.length < 8) throw new Error('SENHA_FRACA');
-    if (!email.includes('@')) throw new Error('EMAIL_INVALIDO');
-    if (rawCpf.length !== 11) throw new Error('CPF_INVALIDO');
-    if (cnpj && rawCnpj && rawCnpj.length !== 14) throw new Error('CNPJ_INVALIDO');
-    if (password.length > 72) throw new Error('SENHA_MUITO_LONGA');
-    if (!/[A-Z]/.test(password)) throw new Error('SENHA_SEM_MAIUSCULA');
-    if (!/[0-9]/.test(password)) throw new Error('SENHA_SEM_NUMERO');
+    if (password.length < 8) throw new Error('Senha fraca');
+    if (!email.includes('@')) throw new Error('Email inválido');
+    if (rawCpf.length !== 11) throw new Error('CPF inválido');
+    if (cnpj && rawCnpj && rawCnpj.length !== 14) throw new Error('CNPJ inválido');
+    if (password.length > 72) throw new Error('Senha muito longa');
+    if (!/[A-Z]/.test(password)) throw new Error('Senha sem letra maiúscula');
+    if (!/[0-9]/.test(password)) throw new Error('Senha sem número');
 
     const existingUser = await prisma.user.findUnique({ where: { email } });
 
     if (existingUser) {
-        throw new Error('EMAIL_EXISTS');
+        throw new Error('Email já cadastrado');
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);

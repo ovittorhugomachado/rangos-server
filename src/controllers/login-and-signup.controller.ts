@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { signUpService, loginService } from "../services/auth.service";
+import { signUpService, loginService } from "../services/login-and-signup.service";
 import { validateSignUpFields, validateLoginFields } from "../middlewares/validation.middleware";
 
 export const signUp = async (req: Request, res: Response) => {
@@ -16,11 +16,11 @@ export const signUp = async (req: Request, res: Response) => {
 
     } catch (error: any) {
         const errorMap: Record<string, number> = {
-            'EMAIL_EXISTS': 409,
-            'CPF_INVALIDO': 400,
-            'CNPJ_INVALIDO': 400,
-            'SENHA_FRACA': 400,
-            'EMAIL_INVALIDO': 400
+            'Email já cadastrado': 409,
+            'CPF inválido': 400,
+            'CNPJ inválido': 400,
+            'Ssenha fraca': 400,
+            'Email inválido': 400
         };
 
         const statusCode = errorMap[error.message] || 500;
