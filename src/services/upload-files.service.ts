@@ -5,10 +5,15 @@ const prisma = new PrismaClient()
 interface AccountData {
     id: number;
     imageType: string,
+    imageName: string;
 }
 
 export const updateProfileLogoService = async (data: AccountData) => {
-    const { id, imageType } = data;
+    const { id, imageType, imageName } = data;
+
+    const imageExtension = imageName.split('.').pop();
+
+    if (!imageExtension) throw new Error('Extensão da imagem não encontrada');
 
     try {
 
@@ -27,7 +32,7 @@ export const updateProfileLogoService = async (data: AccountData) => {
             return await prisma.storeCustomization.upsert({
                 where: { userId: id },
                 update: {
-                    logoUrl: `${baseUrl}/${id}-${imageType}`,
+                    logoUrl: `${baseUrl}/${id}-${imageType}.${imageExtension}`,
                 },
                 create: {
                     userId: id,

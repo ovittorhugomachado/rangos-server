@@ -6,6 +6,7 @@ import authRoutes from './routes/login-and-signup.route';
 import resetPasswordRoutes from './routes/reset-password.routes';
 import userDataRouter from './routes/user.routes';
 import uploadFile from './routes/upload-files.routes';
+import pageStyle from './routes/store-customization.routes';
 import { PrismaClient } from '../node_modules/.prisma/client/index';
 import { cleanExpiredTokens } from './services/reset-password.service';
 
@@ -23,6 +24,7 @@ app.use('/auth', authRoutes);
 app.use('/reset-password', resetPasswordRoutes);
 app.use('/data', userDataRouter);
 app.use('/', uploadFile);
+app.use('/', pageStyle);
 
 cron.schedule('0 * * * *', async () => {
     await cleanExpiredTokens(prisma);

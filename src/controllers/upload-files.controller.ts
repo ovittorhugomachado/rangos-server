@@ -6,14 +6,16 @@ export const updateProfileLogo = async (req: Request, res: Response): Promise<vo
 
     try {
 
-        if (!req.file || !(req.file as any).location) { 
+        if (!req.file || !(req.file as any).location) {
             res.status(400).json({ error: 'File processing failed' });
             return;
         }
-
+        
         const { userId, profileImage } = req.params;
-    
+
         const id = Number(userId);
+
+        const imageName = req.file.originalname;
 
         if (!userId || isNaN(id)) {
             res.status(400).json({ error: 'Invalid user ID' });
@@ -22,7 +24,8 @@ export const updateProfileLogo = async (req: Request, res: Response): Promise<vo
 
         const updatedPreference = await updateProfileLogoService({
             id,
-            imageType: profileImage
+            imageType: profileImage,
+            imageName
         });
 
         res.status(200).json(updatedPreference);
