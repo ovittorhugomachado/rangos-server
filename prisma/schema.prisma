@@ -44,12 +44,12 @@ model StoreCustomization {
 
 model OpeningHour {
   userId    Int
-  day       WeekDay 
-  open      String  @default("closed")
-  close     String  @default("closed")
+  day       WeekDay
+  status    String  @default("closed")
+  timeRanges Json?
   user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  @@id([userId, day]) 
+  @@id([userId, day])
   @@map("opening_hours")
 }
 
