@@ -2,7 +2,7 @@ import bcrypt from 'bcrypt';
 import dotenv from 'dotenv';
 import jwt from 'jsonwebtoken'
 import { stripNonDigits } from '../utils/stripFormating';
-import { PrismaClient } from '.prisma/client';
+import { PrismaClient, WeekDay } from '.prisma/client';
 
 dotenv.config();
 const prisma = new PrismaClient();
@@ -19,14 +19,13 @@ interface AccountData {
 }
 
 export const signUpService = async (data: AccountData) => {
-
     const { restaurantName, cnpj, ownersName, cpf, phoneNumber, email, password } = data;
 
+    // Validações existentes
     const rawCpf = stripNonDigits(cpf);
     const rawCnpj = cnpj ? stripNonDigits(cnpj) : null;
-    const rawPhoneNumber = stripNonDigits(phoneNumber
+    const rawPhoneNumber = stripNonDigits(phoneNumber);
 
-    )
     if (password.length < 8) throw new Error('Senha fraca');
     if (!email.includes('@')) throw new Error('Email inválido');
     if (rawCpf.length !== 11) throw new Error('CPF inválido');
@@ -36,25 +35,52 @@ export const signUpService = async (data: AccountData) => {
     if (!/[0-9]/.test(password)) throw new Error('Senha sem número');
 
     const existingUser = await prisma.user.findUnique({ where: { email } });
-
-    if (existingUser) {
-        throw new Error('Email já cadastrado');
-    }
+    if (existingUser) throw new Error('Email já cadastrado');
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    await prisma.user.create({
-        data: {
-            restaurantName,
-            cnpj: rawCnpj,
-            ownersName,
-            cpf: rawCpf,
-            phoneNumber: rawPhoneNumber,
-            email,
-            password: hashedPassword,
-        },
+    // Usamos transaction para garantir atomicidade
+    const newUser = await prisma.$transaction(async (prisma) => {
+        // Cria o usuário
+        const user = await prisma.user.create({
+            data: {
+                restaurantName,
+                cnpj: rawCnpj,
+                ownersName,
+                cpf: rawCpf,
+                phoneNumber: rawPhoneNumber,
+                email,
+                password: hashedPassword,
+            },
+        });
+
+        // Dias da semana para os horários padrão
+        const daysOfWeek: WeekDay[] = [
+            'segunda', 
+            'terca', 
+            'quarta', 
+            'quinta', 
+            'sexta', 
+            'sabado', 
+            'domingo'
+        ];
+
+        // Cria os horários padrão
+        await prisma.openingHour.createMany({
+            data: daysOfWeek.map(day => ({
+                day,
+                open: 'closed',
+                close: 'closed',
+                userId: user.id
+            }))
+        });
+
+        return user;
     });
+
+    return newUser;
 };
+
 
 export const loginService = async (data: AccountData) => {
     const { email, password } = data
