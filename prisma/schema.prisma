@@ -43,13 +43,13 @@ model StoreCustomization {
 }
 
 model OpeningHour {
-  id        Int     @id @default(autoincrement())
-  day       WeekDay
-  open      String 
-  close     String
   userId    Int
+  day       WeekDay 
+  open      String  @default("closed")
+  close     String  @default("closed")
   user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
+  @@id([userId, day]) 
   @@map("opening_hours")
 }
 
