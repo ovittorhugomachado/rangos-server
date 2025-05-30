@@ -39,7 +39,7 @@ export const login = async (req: Request, res: Response) => {
         }
 
         const token = await loginService(req.body)
-        return res.status(201).json({ token });
+        return res.status(200).json({ token });
 
     } catch (error: unknown) {
         if (error instanceof Error && error.message === 'INVALID_DATA') {
