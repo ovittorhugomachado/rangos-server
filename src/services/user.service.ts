@@ -11,7 +11,17 @@ export const getUserDataService = async (userId: number) => {
             restaurantName: true,
             plan: true,
             accountStatus: true,
-            createdAt: true
+            createdAt: true,
+            openingHours: {
+                select: {
+                    day: true,
+                    open: true,
+                    close: true
+                },
+                orderBy: {
+                    day: 'asc'
+                }
+            }
         }
     });
 
