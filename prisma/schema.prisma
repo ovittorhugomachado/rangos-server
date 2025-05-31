@@ -9,17 +9,17 @@ datasource db {
 }
 
 model User {
-  id                Int                 @id @default(autoincrement())
-  email             String              @unique
-  password          String
-  restaurantName    String
-  accountStatus     AccountStatus       @default(ACTIVE)
-  plan              PlanType            @default(PROFESSIONAL)
-  createdAt         DateTime            @default(now())
-  cnpj              String?
-  cpf               String
-  ownersName        String
-  phoneNumber       String
+  id             Int           @id @default(autoincrement())
+  email          String        @unique
+  password       String
+  restaurantName String
+  accountStatus  AccountStatus @default(ACTIVE)
+  plan           PlanType      @default(PROFESSIONAL)
+  createdAt      DateTime      @default(now())
+  cnpj           String?
+  cpf            String
+  ownersName     String
+  phoneNumber    String
 
   PasswordResetToken PasswordResetToken[]
   storeCustomization StoreCustomization?
@@ -28,58 +28,58 @@ model User {
   @@map("users")
 }
 
-model StoreCustomization { 
-  id               Int     @id @default(autoincrement())
-  primaryColor     String
-  backgroundColor  String
-  textColor        String
-  textButtonColor  String
-  logoUrl          String
-  bannerUrl        String
-  userId           Int     @unique
-  user             User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+model StoreCustomization {
+  id              Int    @id @default(autoincrement())
+  primaryColor    String
+  backgroundColor String
+  textColor       String
+  textButtonColor String
+  logoUrl         String
+  bannerUrl       String
+  userId          Int    @unique
+  user            User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  @@map("store_customizations")  
+  @@map("store_customizations")
 }
 
 model OpeningHour {
-  userId    Int
-  day       WeekDay
-  status    String  @default("closed")
+  userId     Int
+  day        WeekDay
+  isOpen   Boolean @default(false)
   timeRanges Json?
-  user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user       User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@id([userId, day])
   @@map("opening_hours")
 }
 
 model PasswordResetToken {
-  id         Int      @id @default(autoincrement())  
-  token      String   @unique                       
-  userId     Int
-  user       User     @relation(fields: [userId], references: [id])
-  expiresAt  DateTime
-  createdAt  DateTime @default(now())
+  id        Int      @id @default(autoincrement())
+  token     String   @unique
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id])
+  expiresAt DateTime
+  createdAt DateTime @default(now())
 
   @@map("password_reset_tokens")
 }
 
 model MenuCategory {
-  id         Int         @id @default(autoincrement())
-  name       String      @db.VarChar(100)
-  menuItems  MenuItem[]
+  id        Int        @id @default(autoincrement())
+  name      String     @db.VarChar(100)
+  menuItems MenuItem[]
 
   @@map("menu_category")
 }
 
 model MenuItem {
-  id             Int          @id @default(autoincrement())
-  name           String       @db.VarChar(150)
-  description    String?
-  price          Decimal?     @db.Decimal(10, 2)
-  photoUrl       String?
-  categoryId     Int
-  menuCategory   MenuCategory @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  id           Int          @id @default(autoincrement())
+  name         String       @db.VarChar(150)
+  description  String?
+  price        Decimal?     @db.Decimal(10, 2)
+  photoUrl     String?
+  categoryId   Int
+  menuCategory MenuCategory @relation(fields: [categoryId], references: [id], onDelete: Cascade)
 
   @@map("menu_item")
 }
