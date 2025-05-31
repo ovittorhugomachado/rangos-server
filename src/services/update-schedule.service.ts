@@ -16,7 +16,7 @@ export const updateSchedule = async (userId: number, schedule: ScheduleItem[]) =
 
     const user = await prisma.user.findFirst({ where: {id: userId}})
 
-    if(!user) throw new Error('Usuário não encontrado')
+    if(!user) throw new Error('Usuário não encontrado');
 
     await prisma.$transaction(async (tx) => {
 

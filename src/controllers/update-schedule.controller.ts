@@ -1,10 +1,18 @@
 import { Request, Response } from "express";
 import { updateSchedule } from "../services/update-schedule.service";
+import { validateOpeningHours } from "../utils/validate-opening-hours";
 
 export const updateScheduleController = async (req: Request, res: Response) => {
     try {
         const { userId } = req.params
         const { schedule } = req.body
+
+        const validateData = validateOpeningHours(schedule)
+
+        if (validateData) {
+            res.status(400).json({ error: validateData });
+            return;
+        }
 
         await updateSchedule(Number(userId), schedule)
         console.log(schedule)
