@@ -16,9 +16,17 @@ export const updateSchedule = async (userId: number, schedule: ScheduleItem[]) =
 
     const user = await prisma.user.findFirst({ where: {id: userId}})
 
-    if(!user) throw new Error('Uusário não encontrado')
+    if(!user) throw new Error('Usuário não encontrado')
 
     await prisma.$transaction(async (tx) => {
+
+        await tx.openingHour.updateMany({
+            where: {userId},
+            data: {
+                timeRanges: [],
+                isOpen: false
+            }
+        })
         for (const item of schedule) {
             await tx.openingHour.upsert({
                 where: {

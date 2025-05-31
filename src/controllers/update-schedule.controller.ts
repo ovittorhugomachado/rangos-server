@@ -7,6 +7,7 @@ export const updateScheduleController = async (req: Request, res: Response) => {
         const { schedule } = req.body
 
         await updateSchedule(Number(userId), schedule)
+        console.log(schedule)
 
         res.status(200).json({ success: true, message: "Horários atualizados com sucesso" })
     } catch (error) {
