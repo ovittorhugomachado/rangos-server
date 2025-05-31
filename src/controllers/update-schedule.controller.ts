@@ -1,16 +1,23 @@
 import { Request, Response } from "express";
 import { updateSchedule } from "../services/update-schedule.service";
-import { validateOpeningHours } from "../utils/validate-opening-hours";
+import { checkOverlappingRanges, validateOpeningHours } from "../utils/validate-opening-hours";
 
 export const updateScheduleController = async (req: Request, res: Response) => {
     try {
         const { userId } = req.params
         const { schedule } = req.body
 
-        const validateData = validateOpeningHours(schedule)
+        const validationError = validateOpeningHours(schedule)
 
-        if (validateData) {
-            res.status(400).json({ error: validateData });
+        if (validationError) {
+            res.status(400).json({ error: validationError });
+            return;
+        }
+
+        const overlapError = checkOverlappingRanges(schedule)
+
+        if (overlapError) {
+            res.status(400).json({ error: overlapError });
             return;
         }
 

@@ -28,3 +28,31 @@ export const validateOpeningHours = (hours: any[]) => {
 
     return null;
 };
+
+export const checkOverlappingRanges = (schedule: { day: string; timeRanges: { start: string; end: string }[] }[]): string | null => {
+    const grouped: Record<string, { start: string; end: string }[]> = {};
+
+    for (const entry of schedule) {
+        if (!grouped[entry.day]) grouped[entry.day] = [];
+        grouped[entry.day].push(...entry.timeRanges);
+    }
+
+    for (const day in grouped) {
+        const ranges = grouped[day]
+            .map(({ start, end }) => ({
+                start: parseInt(start.replace(":", "")),
+                end: parseInt(end.replace(":", "")),
+            }))
+            .sort((a, b) => a.start - b.start);
+
+        for (let i = 1; i < ranges.length; i++) {
+            const prev = ranges[i - 1];
+            const curr = ranges[i];
+            if (curr.start < prev.end) {
+                return `Horários sobrepostos no dia: ${day}`;
+            }
+        }
+    }
+
+    return null;
+};
