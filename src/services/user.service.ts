@@ -15,7 +15,7 @@ export const getUserDataService = async (userId: number) => {
             openingHours: {
                 select: {
                     day: true,
-                    status: true,
+                    isOpen: true,
                     timeRanges: true
                 },
                 orderBy: {

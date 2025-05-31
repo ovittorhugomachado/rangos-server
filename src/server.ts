@@ -2,10 +2,11 @@ import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import cron from 'node-cron';
-import authRoutes from './routes/login-and-signup.route';
+import authRoutes from './routes/login-and-signup.routes';
 import resetPasswordRoutes from './routes/reset-password.routes';
 import userDataRouter from './routes/user.routes';
 import uploadFile from './routes/upload-files.routes';
+import updateSchedule from './routes/schedules.routes';
 import pageStyle from './routes/store-customization.routes';
 import { PrismaClient } from '../node_modules/.prisma/client/index';
 import { cleanExpiredTokens } from './services/reset-password.service';
@@ -24,6 +25,7 @@ app.use('/auth', authRoutes);
 app.use('/reset-password', resetPasswordRoutes);
 app.use('/data', userDataRouter);
 app.use('/', uploadFile);
+app.use('/', updateSchedule);
 app.use('/', pageStyle);
 
 cron.schedule('0 * * * *', async () => {

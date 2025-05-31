@@ -21,7 +21,6 @@ interface AccountData {
 export const signUpService = async (data: AccountData) => {
     const { restaurantName, cnpj, ownersName, cpf, phoneNumber, email, password } = data;
 
-    // Validações existentes
     const rawCpf = stripNonDigits(cpf);
     const rawCnpj = cnpj ? stripNonDigits(cnpj) : null;
     const rawPhoneNumber = stripNonDigits(phoneNumber);
@@ -39,9 +38,8 @@ export const signUpService = async (data: AccountData) => {
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // Usamos transaction para garantir atomicidade
     const newUser = await prisma.$transaction(async (prisma) => {
-        // Cria o usuário
+
         const user = await prisma.user.create({
             data: {
                 restaurantName,
@@ -54,24 +52,22 @@ export const signUpService = async (data: AccountData) => {
             },
         });
 
-        // Dias da semana para os horários padrão
         const daysOfWeek: WeekDay[] = [
-            'segunda', 
-            'terca', 
-            'quarta', 
-            'quinta', 
-            'sexta', 
-            'sabado', 
+            'segunda',
+            'terca',
+            'quarta',
+            'quinta',
+            'sexta',
+            'sabado',
             'domingo'
         ];
 
-        // Cria os horários padrão
         await prisma.openingHour.createMany({
             data: daysOfWeek.map(day => ({
+                userId: user.id,
                 day,
-                open: 'closed',
-                close: 'closed',
-                userId: user.id
+                isOpen: false, 
+                timeRanges: [] 
             }))
         });
 
