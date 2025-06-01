@@ -3,10 +3,12 @@ import dotenv from 'dotenv';
 import jwt from 'jsonwebtoken'
 import { stripNonDigits } from '../../utils/stripFormating';
 import { PrismaClient, WeekDay } from '.prisma/client';
+import { generateTokens } from './auth.utils';
 
 dotenv.config();
 const prisma = new PrismaClient();
 const JWT_SECRET = process.env.JWT_SECRET || 'secreto'
+const REFRESH_SECRET = process.env.REFRESH_SECRET || 'refresh_secreto';
 
 interface AccountData {
     restaurantName: string;
@@ -66,8 +68,8 @@ export const signUpService = async (data: AccountData) => {
             data: daysOfWeek.map(day => ({
                 userId: user.id,
                 day,
-                isOpen: false, 
-                timeRanges: [] 
+                isOpen: false,
+                timeRanges: []
             }))
         });
 
@@ -76,7 +78,6 @@ export const signUpService = async (data: AccountData) => {
 
     return newUser;
 };
-
 
 export const loginService = async (data: AccountData) => {
     const { email, password } = data
@@ -90,15 +91,51 @@ export const loginService = async (data: AccountData) => {
     if (!passwordMatch) {
         throw new Error('INVALID_DATA')
     }
-    const token = jwt.sign(
+
+    const payload = {
+        userId: user.id,
+        plan: user.plan,
+        accountStatus: user.accountStatus,
+    };
+
+    const { accessToken, refreshToken } = generateTokens(payload);
+
+    await prisma.user.update({
+        where: { id: user.id },
+        data: { refreshToken },
+    });
+
+    return { accessToken, refreshToken };
+
+}
+
+export const refreshTokenService = async (refreshToken: string): Promise<string> => {
+    const payload = jwt.verify(refreshToken, REFRESH_SECRET) as any;
+
+    const user = await prisma.user.findUnique({
+        where: { id: payload.userId },
+    });
+
+    if (!user || user.refreshToken !== refreshToken) {
+        throw new Error('INVALID_REFRESH_TOKEN');
+    }
+
+    const newAccessToken = jwt.sign(
         {
             userId: user.id,
             plan: user.plan,
-            accountStatus: user.accountStatus
+            accountStatus: user.accountStatus,
         },
         JWT_SECRET,
-        { expiresIn: '2h' }
+        { expiresIn: '15m' }
     );
 
-    return token;
-}
+    return newAccessToken;
+};
+
+export const logoutService = async (userId: number) => {
+  await prisma.user.update({
+    where: { id: userId },
+    data: { refreshToken: null },
+  });
+};
