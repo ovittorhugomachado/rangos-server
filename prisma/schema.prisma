@@ -21,7 +21,9 @@ model User {
   ownersName     String
   phoneNumber    String
 
-  PasswordResetToken PasswordResetToken[]
+  refreshToken   String?
+
+  passwordResetToken PasswordResetToken[]
   storeCustomization StoreCustomization?
   openingHours       OpeningHour[]
 
@@ -45,7 +47,7 @@ model StoreCustomization {
 model OpeningHour {
   userId     Int
   day        WeekDay
-  isOpen   Boolean @default(false)
+  isOpen     Boolean @default(false)
   timeRanges Json?
   user       User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
