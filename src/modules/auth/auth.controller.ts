@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
-import { signUpService, loginService } from "../services/login-and-signup.service";
-import { validateSignUpFields, validateLoginFields } from "../middlewares/validation.middleware";
+import { signUpService, loginService } from "./auth.service";
+import { validateSignUpFields, validateLoginFields } from "../../middlewares/validation.middleware";
 
 export const signUp = async (req: Request, res: Response) => {
 
@@ -19,7 +19,7 @@ export const signUp = async (req: Request, res: Response) => {
             'Email já cadastrado': 409,
             'CPF inválido': 400,
             'CNPJ inválido': 400,
-            'Ssenha fraca': 400,
+            'Senha fraca': 400,
             'Email inválido': 400
         };
 

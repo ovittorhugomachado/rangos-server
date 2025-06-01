@@ -2,14 +2,14 @@ import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import cron from 'node-cron';
-import authRoutes from './routes/login-and-signup.routes';
-import resetPasswordRoutes from './routes/reset-password.routes';
-import userDataRouter from './routes/user.routes';
-import uploadFile from './routes/upload-files.routes';
-import updateSchedule from './routes/schedules.routes';
-import pageStyle from './routes/store-customization.routes';
+import authRoutes from './modules/auth/auth.routes';
+import resetPasswordRoutes from './modules/password/password.routes';
+import userDataRouter from './modules/user/user.routes';
+import uploadFile from './modules/uploads/upload-profile-logo.routes';
+import updateSchedule from './modules/schedules/schedules.routes';
+import pageStyle from './modules/store-customization/store-customization.routes'
 import { PrismaClient } from '../node_modules/.prisma/client/index';
-import { cleanExpiredTokens } from './services/reset-password.service';
+import { cleanExpiredTokens } from './modules/password/password.service';
 
 dotenv.config();
 
@@ -21,9 +21,9 @@ app.use(express.urlencoded({ extended: true }))
 app.use(express.json());
 app.use(cors());
 
-app.use('/auth', authRoutes);
-app.use('/reset-password', resetPasswordRoutes);
-app.use('/data', userDataRouter);
+app.use('/', authRoutes);
+app.use('/', resetPasswordRoutes);
+app.use('/', userDataRouter);
 app.use('/', uploadFile);
 app.use('/', updateSchedule);
 app.use('/', pageStyle);

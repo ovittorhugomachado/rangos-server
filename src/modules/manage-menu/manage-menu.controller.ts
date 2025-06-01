@@ -3,7 +3,7 @@ import {
     createCategoryService,
     deleteCategoryService,
     getCategoriesService
-} from '../services/manage-menu.service';
+} from '../../modules/manage-menu/manage-menu.service';
 
 export const createCategory = async (req: Request, res: Response) => {
     const { name } = req.body;

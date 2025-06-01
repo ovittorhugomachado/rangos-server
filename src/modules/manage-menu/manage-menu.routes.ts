@@ -3,7 +3,7 @@ import {
     createCategory,
     deleteCategory,
     getCategories
-} from '../controllers/manage-menu.controller';
+} from './manage-menu.controller';
 
 const router = Router();
 

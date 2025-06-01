@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { updateProfileLogoService } from '../services/upload-files.service';
+import { updateProfileLogoService } from './upload-profile-logo.service';
 import { Prisma } from '@prisma/client';
 
 export const updateProfileLogo = async (req: Request, res: Response): Promise<void> => {

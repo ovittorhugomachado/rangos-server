@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { getUserDataService } from '../services/user.service';
+import { getUserDataService } from './user.service';
 
 export const getUserProfile = async (req: Request, res: Response) => {
     const userId = (req as any).user?.userId;

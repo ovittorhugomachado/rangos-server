@@ -3,7 +3,7 @@ import {
     requestPasswordReset,
     resetPassword,
     validateToken
-} from '../controllers/reset-password.controller';
+} from './password.controller';
 
 const router = Router();
 

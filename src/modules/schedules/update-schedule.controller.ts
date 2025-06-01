@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
-import { updateSchedule } from "../services/update-schedule.service";
-import { checkOverlappingRanges, validateOpeningHours } from "../utils/validate-opening-hours";
+import { updateSchedule } from "./update-schedule.service";
+import { checkOverlappingRanges, validateOpeningHours } from "../../utils/validate-opening-hours";
 
 export const updateScheduleController = async (req: Request, res: Response) => {
     try {

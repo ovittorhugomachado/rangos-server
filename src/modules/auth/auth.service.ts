@@ -1,7 +1,7 @@
 import bcrypt from 'bcrypt';
 import dotenv from 'dotenv';
 import jwt from 'jsonwebtoken'
-import { stripNonDigits } from '../utils/stripFormating';
+import { stripNonDigits } from '../../utils/stripFormating';
 import { PrismaClient, WeekDay } from '.prisma/client';
 
 dotenv.config();

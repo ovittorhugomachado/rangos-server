@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { getStoreCustomizationByUserId } from '../services/store-customization.service';
+import { getStoreCustomizationByUserId } from './store-customization.service';
 
 export const getStoreCustomization = async (req: Request, res: Response): Promise<void> =>  {
     try {

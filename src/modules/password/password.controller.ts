@@ -1,11 +1,11 @@
 import { Request, Response } from 'express';
-import { PrismaClient } from '../../node_modules/.prisma/client/index';
+import { PrismaClient } from '.prisma/client';
 import {
     generateResetTokenService,
     sendResetEmailService,
     validateTokenService,
     resetPasswordService
-} from '../services/reset-password.service';
+} from './password.service';
 
 const prisma = new PrismaClient()
 

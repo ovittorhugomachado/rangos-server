@@ -1,7 +1,7 @@
 import bcrypt from 'bcrypt';
 import { randomUUID } from 'crypto';
-import { PrismaClient } from '../../node_modules/.prisma/client/index';
-import { transporter } from '../utils/email';
+import { PrismaClient } from '.prisma/client';
+import { transporter } from '../../utils/email';
 
 const prisma = new PrismaClient()
 
