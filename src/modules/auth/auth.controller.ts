@@ -33,6 +33,8 @@ export const signUp = async (req: Request, res: Response) => {
 export const login = async (req: Request, res: Response) => {
 
     try {
+
+        console.log(req.ip)
         const validationError = validateLoginFields(req.body);
         if (validationError) {
             return res.status(400).json({ message: validationError });

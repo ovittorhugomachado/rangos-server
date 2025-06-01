@@ -17,6 +17,8 @@ const app = express();
 const prisma = new PrismaClient();
 const port = process.env.PORT || 3000;
 
+app.set('trust proxy', 1);
+
 app.use(express.urlencoded({ extended: true }))
 app.use(express.json());
 app.use(cors());
