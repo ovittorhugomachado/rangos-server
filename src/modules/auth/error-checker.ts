@@ -8,7 +8,7 @@ interface AccountDataBody {
     password: string;
 }
 
-export const validateSignUpFields = (body: AccountDataBody): string | null => {
+export const signUpFieldsErrorChecker = (body: AccountDataBody): string | null => {
     const requiredFields = ['restaurantName', 'ownersName', 'cpf', 'phoneNumber', 'email', 'password'];
 
     for (const field of requiredFields) {
@@ -20,7 +20,7 @@ export const validateSignUpFields = (body: AccountDataBody): string | null => {
     return null;
 }
 
-export const validateLoginFields = (body: AccountDataBody): string | null => {
+export const loginFieldsErrorChecker = (body: AccountDataBody): string | null => {
     const { email, password } = body;
 
     if (!email || !password) {

@@ -1,11 +1,11 @@
 import { Request, Response } from "express";
 import { signUpService, loginService, refreshTokenService, logoutService } from "./auth.service";
-import { validateSignUpFields, validateLoginFields } from "../../middlewares/validation.middleware";
+import { loginFieldsErrorChecker, signUpFieldsErrorChecker } from "./error-checker";
 
 export const signUp = async (req: Request, res: Response) => {
 
     try {
-        const validationError = validateSignUpFields(req.body);
+        const validationError = signUpFieldsErrorChecker(req.body);
 
         if (validationError) {
             return res.status(400).json({ error: validationError });
@@ -34,7 +34,7 @@ export const login = async (req: Request, res: Response) => {
 
     try {
 
-        const validationError = validateLoginFields(req.body);
+        const validationError = loginFieldsErrorChecker(req.body);
         if (validationError) {
             return res.status(400).json({ message: validationError });
         }
