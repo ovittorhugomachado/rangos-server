@@ -9,49 +9,59 @@ datasource db {
 }
 
 model User {
-  id             Int           @id @default(autoincrement())
-  email          String        @unique
-  password       String
-  restaurantName String
-  accountStatus  AccountStatus @default(ACTIVE)
-  plan           PlanType      @default(PROFESSIONAL)
-  createdAt      DateTime      @default(now())
-  cnpj           String?
-  cpf            String
-  ownersName     String
-  phoneNumber    String
-
-  refreshToken   String?
-
-  passwordResetToken PasswordResetToken[]
-  storeCustomization StoreCustomization?
-  openingHours       OpeningHour[]
+  id                  Int                  @id @default(autoincrement())
+  email               String               @unique
+  password            String
+  restaurantName      String
+  createdAt           DateTime             @default(now())
+  cnpj                String?
+  cpf                 String
+  ownersName          String
+  phoneNumber         String
+  refreshToken        String?
+  store               Store?
+  passwordResetTokens PasswordResetToken[]
 
   @@map("users")
 }
 
-model StoreCustomization {
-  id              Int    @id @default(autoincrement())
-  primaryColor    String
-  backgroundColor String
-  textColor       String
-  textButtonColor String
-  logoUrl         String
-  bannerUrl       String
-  userId          Int    @unique
-  user            User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+model Store {
+  id             Int            @id @default(autoincrement())
+  userId         Int            @unique
+  user           User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  logoUrl        String?
+  bannerUrl      String?
+  address        String? // Novo campo
+  restaurantName String? // Cópia de User.restaurantName
+  phoneNumber    String? // Cópia de User.phoneNumber
+  openingHours   OpeningHour[]
+  style          StoreStyle?
+  createdAt      DateTime       @default(now())
+  MenuCategory   MenuCategory[]
 
-  @@map("store_customizations")
+  @@map("stores")
+}
+
+model StoreStyle {
+  id              Int    @id @default(autoincrement())
+  primaryColor    String @default("#4F46E5")
+  backgroundColor String @default("#FFFFFF")
+  textColor       String @default("#1F2937")
+  textButtonColor String @default("#FFFFFF")
+  storeId         Int    @unique
+  store           Store  @relation(fields: [storeId], references: [id], onDelete: Cascade)
+
+  @@map("store_styles")
 }
 
 model OpeningHour {
-  userId     Int
+  storeId    Int
+  store      Store   @relation(fields: [storeId], references: [id], onDelete: Cascade)
   day        WeekDay
   isOpen     Boolean @default(false)
   timeRanges Json?
-  user       User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  @@id([userId, day])
+  @@id([storeId, day])
   @@map("opening_hours")
 }
 
@@ -69,6 +79,8 @@ model PasswordResetToken {
 model MenuCategory {
   id        Int        @id @default(autoincrement())
   name      String     @db.VarChar(100)
+  storeId   Int
+  store     Store      @relation(fields: [storeId], references: [id], onDelete: Cascade)
   menuItems MenuItem[]
 
   @@map("menu_category")
@@ -94,15 +106,4 @@ enum WeekDay {
   sexta
   sabado
   domingo
-}
-
-enum AccountStatus {
-  ACTIVE
-  SUSPENDED
-  OVERDUE
-}
-
-enum PlanType {
-  PROFESSIONAL
-  PROFESSIONAL_MORE_GPT
 }

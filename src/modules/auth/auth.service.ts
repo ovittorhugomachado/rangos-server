@@ -35,7 +35,7 @@ export const signUpService = async (data: AccountData) => {
     if (!/[A-Z]/.test(password)) throw new Error('Senha sem letra maiúscula');
     if (!/[0-9]/.test(password)) throw new Error('Senha sem número');
 
-    const existingUser = await prisma.user.findUnique({ where: { email } });
+    const existingUser = await prisma.user.findUnique({ where: { email } })
     if (existingUser) throw new Error('Email já cadastrado');
 
     const hashedPassword = await bcrypt.hash(password, 10);
@@ -54,6 +54,16 @@ export const signUpService = async (data: AccountData) => {
             },
         });
 
+        const store = await prisma.store.create({
+            data: {
+                userId: user.id,
+
+                style: {
+                    create: {}
+                }
+            },
+        });
+
         const daysOfWeek: WeekDay[] = [
             'segunda',
             'terca',
@@ -66,7 +76,7 @@ export const signUpService = async (data: AccountData) => {
 
         await prisma.openingHour.createMany({
             data: daysOfWeek.map(day => ({
-                userId: user.id,
+                storeId: store.id,
                 day,
                 isOpen: false,
                 timeRanges: []
@@ -94,8 +104,6 @@ export const loginService = async (data: AccountData) => {
 
     const payload = {
         userId: user.id,
-        plan: user.plan,
-        accountStatus: user.accountStatus,
     };
 
     const { accessToken, refreshToken } = generateTokens(payload);
@@ -123,8 +131,6 @@ export const refreshTokenService = async (refreshToken: string): Promise<string>
     const newAccessToken = jwt.sign(
         {
             userId: user.id,
-            plan: user.plan,
-            accountStatus: user.accountStatus,
         },
         JWT_SECRET,
         { expiresIn: '15m' }
@@ -134,8 +140,8 @@ export const refreshTokenService = async (refreshToken: string): Promise<string>
 };
 
 export const logoutService = async (userId: number) => {
-  await prisma.user.update({
-    where: { id: userId },
-    data: { refreshToken: null },
-  });
+    await prisma.user.update({
+        where: { id: userId },
+        data: { refreshToken: null },
+    });
 };
