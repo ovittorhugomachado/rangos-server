@@ -52,7 +52,6 @@ export const login = async (req: Request, res: Response) => {
             httpOnly: true,
             secure: false,//EM PRODUÇÃOO MUDAR PARA TRUE
             sameSite: 'lax',
-            path: '/refresh',
             maxAge: 30 * 24 * 60 * 60 * 1000, // 30 dias
         });
         return res.status(200).json({ message: 'Login realizado com sucesso' });
@@ -67,7 +66,7 @@ export const login = async (req: Request, res: Response) => {
 };
 
 export const refreshAccessToken = async (req: Request, res: Response) => {
-    
+
     const refreshToken = req.cookies.refreshToken;
     if (!refreshToken) {
         return res.status(401).json({ message: 'Refresh token não fornecido' });
