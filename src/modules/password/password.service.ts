@@ -43,11 +43,6 @@ export const sendResetEmailService = async (email: string, token: string, restau
     });
 };
 
-export const validateTokenService = async (token: string) => {
-    const tokenData = await prisma.passwordResetToken.findFirst({ where: { token } });
-    if (!tokenData || tokenData.expiresAt < new Date()) throw new Error('INVALID_OR_EXPIRED_TOKEN');
-};
-
 export const resetPasswordService = async (token: string, newPassword: string) => {
     const tokenRecord = await prisma.passwordResetToken.findUnique({
         where: { token },
@@ -66,18 +61,8 @@ export const resetPasswordService = async (token: string, newPassword: string) =
     await prisma.passwordResetToken.delete({ where: { token } });
 };
 
-export const cleanExpiredTokens = async (prisma: PrismaClient) => {
-    try {
-        const result = await prisma.passwordResetToken.deleteMany({
-            where: {
-                expiresAt: {
-                    lt: new Date()
-                }
-            }
-        });
-
-        console.log(`[CRON] Tokens expirados removidos: ${result.count}`);
-    } catch (error) {
-        console.error('[CRON] Erro ao limpar tokens expirados:', error);
-    }
+export const validateTokenService = async (token: string) => {
+    const tokenData = await prisma.passwordResetToken.findFirst({ where: { token } });
+    if (!tokenData || tokenData.expiresAt < new Date()) throw new Error('INVALID_OR_EXPIRED_TOKEN');
 };
+
