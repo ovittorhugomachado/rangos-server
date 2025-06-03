@@ -13,7 +13,6 @@ export const updateProfileLogo = async (req: Request, res: Response): Promise<vo
 
         const { userId, imageType } = req.params;
         const id = Number(userId);
-        const imageName = req.file.originalname;
 
         if (!userId || isNaN(id)) {
             res.status(400).json({
@@ -27,13 +26,7 @@ export const updateProfileLogo = async (req: Request, res: Response): Promise<vo
             return
         }
 
-        const updatedPreference = await updateProfileLogoService({
-            id,
-            imageType,
-            imageName
-        });
-
-        res.status(200).json(updatedPreference);
+        res.status(200).json({message: 'Logo atualizada com sucesso'});
     } catch (error: any) {
         console.error('Error updating profile logo:', error);
 

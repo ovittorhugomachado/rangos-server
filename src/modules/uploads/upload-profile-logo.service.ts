@@ -29,14 +29,12 @@ export const updateProfileLogoService = async (data: AccountData) => {
 
             const baseUrl = `https://S3.${process.env.AWS_DEFAULT_REGION}.amazonaws.com/${process.env.AWS_BUCKET_NAME}`;
 
-            await prisma.store.update({
+            return await prisma.store.update({
                 where: { id },
                 data: {
                     logoUrl: `${baseUrl}/${id}-${imageType}.${imageExtension}`,
                 },
             });
-            
-            return ({message: 'Logo atualizado cm sucesso'})
         });
     } catch (error) {
         console.error('Service error:', error);
