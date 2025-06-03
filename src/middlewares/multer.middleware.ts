@@ -1,6 +1,5 @@
 import multer from 'multer';
 import path from 'path';
-import crypto from 'crypto';
 import { S3Client, S3ClientConfig } from '@aws-sdk/client-s3';
 import multerS3 from 'multer-s3';
 import { Request } from 'express';
@@ -33,16 +32,12 @@ const storageTypes: StorageConfig = {
             cb(null, path.resolve(__dirname, '..', '..', 'tmp', 'uploads'));
         },
         filename: (req: Request, file: Express.Multer.File, cb: (error: Error | null, filename: string) => void) => {
-            crypto.randomBytes(16, (err, hash) => {
-                if (err) return cb(err, "");
+            
+            const ext = path.extname(file.originalname);
+            const { userId, imageType } = req.params;
 
-                const ext = path.extname(file.originalname);
-
-                const { userId, profileImage } = req.params
-
-                file.filename = `${userId}-${profileImage}${ext}`;
-                cb(null, file.filename);
-            });
+            const fileName = `${userId}-${imageType}${ext}`;
+            cb(null, fileName);
         }
     }),
     s3: multerS3({
@@ -50,16 +45,12 @@ const storageTypes: StorageConfig = {
         bucket: process.env.AWS_BUCKET_NAME || '',
         contentType: multerS3.AUTO_CONTENT_TYPE,
         key: (req: Request, file: Express.Multer.File, cb: (error: Error | null, key: string) => void) => {
-            crypto.randomBytes(16, (err, hash) => {
-                if (err) return cb(err, "");
-
+                
+            const ext = path.extname(file.originalname);
                 const { userId, imageType } = req.params
-
-                const ext = path.extname(file.originalname);
 
                 const fileNameInS3 = `${userId}-${imageType}${ext}`;
                 cb(null, fileNameInS3);
-            });
         }
     })
 };
