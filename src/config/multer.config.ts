@@ -55,8 +55,6 @@ const storageTypes: StorageConfig = {
 
                 const { userId, imageType } = req.params
 
-                console.log(imageType)
-
                 const ext = path.extname(file.originalname);
 
                 const fileNameInS3 = `${userId}-${imageType}${ext}`;
