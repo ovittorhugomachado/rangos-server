@@ -13,7 +13,7 @@ router.post('/login', authLimiter, (req, res, next) => {
     login(req, res).catch(next);
 });
 
-router.post('/refresh', (req, res, next) => {
+router.post('/refresh-token', (req, res, next) => {
   refreshAccessToken(req, res).catch(next);
 });
 
