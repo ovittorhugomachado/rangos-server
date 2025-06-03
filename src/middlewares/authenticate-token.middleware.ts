@@ -1,26 +1,54 @@
 import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
 
-const JWT_SECRET = process.env.JWT_SECRET || 'secreto';
+const JWT_SECRET = process.env.JWT_SECRET as string;
+if (!JWT_SECRET) throw new Error('JWT_SECRET não definido');
 
-export function authenticateToken(req: Request & { user?: any }, res: Response, next: NextFunction): void {
+interface UserPayload {
+  userId: number;
+}
 
-  const token = req.cookies.token || req.headers.authorization?.split(' ')[1];
-  console.log('Cookies:', req.cookies);
-  console.log('Token do cookie:', req.cookies?.token);
+declare global {
+  namespace Express {
+    interface Request {
+      user?: UserPayload;
+    }
+  }
+}
+
+export function authenticateToken(req: Request, res: Response, next: NextFunction): void {
+
+  const token = req.cookies.token
+
   if (!token) {
     res.status(401).json({ message: 'Token não fornecido' });
     return;
   }
 
   try {
-    console.log('Cookies:', req.cookies);
-    console.log('Token do cookie:', req.cookies?.token);
 
-    const decoded = jwt.verify(token, JWT_SECRET);
+    const decoded = jwt.verify(token, JWT_SECRET) as UserPayload;
+
+    if (typeof decoded.userId !== 'number') {
+      throw new jwt.JsonWebTokenError('Payload inválido: userId deve ser um número');
+    }
+
     req.user = decoded;
     next();
-  } catch {
-    res.status(401).json({ message: 'Token inválido ou expirado' });
+
+  } catch (error) {
+    
+    console.error('Erro no middleware JWT:', error);
+
+    if (error instanceof jwt.TokenExpiredError) {
+      res.status(401).json({ message: 'Token expirado' });
+      return
+    }
+    if (error instanceof jwt.JsonWebTokenError) {
+      res.status(403).json({ message: 'Token inválido' });
+      return
+    }
+    res.status(500).json({ message: 'Erro interno durante a autenticação' });
+    return
   }
 }

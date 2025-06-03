@@ -9,19 +9,7 @@ export const getUserDataService = async (userId: number) => {
             id: true,
             email: true,
             restaurantName: true,
-            plan: true,
-            accountStatus: true,
             createdAt: true,
-            openingHours: {
-                select: {
-                    day: true,
-                    isOpen: true,
-                    timeRanges: true
-                },
-                orderBy: {
-                    day: 'asc'
-                }
-            }
         }
     });
 
