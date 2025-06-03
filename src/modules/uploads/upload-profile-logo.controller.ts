@@ -10,21 +10,26 @@ export const updateProfileLogo = async (req: Request, res: Response): Promise<vo
             res.status(400).json({ error: 'File processing failed' });
             return;
         }
-        
-        const { userId, profileImage } = req.params;
 
+        const { userId, imageType } = req.params;
         const id = Number(userId);
-
         const imageName = req.file.originalname;
 
         if (!userId || isNaN(id)) {
-            res.status(400).json({ error: 'Invalid user ID' });
-            return;
+            res.status(400).json({
+                error: 'Invalid parameters',
+                details: {
+                    userId: userId,
+                    isValid: !isNaN(id) && id > 0,
+                    profileImage: imageType
+                }
+            });
+            return
         }
 
         const updatedPreference = await updateProfileLogoService({
             id,
-            imageType: profileImage,
+            imageType: imageType,
             imageName
         });
 
@@ -41,10 +46,7 @@ export const updateProfileLogo = async (req: Request, res: Response): Promise<vo
                 meta: error.meta
             });
         } else {
-            res.status(500).json({
-                error: 'Failed to update profile logo',
-                details: error.message
-            });
+            res.status(500).json({ error: 'Failed to update profile logo' });
         }
     }
 };

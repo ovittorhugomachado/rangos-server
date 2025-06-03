@@ -29,19 +29,10 @@ export const updateProfileLogoService = async (data: AccountData) => {
 
             const baseUrl = `https://S3.${process.env.AWS_DEFAULT_REGION}.amazonaws.com/${process.env.AWS_BUCKET_NAME}`;
 
-            return await prisma.storeCustomization.upsert({
-                where: { userId: id },
-                update: {
+            return await prisma.store.update({
+                where: { id },
+                data: {
                     logoUrl: `${baseUrl}/${id}-${imageType}.${imageExtension}`,
-                },
-                create: {
-                    userId: id,
-                    logoUrl: `${baseUrl}/${id}-${imageType}`,
-                    primaryColor: '#FFFFFF',
-                    backgroundColor: '#000000',
-                    textColor: '#000000',
-                    textButtonColor: '#FFFFFF',
-                    bannerUrl: '',
                 },
             });
         });

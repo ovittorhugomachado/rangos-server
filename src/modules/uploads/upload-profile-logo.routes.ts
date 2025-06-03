@@ -6,9 +6,10 @@ import { authenticateToken } from '../../middlewares/authenticate-token.middlewa
 const router = express.Router();
 
 router.patch(
-    '/users/:userId/:profileImage',
+    '/:userId/:imageType',
     authenticateToken,
     upload.single('logo'),
-    updateProfileLogo);
+    updateProfileLogo
+);
 
 export default router

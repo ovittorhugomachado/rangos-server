@@ -53,11 +53,13 @@ const storageTypes: StorageConfig = {
             crypto.randomBytes(16, (err, hash) => {
                 if (err) return cb(err, "");
 
-                const { userId, profileImage } = req.params
+                const { userId, imageType } = req.params
+
+                console.log(imageType)
 
                 const ext = path.extname(file.originalname);
 
-                const fileNameInS3 = `${userId}-${profileImage}${ext}`;
+                const fileNameInS3 = `${userId}-${imageType}${ext}`;
                 cb(null, fileNameInS3);
             });
         }
