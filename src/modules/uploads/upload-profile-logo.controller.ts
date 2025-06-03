@@ -29,7 +29,7 @@ export const updateProfileLogo = async (req: Request, res: Response): Promise<vo
 
         const updatedPreference = await updateProfileLogoService({
             id,
-            imageType: imageType,
+            imageType,
             imageName
         });
 
