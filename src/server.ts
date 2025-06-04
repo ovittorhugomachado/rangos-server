@@ -8,7 +8,7 @@ import resetPasswordRoutes from './modules/password/password.routes';
 import userDataRouter from './modules/user/user.routes';
 import uploadFile from './modules/uploads/upload-profile-logo.routes';
 import updateSchedule from './modules/schedules/schedules.routes';
-import pageStyle from './modules/store-customization/store-customization.routes'
+import pageStyle from './modules/menu-customization/store-customization.routes'
 import { PrismaClient } from '../node_modules/.prisma/client/index';
 import { cleanExpiredTokens } from './modules/password/password.service';
 
