@@ -6,11 +6,12 @@ import cookieParser from 'cookie-parser';
 import authRoutes from './modules/auth/auth.routes';
 import resetPasswordRoutes from './modules/password/password.routes';
 import userDataRouter from './modules/user/user.routes';
+import storeDataRoutes from './modules/store/store.routes';
 import uploadFile from './modules/uploads/upload-profile-logo.routes';
 import updateSchedule from './modules/schedules/schedules.routes';
 import pageStyle from './modules/menu-customization/store-customization.routes'
 import { PrismaClient } from '../node_modules/.prisma/client/index';
-import { cleanExpiredTokens } from './modules/password/password.service';
+import { cleanExpiredTokens } from './modules/password/clean-expired-tokens.utils';
 
 dotenv.config();
 
@@ -31,6 +32,7 @@ app.use(cors({
 app.use('/', authRoutes);
 app.use('/', resetPasswordRoutes);
 app.use('/', userDataRouter);
+app.use('/', storeDataRoutes)
 app.use('/', uploadFile);
 app.use('/', updateSchedule);
 app.use('/', pageStyle);

@@ -29,11 +29,11 @@ model Store {
   id             Int            @id @default(autoincrement())
   userId         Int            @unique
   user           User           @relation(fields: [userId], references: [id], onDelete: Cascade)
-  logoUrl        String?
-  bannerUrl      String?
-  address        String?
   restaurantName String?
   phoneNumber    String?
+  address        String?
+  logoUrl        String?
+  bannerUrl      String?
   delivery       Boolean        @default(true)
   pickup         Boolean        @default(false)
   openingHours   OpeningHour[]
