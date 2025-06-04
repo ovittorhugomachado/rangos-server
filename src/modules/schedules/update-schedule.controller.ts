@@ -1,10 +1,10 @@
 import { Request, Response } from "express";
 import { updateSchedule } from "./update-schedule.service";
-import { checkOverlappingRanges, validateOpeningHours } from "../../utils/validate-opening-hours";
+import { checkOverlappingRanges, validateOpeningHours } from "./validate-opening-hours.utils";
 
 export const updateScheduleController = async (req: Request, res: Response) => {
     try {
-        const { userId } = req.params
+        const userId = Number(req.user?.userId);
         const { schedule } = req.body
 
         const validationError = validateOpeningHours(schedule)

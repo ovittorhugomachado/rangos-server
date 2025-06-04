@@ -13,25 +13,29 @@ interface ScheduleItem {
 }
 
 export const updateSchedule = async (userId: number, schedule: ScheduleItem[]) => {
+    const store = await prisma.store.findFirst({
+        where: { userId },
+        select: { id: true },
+    });
 
-    const user = await prisma.user.findFirst({ where: {id: userId}})
+    if (!store) throw new Error('Loja não encontrada');
 
-    if(!user) throw new Error('Usuário não encontrado');
+    const storeId = store.id;
 
     await prisma.$transaction(async (tx) => {
-
         await tx.openingHour.updateMany({
-            where: {userId},
+            where: { storeId },
             data: {
                 timeRanges: [],
                 isOpen: false
             }
-        })
+        });
+
         for (const item of schedule) {
             await tx.openingHour.upsert({
                 where: {
-                    userId_day: {
-                        userId,
+                    storeId_day: {
+                        storeId,
                         day: item.day
                     }
                 },
@@ -40,7 +44,7 @@ export const updateSchedule = async (userId: number, schedule: ScheduleItem[]) =
                     isOpen: item.timeRanges.length > 0
                 },
                 create: {
-                    userId,
+                    storeId,
                     day: item.day,
                     timeRanges: item.timeRanges as unknown as Prisma.JsonArray,
                     isOpen: item.timeRanges.length > 0
