@@ -31,9 +31,11 @@ model Store {
   user           User           @relation(fields: [userId], references: [id], onDelete: Cascade)
   logoUrl        String?
   bannerUrl      String?
-  address        String? // Novo campo
-  restaurantName String? // Cópia de User.restaurantName
-  phoneNumber    String? // Cópia de User.phoneNumber
+  address        String?
+  restaurantName String?
+  phoneNumber    String?
+  delivery       Boolean        @default(true)
+  pickup         Boolean        @default(false)
   openingHours   OpeningHour[]
   style          StoreStyle?
   createdAt      DateTime       @default(now())
