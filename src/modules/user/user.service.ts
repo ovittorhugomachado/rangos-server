@@ -1,6 +1,6 @@
 import { PrismaClient } from "@prisma/client";
 
-const prisma = new PrismaClient()
+const prisma = new PrismaClient();
 
 interface UserProfileData {
     restaurantName: string | null;
@@ -9,7 +9,7 @@ interface UserProfileData {
     cnpj: string | null;
     ownersName: string | null;
     cpf: string | null;
-}
+};
 
 interface UpdateUserData {
     restaurantName?: string;
@@ -18,7 +18,7 @@ interface UpdateUserData {
     cnpj?: string;
     ownersName?: string;
     cpf?: string;
-}
+};
 
 export const serviceGetUserData = async (userId: number): Promise<UserProfileData> => {
 
@@ -45,11 +45,11 @@ export const userDataUpdateService = async (userId: number, updateData: UpdateUs
 
     if (!userId || isNaN(userId)) {
         throw new Error('ID_INVALIDO');
-    }
+    };
 
     if (Object.keys(updateData).length === 0) {
         throw new Error('DADOS_ATUALIZACAO_VAZIOS');
-    }
+    };
 
     return await prisma.user.update({
         where: { id: userId },
@@ -63,7 +63,7 @@ export const userDataUpdateService = async (userId: number, updateData: UpdateUs
             cpf: true,
         }
     });
-}
+};
 
 export const serviceDeleteUser = async (userId: number) => {
 
@@ -78,4 +78,4 @@ export const serviceDeleteUser = async (userId: number) => {
     if (!user) {
         throw new Error('USER_NOT_FOUND');
     }
-}
+};
