@@ -84,6 +84,7 @@ model MenuCategory {
   storeId   Int
   store     Store      @relation(fields: [storeId], references: [id], onDelete: Cascade)
   menuItems MenuItem[]
+  isActive  Boolean    @default(true)
 
   @@map("menu_category")
 }
