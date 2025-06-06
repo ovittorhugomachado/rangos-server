@@ -12,4 +12,4 @@ router.patch('/store', authenticateToken, (req, res, next) => {
     updateStoreData(req, res).catch(next);
 });
 
-export default router
+export default router;
