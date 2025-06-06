@@ -4,7 +4,7 @@ const prisma = new PrismaClient();
 
 export const createCategoryMenuService = async (userId: number, name: string) => {
 
-    const store = await prisma.store.findUnique({ where: { userId }});
+    const store = await prisma.store.findUnique({ where: { userId } });
 
     if (!store) throw new Error('Loja não encontrada');
 
@@ -12,7 +12,7 @@ export const createCategoryMenuService = async (userId: number, name: string) =>
         data: {
             name,
             store: {
-                connect: { id: store?.id } 
+                connect: { id: store?.id }
             },
         }
     });
@@ -28,12 +28,37 @@ export const menuCategoryRenameService = async (userId: number, categoryId: numb
 
     const category = await prisma.menuCategory.findUnique({ where: { id: categoryId } });
 
-    if (!category || category.storeId !== store.id) { 
+    if (!category || category.storeId !== store.id) {
         throw new Error('Categoria não encontrada')
-    }
+    };
 
     return await prisma.menuCategory.update({
         where: { id: categoryId },
         data: { name: newName }
+    });
+};
+
+export const toggleMenuCategoryService = async (userId: number, categoryId: number) => {
+
+    const store = await prisma.store.findUnique({ where: { userId } });
+
+    if (!store) throw new Error('Loja não encontrada');
+
+    const category = await prisma.menuCategory.findFirst({ 
+        where: { 
+            id: categoryId,
+            storeId: store.id
+        }
+    });
+
+    if (!category || category.storeId !== store.id) {
+        throw new Error('Categoria não encontrada')
+    };
+
+    return await prisma.menuCategory.update({
+        where: { id: categoryId },
+        data: {
+            isActive: !category.isActive
+        }
     });
 };

@@ -1,5 +1,5 @@
 import { Request, Response } from "express"
-import { createCategoryMenuService, menuCategoryRenameService } from "./menu-category.service";
+import { createCategoryMenuService, menuCategoryRenameService, toggleMenuCategoryService } from "./menu-category.service";
 
 export const CreateMenuCategory = async (req: Request, res: Response) => {
 
@@ -54,4 +54,30 @@ export const renameMenuCategory = async (req: Request, res: Response) => {
             message: error instanceof Error ? error.message : "Erro desconhecido"
         });
     };
-}
+};
+
+export const toggleMenuCategoryStatus = async (req: Request, res: Response) => {
+
+    const userId = Number(req.user?.userId);
+    const categoryId = Number(req.params.id);
+
+    if (!userId) {
+        return res.status(401).json({ message: 'Erro na validação do usuário' });
+    };
+
+    try {
+
+        const updatedStatus = await toggleMenuCategoryService(userId, categoryId)
+        res.status(200).json({
+            success: true,
+            isActive: updatedStatus.isActive
+        });
+
+    } catch (error) {
+        console.error('Erro ao atualizar status da categoria:', error);
+        res.status(500).json({
+            success: false,
+            message: error instanceof Error ? error.message : "Erro desconhecido"
+        });
+    };
+};
