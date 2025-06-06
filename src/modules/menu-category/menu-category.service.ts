@@ -2,6 +2,22 @@ import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
+export const serviceGetMenuCategories = async (userId: number) => {
+
+    const store = await prisma.store.findUnique({
+        where: { userId },
+        include: {
+            MenuCategory: {
+                orderBy: { id: 'asc' }
+            }
+        }
+    });
+
+    if (!store) throw new Error('Loja não encontrada');
+
+    return store.MenuCategory
+};
+
 export const createCategoryMenuService = async (userId: number, name: string) => {
 
     const store = await prisma.store.findUnique({ where: { userId } });
@@ -44,8 +60,8 @@ export const toggleMenuCategoryService = async (userId: number, categoryId: numb
 
     if (!store) throw new Error('Loja não encontrada');
 
-    const category = await prisma.menuCategory.findFirst({ 
-        where: { 
+    const category = await prisma.menuCategory.findFirst({
+        where: {
             id: categoryId,
             storeId: store.id
         }
@@ -67,8 +83,8 @@ export const serviceDeleteMenuCategory = async (userId: number, categoryId: numb
 
     if (!store) throw new Error('Loja não encontrada');
 
-    const category = await prisma.menuCategory.findFirst({ 
-        where: { 
+    const category = await prisma.menuCategory.findFirst({
+        where: {
             id: categoryId,
             storeId: store.id
         }

@@ -1,7 +1,35 @@
 import { Request, Response } from "express"
-import { createCategoryMenuService, menuCategoryRenameService, serviceDeleteMenuCategory, toggleMenuCategoryService } from "./menu-category.service";
+import {
+    createCategoryMenuService,
+    menuCategoryRenameService,
+    serviceDeleteMenuCategory,
+    serviceGetMenuCategories,
+    toggleMenuCategoryService
+} from "./menu-category.service";
 
-export const CreateMenuCategory = async (req: Request, res: Response) => {
+export const getMenuCategories = async (req: Request, res: Response) => {
+
+    const userId = Number(req.user?.userId);
+
+    if (!userId) {
+        return res.status(401).json({ message: 'Erro na validação do usuário' })
+    };
+
+    try {
+
+        const categories = await serviceGetMenuCategories(userId);
+        res.status(200).json(categories);
+
+    } catch (error) {
+        console.error('Erro ao criar nova categoria:', error);
+        res.status(500).json({
+            success: false,
+            message: error instanceof Error ? error.message : "Erro desconhecido"
+        });
+    };
+};
+
+export const createMenuCategory = async (req: Request, res: Response) => {
 
     const userId = Number(req.user?.userId);
     const { name } = req.body;

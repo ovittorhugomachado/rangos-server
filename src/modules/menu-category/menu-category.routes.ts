@@ -1,11 +1,21 @@
 import { Router } from "express";
 import { authenticateToken } from "../../middlewares/authenticate-token.middleware";
-import { CreateMenuCategory, deleteMenuCategory, renameMenuCategory, toggleMenuCategoryStatus } from "./menu-category.controller";
+import {
+    createMenuCategory,
+    deleteMenuCategory,
+    getMenuCategories,
+    renameMenuCategory,
+    toggleMenuCategoryStatus
+} from "./menu-category.controller";
 
 const router = Router();
 
+router.get('/categories', authenticateToken, (req, res, next) => {
+    getMenuCategories(req, res).catch(next);
+});
+
 router.post('/categories', authenticateToken, (req, res, next) => {
-    CreateMenuCategory(req, res).catch(next);
+    createMenuCategory(req, res).catch(next);
 });
 
 router.put('/categories/:id', authenticateToken, (req, res, next) => {
