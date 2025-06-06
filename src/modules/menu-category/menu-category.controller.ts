@@ -1,7 +1,7 @@
 import { Request, Response } from "express"
-import { createCategoryMenuService, menuCategoryUpdateService } from "./menu-category.service";
+import { createCategoryMenuService, menuCategoryRenameService } from "./menu-category.service";
 
-export const controllerCreateMenuCategory = async (req: Request, res: Response) => {
+export const CreateMenuCategory = async (req: Request, res: Response) => {
 
     const userId = Number(req.user?.userId);
     const { name } = req.body;
@@ -28,7 +28,7 @@ export const controllerCreateMenuCategory = async (req: Request, res: Response) 
     };
 };
 
-export const controllerUpdateMenuCategory = async (req: Request, res: Response) => {
+export const renameMenuCategory = async (req: Request, res: Response) => {
 
     const userId = Number(req.user?.userId);
     const categoryId = Number(req.params.id);
@@ -44,11 +44,11 @@ export const controllerUpdateMenuCategory = async (req: Request, res: Response) 
 
     try {
 
-        const updatedCategory = await menuCategoryUpdateService(userId, categoryId, newName)
+        const updatedCategory = await menuCategoryRenameService(userId, categoryId, newName)
         res.status(200).json(updatedCategory)
 
     } catch (error) {
-        console.error('Erro ao atualizar categoria:', error);
+        console.error('Erro ao renomear categoria:', error);
         res.status(500).json({
             success: false,
             message: error instanceof Error ? error.message : "Erro desconhecido"

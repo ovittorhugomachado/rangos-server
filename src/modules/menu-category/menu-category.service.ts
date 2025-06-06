@@ -20,14 +20,13 @@ export const createCategoryMenuService = async (userId: number, name: string) =>
     return category
 };
 
-export const menuCategoryUpdateService = async (userId: number, categoryId: number, newName: string) => {
+export const menuCategoryRenameService = async (userId: number, categoryId: number, newName: string) => {
 
     const store = await prisma.store.findUnique({ where: { userId } });
 
     if (!store) throw new Error('Loja não encontrada');
 
     const category = await prisma.menuCategory.findUnique({ where: { id: categoryId } });
-
 
     if (!category || category.storeId !== store.id) { 
         throw new Error('Categoria não encontrada')
