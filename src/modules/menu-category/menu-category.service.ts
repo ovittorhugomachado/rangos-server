@@ -51,9 +51,7 @@ export const toggleMenuCategoryService = async (userId: number, categoryId: numb
         }
     });
 
-    if (!category || category.storeId !== store.id) {
-        throw new Error('Categoria não encontrada')
-    };
+    if (!category) { throw new Error('Categoria não encontrada') };
 
     return await prisma.menuCategory.update({
         where: { id: categoryId },
@@ -61,4 +59,23 @@ export const toggleMenuCategoryService = async (userId: number, categoryId: numb
             isActive: !category.isActive
         }
     });
+};
+
+export const serviceDeleteMenuCategory = async (userId: number, categoryId: number) => {
+
+    const store = await prisma.store.findUnique({ where: { userId } });
+
+    if (!store) throw new Error('Loja não encontrada');
+
+    const category = await prisma.menuCategory.findFirst({ 
+        where: { 
+            id: categoryId,
+            storeId: store.id
+        }
+    });
+
+    if (!category) { throw new Error('Categoria não encontrada') };
+
+    await prisma.menuCategory.delete({ where: { id: categoryId } });
+    return { success: true, message: "Categoria deletada", deletedId: categoryId }
 };

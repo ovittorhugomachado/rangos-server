@@ -1,5 +1,5 @@
 import { Request, Response } from "express"
-import { createCategoryMenuService, menuCategoryRenameService, toggleMenuCategoryService } from "./menu-category.service";
+import { createCategoryMenuService, menuCategoryRenameService, serviceDeleteMenuCategory, toggleMenuCategoryService } from "./menu-category.service";
 
 export const CreateMenuCategory = async (req: Request, res: Response) => {
 
@@ -75,6 +75,29 @@ export const toggleMenuCategoryStatus = async (req: Request, res: Response) => {
 
     } catch (error) {
         console.error('Erro ao atualizar status da categoria:', error);
+        res.status(500).json({
+            success: false,
+            message: error instanceof Error ? error.message : "Erro desconhecido"
+        });
+    };
+};
+
+export const deleteMenuCategory = async (req: Request, res: Response) => {
+
+    const userId = Number(req.user?.userId);
+    const categoryId = Number(req.params.id);
+
+    if (!userId) {
+        return res.status(401).json({ message: 'Erro na validação do usuário' });
+    };
+
+    try {
+
+        await serviceDeleteMenuCategory(userId, categoryId);
+        return res.status(200).json({ message: 'Categoria deletada com sucesso' })
+
+    } catch (error) {
+        console.error('Erro ao deletar categoria:', error);
         res.status(500).json({
             success: false,
             message: error instanceof Error ? error.message : "Erro desconhecido"

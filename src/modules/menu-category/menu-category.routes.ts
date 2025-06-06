@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { authenticateToken } from "../../middlewares/authenticate-token.middleware";
-import { CreateMenuCategory, renameMenuCategory, toggleMenuCategoryStatus } from "./menu-category.controller";
+import { CreateMenuCategory, deleteMenuCategory, renameMenuCategory, toggleMenuCategoryStatus } from "./menu-category.controller";
 
 const router = Router();
 
@@ -14,6 +14,10 @@ router.put('/categories/:id', authenticateToken, (req, res, next) => {
 
 router.patch('/categories/:id/toggle-status', authenticateToken, (req, res, next) => {
     toggleMenuCategoryStatus(req, res).catch(next);
+});
+
+router.delete('/categories/:id', authenticateToken, (req, res, next) => {
+    deleteMenuCategory(req, res).catch(next);
 });
 
 export default router;
