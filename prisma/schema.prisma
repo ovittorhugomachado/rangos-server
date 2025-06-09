@@ -90,13 +90,14 @@ model MenuCategory {
 }
 
 model MenuItem {
-  id                  Int                   @id @default(autoincrement())
-  name                String                @db.VarChar(150)
-  description         String?
-  price               Decimal?              @db.Decimal(10, 2)
-  photoUrl            String?
-  categoryId          Int
-  menuCategory        MenuCategory          @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  id            Int                   @id @default(autoincrement())
+  name          String                @db.VarChar(150)
+  description   String?
+  price         Decimal?              @db.Decimal(10, 2)
+  photoUrl      String?
+  categoryId    Int
+  isAvailable   Boolean               @default(true)
+  menuCategory  MenuCategory          @relation(fields: [categoryId], references: [id], onDelete: Cascade)
   optionsGroups MenuItemOptionGroup[]
 
   @@map("menu_item")
