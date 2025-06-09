@@ -15,6 +15,9 @@ import pageStyle from './modules/menu-customization/store-customization.routes'
 import { PrismaClient } from '../node_modules/.prisma/client/index';
 import { cleanExpiredTokens } from './modules/password/clean-expired-tokens.utils';
 
+
+    {/*ANTES DE COLOCAR O PROJETO EM PRODUÇÃO FAZER TESTES SALVANDO DADOS NO CACHE
+    PRA DIMINUIR O NUMERO DE CONSULTAR NO BD E DIMINUIR A LATÊNCIA */}
 dotenv.config();
 
 const app = express();
