@@ -90,15 +90,37 @@ model MenuCategory {
 }
 
 model MenuItem {
-  id           Int          @id @default(autoincrement())
-  name         String       @db.VarChar(150)
-  description  String?
-  price        Decimal?     @db.Decimal(10, 2)
-  photoUrl     String?
-  categoryId   Int
-  menuCategory MenuCategory @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  id                  Int                   @id @default(autoincrement())
+  name                String                @db.VarChar(150)
+  description         String?
+  price               Decimal?              @db.Decimal(10, 2)
+  photoUrl            String?
+  categoryId          Int
+  menuCategory        MenuCategory          @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  optionsGroups MenuItemOptionGroup[]
 
   @@map("menu_item")
+}
+
+model MenuItemOptionGroup {
+  id         Int              @id @default(autoincrement())
+  title      String           @db.VarChar(100)
+  required   Boolean          @default(false)
+  menuItemId Int
+  menuItem   MenuItem         @relation(fields: [menuItemId], references: [id], onDelete: Cascade)
+  options    MenuItemOption[]
+
+  @@map("menu_item_options_group")
+}
+
+model MenuItemOption {
+  id                  Int                 @id @default(autoincrement())
+  name                String              @db.VarChar(100)
+  additionalPrice     Decimal?            @db.Decimal(10, 2)
+  optionGroupId       Int
+  MenuItemOptionGroup MenuItemOptionGroup @relation(fields: [optionGroupId], references: [id], onDelete: Cascade)
+
+  @@map("menu_item_options")
 }
 
 enum WeekDay {
