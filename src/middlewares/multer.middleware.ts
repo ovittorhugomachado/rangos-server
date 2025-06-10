@@ -49,7 +49,7 @@ const createStorage = (imageCategory: 'logo' | 'banner') => {
     };
 };
 
-const createProductStorage = () => {
+const createMenuItemStorage = () => {
     return {
         local: multer.diskStorage({
             destination: (req: Request, file: Express.Multer.File, cb: (error: Error | null, destination: string) => void) => {
@@ -57,15 +57,9 @@ const createProductStorage = () => {
             },
             filename: (req: Request, file: Express.Multer.File, cb: (error: Error | null, filename: string) => void) => {
                 const ext = path.extname(file.originalname);
-                const { storeId, categoryId } = req.params;
-                const productName = req.body.name || 'product'; 
-
-                const sanitizedProductName = productName
-                    .toLowerCase()
-                    .replace(/\s+/g, '-')
-                    .replace(/[^\w-]+/g, '');
-
-                const fileName = `${storeId}/${categoryId}/${sanitizedProductName}${ext}`;
+                const userId = (req.user as any)?.userId;
+                const { categoryId, menuItemId } = req.params;
+                const fileName = `store${userId}-category${categoryId}-product${menuItemId}${ext}`;
                 cb(null, fileName);
             }
         }),
@@ -76,16 +70,9 @@ const createProductStorage = () => {
             key: (req: Request, file: Express.Multer.File, cb: (error: Error | null, key: string) => void) => {
                 const ext = path.extname(file.originalname);
                 const userId = (req.user as any)?.userId;
-                const storeId = userId;
-                const { categoryId } = req.params;
-                const productName = req.body.name || 'product';
+                const { categoryId, menuItemId } = req.params;
 
-                const sanitizedProductName = productName
-                    .toLowerCase()
-                    .replace(/\s+/g, '-')
-                    .replace(/[^\w-]+/g, '');
-
-                const fileNameInS3 = `${storeId}/${categoryId}/${sanitizedProductName}${ext}`;
+                const fileNameInS3 = `store${userId}-category${categoryId}-product${menuItemId}${ext}`;
                 cb(null, fileNameInS3);
             }
         })
@@ -115,7 +102,7 @@ const multerConfig = {
 
 const logoStorage = createStorage('logo');
 const bannerStorage = createStorage('banner');
-const productStorage = createProductStorage();
+const menuItemStorage = createMenuItemStorage();
 
 const uploadLogo = multer({
     ...multerConfig,
@@ -127,10 +114,10 @@ const uploadBanner = multer({
     storage: bannerStorage[process.env.STORAGE_TYPE as StorageType] || bannerStorage.local
 });
 
-const uploadProductImage = multer({
+const uploadMenuItemImage = multer({
     ...multerConfig,
-    storage: productStorage[process.env.STORAGE_TYPE as StorageType] || productStorage.local
+    storage: menuItemStorage[process.env.STORAGE_TYPE as StorageType] || menuItemStorage.local
 });
 
-export { uploadLogo, uploadBanner, uploadProductImage, s3 };
+export { uploadLogo, uploadBanner, uploadMenuItemImage, s3 };
 

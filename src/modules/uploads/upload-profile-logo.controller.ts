@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { ProfileBannerUpdateService, ProfileLogoUpdateService } from './upload-profile-logo.service';
+import { profileBannerUpdateService, profileLogoUpdateService, menuItemImageUpdateService } from './upload-profile-logo.service';
 
 export const updateProfileLogo = async (req: Request, res: Response): Promise<void> => {
 
@@ -12,7 +12,7 @@ export const updateProfileLogo = async (req: Request, res: Response): Promise<vo
 
         const userId = Number(req.user?.userId);
 
-        await ProfileLogoUpdateService(userId, (req.file as any).location);
+        await profileLogoUpdateService(userId, (req.file as any).location);
 
         res.status(200).json({ message: 'Logo atualizado com sucesso' });
 
@@ -36,7 +36,7 @@ export const updateProfileBanner = async (req: Request, res: Response): Promise<
 
         const userId = Number(req.user?.userId);
 
-        await ProfileBannerUpdateService(userId, (req.file as any).location);
+        await profileBannerUpdateService(userId, (req.file as any).location);
 
         res.status(200).json({ message: 'Banner atualizada com sucesso' });
 
@@ -49,7 +49,7 @@ export const updateProfileBanner = async (req: Request, res: Response): Promise<
     }
 };
 
-export const updateProductImage = async (req: Request, res: Response): Promise<void> => {
+export const updateMenuItemImage = async (req: Request, res: Response): Promise<void> => {
 
     try {
 
@@ -59,22 +59,21 @@ export const updateProductImage = async (req: Request, res: Response): Promise<v
         }
 
         const userId = Number(req.user?.userId);
-        const itemId = Number(req.params.id);
-        const { categoryId } = req.params;
-        const id = Number(userId);
+        const itemId = Number(req.params.menuItemId);
+        const categoryId = Number(req.params.categoryId);
 
-        if (!userId || isNaN(id)) {
+        if (!userId || isNaN(userId)) {
             res.status(400).json({
                 error: 'Parâmetros inválidos',
                 details: {
                     userId: userId,
-                    isValid: !isNaN(id) && id > 0,
+                    isValid: !isNaN(userId) && userId > 0,
                 }
             });
             return
         }
 
-        await ProfileBannerUpdateService(id, (req.file as any).location);
+        await menuItemImageUpdateService(userId, categoryId, itemId, (req.file as any).location);
 
         res.status(200).json({ message: 'Banner atualizada com sucesso' });
 

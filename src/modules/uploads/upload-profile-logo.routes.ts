@@ -1,7 +1,8 @@
 import express from 'express';
-import { updateProfileBanner, updateProfileLogo } from './upload-profile-logo.controller';
-import { uploadBanner, uploadLogo, uploadProductImage } from '../../middlewares/multer.middleware';
+import { updateMenuItemImage, updateProfileBanner, updateProfileLogo } from './upload-profile-logo.controller';
+import { uploadBanner, uploadLogo, uploadMenuItemImage } from '../../middlewares/multer.middleware';
 import { authenticateToken } from '../../middlewares/authenticate-token.middleware';
+import { updateMenuItem } from '../manage-menu/menu-items/menu-item.controller';
 
 const router = express.Router();
 
@@ -20,10 +21,10 @@ router.patch(
 );
 
 router.patch(
-    '/:userId/banner',
+    '/:categoryId/:menuItemId',
     authenticateToken,
-    uploadProductImage.single('product'),
-    updateProfileBanner
+    uploadMenuItemImage.single('menu-item'),
+    updateMenuItemImage
 );
 
 export default router
