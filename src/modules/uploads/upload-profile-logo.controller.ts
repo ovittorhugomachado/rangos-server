@@ -1,45 +1,88 @@
 import { Request, Response } from 'express';
-import { updateProfileLogoService } from './upload-profile-logo.service';
-import { Prisma } from '@prisma/client';
+import { ProfileBannerUpdateService, ProfileLogoUpdateService } from './upload-profile-logo.service';
 
 export const updateProfileLogo = async (req: Request, res: Response): Promise<void> => {
 
     try {
 
         if (!req.file || !(req.file as any).location) {
-            res.status(400).json({ error: 'File processing failed' });
+            res.status(400).json({ error: 'Erro no processamento do arquivo' });
             return;
         }
 
-        const { userId, imageType } = req.params;
+        const userId = Number(req.user?.userId);
+
+        await ProfileLogoUpdateService(userId, (req.file as any).location);
+
+        res.status(200).json({ message: 'Logo atualizado com sucesso' });
+
+    } catch (error) {
+        console.error('Erro atualizar imagem:', error);
+        res.status(500).json({
+            success: false,
+            message: error instanceof Error ? error.message : "Erro desconhecido"
+        });
+    }
+};
+
+export const updateProfileBanner = async (req: Request, res: Response): Promise<void> => {
+
+    try {
+
+        if (!req.file || !(req.file as any).location) {
+            res.status(400).json({ error: 'Erro no processamento do arquivo' });
+            return;
+        }
+
+        const userId = Number(req.user?.userId);
+
+        await ProfileBannerUpdateService(userId, (req.file as any).location);
+
+        res.status(200).json({ message: 'Banner atualizada com sucesso' });
+
+    } catch (error) {
+        console.error('Erro atualizar imagem:', error);
+        res.status(500).json({
+            success: false,
+            message: error instanceof Error ? error.message : "Erro desconhecido"
+        });
+    }
+};
+
+export const updateProductImage = async (req: Request, res: Response): Promise<void> => {
+
+    try {
+
+        if (!req.file || !(req.file as any).location) {
+            res.status(400).json({ error: 'Erro no processamento do arquivo' });
+            return;
+        }
+
+        const userId = Number(req.user?.userId);
+        const itemId = Number(req.params.id);
+        const { categoryId } = req.params;
         const id = Number(userId);
 
         if (!userId || isNaN(id)) {
             res.status(400).json({
-                error: 'Invalid parameters',
+                error: 'Parâmetros inválidos',
                 details: {
                     userId: userId,
                     isValid: !isNaN(id) && id > 0,
-                    profileImage: imageType
                 }
             });
             return
         }
 
-        res.status(200).json({message: 'Logo atualizada com sucesso'});
-    } catch (error: any) {
-        console.error('Error updating profile logo:', error);
+        await ProfileBannerUpdateService(id, (req.file as any).location);
 
-        if (error.message === 'USER_NOT_FOUND') {
-            res.status(404).json({ error: 'User not found' });
-        } else if (error instanceof Prisma.PrismaClientKnownRequestError) {
-            res.status(400).json({
-                error: 'Database error',
-                code: error.code,
-                meta: error.meta
-            });
-        } else {
-            res.status(500).json({ error: 'Failed to update profile logo' });
-        }
+        res.status(200).json({ message: 'Banner atualizada com sucesso' });
+
+    } catch (error) {
+        console.error('Erro atualizar imagem:', error);
+        res.status(500).json({
+            success: false,
+            message: error instanceof Error ? error.message : "Erro desconhecido"
+        });
     }
 };

@@ -1,15 +1,29 @@
 import express from 'express';
-import { updateProfileLogo } from './upload-profile-logo.controller';
-import { upload } from '../../middlewares/multer.middleware';
+import { updateProfileBanner, updateProfileLogo } from './upload-profile-logo.controller';
+import { uploadBanner, uploadLogo, uploadProductImage } from '../../middlewares/multer.middleware';
 import { authenticateToken } from '../../middlewares/authenticate-token.middleware';
 
 const router = express.Router();
 
 router.patch(
-    '/:userId/:imageType',
+    '/logo',
     authenticateToken,
-    upload.single('logo'),
+    uploadLogo.single('logo'),
     updateProfileLogo
+);
+
+router.patch(
+    '/banner',
+    authenticateToken,
+    uploadBanner.single('banner'),
+    updateProfileBanner
+);
+
+router.patch(
+    '/:userId/banner',
+    authenticateToken,
+    uploadProductImage.single('product'),
+    updateProfileBanner
 );
 
 export default router
