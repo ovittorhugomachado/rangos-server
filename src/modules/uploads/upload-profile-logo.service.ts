@@ -23,7 +23,7 @@ export const profileLogoUpdateService = async (id: number, imageName: string) =>
         return await prisma.store.update({
             where: { id },
             data: {
-                logoUrl: `${baseUrl}/${id}-logo.${imageExtension}`,
+                logoUrl: `${baseUrl}/store${id}/logo.${imageExtension}`,
             },
         });
     });
@@ -50,7 +50,7 @@ export const profileBannerUpdateService = async (id: number, imageName: string) 
         return await prisma.store.update({
             where: { id },
             data: {
-                bannerUrl: `${baseUrl}/${id}-banner.${imageExtension}`,
+                bannerUrl: `${baseUrl}/store${id}/banner.${imageExtension}`,
             },
         });
     });

@@ -31,7 +31,7 @@ const createStorage = (imageCategory: 'logo' | 'banner') => {
             filename: (req: Request, file: Express.Multer.File, cb: (error: Error | null, filename: string) => void) => {
                 const ext = path.extname(file.originalname);
                 const userId = (req.user as any)?.userId;
-                const fileName = `${userId}-${imageCategory}${ext}`;
+                const fileName = `store${userId}/${imageCategory}${ext}`;
                 cb(null, fileName);
             }
         }),
@@ -42,7 +42,7 @@ const createStorage = (imageCategory: 'logo' | 'banner') => {
             key: (req: Request, file: Express.Multer.File, cb: (error: Error | null, key: string) => void) => {
                 const ext = path.extname(file.originalname);
                 const userId = (req.user as any)?.userId;
-                const fileNameInS3 = `${userId}-${imageCategory}${ext}`;
+                const fileNameInS3 = `store${userId}/${imageCategory}${ext}`;
                 cb(null, fileNameInS3);
             }
         })
@@ -59,7 +59,7 @@ const createMenuItemStorage = () => {
                 const ext = path.extname(file.originalname);
                 const userId = (req.user as any)?.userId;
                 const { categoryId, menuItemId } = req.params;
-                const fileName = `store${userId}-category${categoryId}-product${menuItemId}${ext}`;
+                const fileName = `store${userId}/category${categoryId}/product${menuItemId}${ext}`;
                 cb(null, fileName);
             }
         }),
@@ -72,7 +72,7 @@ const createMenuItemStorage = () => {
                 const userId = (req.user as any)?.userId;
                 const { categoryId, menuItemId } = req.params;
 
-                const fileNameInS3 = `store${userId}-category${categoryId}-product${menuItemId}${ext}`;
+                const fileNameInS3 = `store${userId}/category${categoryId}/product${menuItemId}${ext}`;
                 cb(null, fileNameInS3);
             }
         })

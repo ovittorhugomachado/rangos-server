@@ -1,5 +1,9 @@
 import { Request, Response } from 'express';
-import { profileBannerUpdateService, profileLogoUpdateService, menuItemImageUpdateService } from './upload-profile-logo.service';
+import {
+    profileBannerUpdateService,
+    profileLogoUpdateService,
+    menuItemImageUpdateService
+} from './upload-profile-logo.service';
 
 export const updateProfileLogo = async (req: Request, res: Response): Promise<void> => {
 
