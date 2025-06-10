@@ -79,7 +79,7 @@ export const updateMenuItemImage = async (req: Request, res: Response): Promise<
 
         await menuItemImageUpdateService(userId, categoryId, itemId, (req.file as any).location);
 
-        res.status(200).json({ message: 'Banner atualizada com sucesso' });
+        res.status(200).json({ message: 'imagem do produto atualizada com sucesso' });
 
     } catch (error) {
         console.error('Erro atualizar imagem:', error);
