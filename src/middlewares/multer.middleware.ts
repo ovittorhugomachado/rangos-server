@@ -75,7 +75,9 @@ const createProductStorage = () => {
             contentType: multerS3.AUTO_CONTENT_TYPE,
             key: (req: Request, file: Express.Multer.File, cb: (error: Error | null, key: string) => void) => {
                 const ext = path.extname(file.originalname);
-                const { storeId, categoryId } = req.params;
+                const userId = (req.user as any)?.userId;
+                const storeId = userId;
+                const { categoryId } = req.params;
                 const productName = req.body.name || 'product';
 
                 const sanitizedProductName = productName
