@@ -11,6 +11,7 @@ import uploadFile from './modules/uploads/upload-profile-logo.routes';
 import updateSchedule from './modules/schedules/schedules.routes';
 import menuCategoriesRoutes from './modules/manage-menu/menu-category/menu-category.routes'
 import menuItemRoutes from './modules/manage-menu/menu-items/menu-item.routes'
+import ordersRoutes from './modules/orders/order.routes'
 import pageStyle from './modules/menu-customization/store-customization.routes'
 import { PrismaClient } from '../node_modules/.prisma/client/index';
 import { cleanExpiredTokens } from './modules/password/clean-expired-tokens.utils';
@@ -42,6 +43,7 @@ app.use('/', uploadFile);
 app.use('/', updateSchedule);
 app.use('/', menuCategoriesRoutes);
 app.use('/', menuItemRoutes);
+app.use('/', ordersRoutes);
 app.use('/', pageStyle);
 
 cron.schedule('0 * * * *', async () => {
