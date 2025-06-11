@@ -190,7 +190,7 @@ enum PaymentMethod {
 enum OrderStaus {
   aguardando_aprovacao
   em_preparo
-  pronto_para_returada
+  pronto_para_retirada
   a_caminho
   entregue
   cancelado
