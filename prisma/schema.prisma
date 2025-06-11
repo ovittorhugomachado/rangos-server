@@ -194,4 +194,5 @@ enum OrderStaus {
   a_caminho
   entregue
   cancelado
+  cancelado_automaticamente
 }
