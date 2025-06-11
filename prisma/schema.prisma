@@ -122,6 +122,7 @@ model MenuItemOption {
   additionalPrice     Decimal?            @db.Decimal(10, 2)
   optionGroupId       Int
   MenuItemOptionGroup MenuItemOptionGroup @relation(fields: [optionGroupId], references: [id], onDelete: Cascade)
+  orderItemOptions    OrderItemOption[]
 
   @@map("menu_item_options")
 }
@@ -135,6 +136,7 @@ model Order {
   deliveryType  DeliveryType
   paymentMethod PaymentMethod
   totalAmount   Decimal       @db.Decimal(10, 2)
+  status        OrderStaus    @default(aguardando_aprovacao)
   createdAt     DateTime      @default(now())
   orderItems    OrderItem[]
 
@@ -142,15 +144,26 @@ model Order {
 }
 
 model OrderItem {
-  id         Int      @id @default(autoincrement())
+  id         Int               @id @default(autoincrement())
   orderId    Int
   menuItemId Int
-  quantity   Int      @default(1)
+  quantity   Int               @default(1)
   note       String?
-  menuItem   MenuItem @relation(fields: [menuItemId], references: [id])
-  order      Order    @relation(fields: [orderId], references: [id])
+  menuItem   MenuItem          @relation(fields: [menuItemId], references: [id])
+  order      Order             @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  options    OrderItemOption[]
 
   @@map("order_items")
+}
+
+model OrderItemOption {
+  id          Int            @id @default(autoincrement())
+  orderItemId Int
+  optionId    Int
+  orderItem   OrderItem      @relation(fields: [orderItemId], references: [id], onDelete: Cascade)
+  option      MenuItemOption @relation(fields: [optionId], references: [id], onDelete: Cascade)
+
+  @@map("order_item_options")
 }
 
 enum WeekDay {
@@ -172,4 +185,13 @@ enum PaymentMethod {
   dinheiro
   cartao
   pix
+}
+
+enum OrderStaus {
+  aguardando_aprovacao
+  em_preparo
+  pronto_para_returada
+  a_caminho
+  entregue
+  cancelado
 }
