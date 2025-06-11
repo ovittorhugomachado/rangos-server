@@ -1,6 +1,9 @@
 import { PrismaClient } from '.prisma/client';
+import cron from 'node-cron';
 
-export const cleanExpiredTokens = async (prisma: PrismaClient) => {
+const prisma = new PrismaClient()
+
+cron.schedule('0 * * * *', async () => {
     try {
         const result = await prisma.passwordResetToken.deleteMany({
             where: {
@@ -14,4 +17,4 @@ export const cleanExpiredTokens = async (prisma: PrismaClient) => {
     } catch (error) {
         console.error('[CRON] Erro ao limpar tokens expirados:', error);
     }
-};
+});

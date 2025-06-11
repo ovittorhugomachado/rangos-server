@@ -14,7 +14,6 @@ import menuItemRoutes from './modules/manage-menu/menu-items/menu-item.routes'
 import ordersRoutes from './modules/orders/order.routes'
 import pageStyle from './modules/menu-customization/store-customization.routes'
 import { PrismaClient } from '../node_modules/.prisma/client/index';
-import { cleanExpiredTokens } from './modules/password/clean-expired-tokens.utils';
 
 
     {/*ANTES DE COLOCAR O PROJETO EM PRODUÇÃO FAZER TESTES SALVANDO DADOS NO CACHE
@@ -45,10 +44,6 @@ app.use('/', menuCategoriesRoutes);
 app.use('/', menuItemRoutes);
 app.use('/', ordersRoutes);
 app.use('/', pageStyle);
-
-cron.schedule('0 * * * *', async () => {
-    await cleanExpiredTokens(prisma);
-});
 
 app.listen(port, () => {
     console.log(`Servidor rodando na porta ${port}`);
