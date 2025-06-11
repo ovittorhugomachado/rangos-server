@@ -40,6 +40,7 @@ model Store {
   style          StoreStyle?
   createdAt      DateTime       @default(now())
   MenuCategory   MenuCategory[]
+  orders         Order[]
 
   @@map("stores")
 }
@@ -99,6 +100,7 @@ model MenuItem {
   isAvailable   Boolean               @default(true)
   menuCategory  MenuCategory          @relation(fields: [categoryId], references: [id], onDelete: Cascade)
   optionsGroups MenuItemOptionGroup[]
+  orderItem     OrderItem[]
 
   @@map("menu_item")
 }
@@ -124,6 +126,33 @@ model MenuItemOption {
   @@map("menu_item_options")
 }
 
+model Order {
+  id            Int           @id @default(autoincrement())
+  storeId       Int
+  store         Store         @relation(fields: [storeId], references: [id], onDelete: Cascade)
+  customerName  String
+  customerPhone String
+  deliveryType  DeliveryType
+  paymentMethod PaymentMethod
+  totalAmount   Decimal       @db.Decimal(10, 2)
+  createdAt     DateTime      @default(now())
+  orderItems    OrderItem[]
+
+  @@map("orders")
+}
+
+model OrderItem {
+  id         Int      @id @default(autoincrement())
+  orderId    Int
+  menuItemId Int
+  quantity   Int      @default(1)
+  note       String?
+  menuItem   MenuItem @relation(fields: [menuItemId], references: [id])
+  order      Order    @relation(fields: [orderId], references: [id])
+
+  @@map("order_items")
+}
+
 enum WeekDay {
   segunda
   terca
@@ -132,4 +161,15 @@ enum WeekDay {
   sexta
   sabado
   domingo
+}
+
+enum DeliveryType {
+  delivery
+  pickup
+}
+
+enum PaymentMethod {
+  dinheiro
+  cartao
+  pix
 }

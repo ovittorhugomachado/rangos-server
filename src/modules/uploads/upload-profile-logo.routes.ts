@@ -2,7 +2,6 @@ import express from 'express';
 import { updateMenuItemImage, updateProfileBanner, updateProfileLogo } from './upload-profile-logo.controller';
 import { uploadBanner, uploadLogo, uploadMenuItemImage } from '../../middlewares/multer.middleware';
 import { authenticateToken } from '../../middlewares/authenticate-token.middleware';
-import { updateMenuItem } from '../manage-menu/menu-items/menu-item.controller';
 
 const router = express.Router();
 
