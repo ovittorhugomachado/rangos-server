@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { DeliveryType, PaymentMethod } from "@prisma/client";
-import { createOrderService } from "./order-service";
+import { createOrderService } from "./order.service";
 import { NotFoundError, ValidationError } from "../../../utils/errors";
 
 export const createOrder = async (req: Request, res: Response): Promise<void> => {
