@@ -12,6 +12,7 @@ import updateSchedule from './modules/schedules/schedules.routes';
 import menuCategoriesRoutes from './modules/manage-menu/menu-category/menu-category.routes'
 import menuItemRoutes from './modules/manage-menu/menu-items/menu-item.routes'
 import ordersRoutes from './modules/create-order/by-store/order.routes'
+import manageOrdersRoutes from './modules/manage-order/orders.routes'
 import pageStyle from './modules/menu-customization/store-customization.routes'
 
     {/*ANTES DE COLOCAR O PROJETO EM PRODUÇÃO FAZER TESTES SALVANDO DADOS NO CACHE
@@ -41,6 +42,7 @@ app.use('/', updateSchedule);
 app.use('/', menuCategoriesRoutes);
 app.use('/', menuItemRoutes);
 app.use('/', ordersRoutes);
+app.use('/', manageOrdersRoutes);
 app.use('/', pageStyle);
 
 app.listen(port, () => {
