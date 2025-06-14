@@ -4,7 +4,6 @@ import dotenv from 'dotenv';
 import cookieParser from 'cookie-parser';
 import authRoutes from './modules/auth/auth.routes';
 import resetPasswordRoutes from './modules/password/password.routes';
-import './modules/password/clean-expired-tokens.utils'
 import userDataRouter from './modules/user/user.routes';
 import storeDataRoutes from './modules/store/store.routes';
 import uploadFile from './modules/uploads/upload-profile-logo.routes';
@@ -14,6 +13,7 @@ import menuItemRoutes from './modules/manage-menu/menu-items/menu-item.routes'
 import ordersRoutes from './modules/create-order/by-store/order.routes'
 import manageOrdersRoutes from './modules/manage-order/orders.routes'
 import pageStyle from './modules/menu-customization/store-customization.routes'
+import './modules/password/clean-expired-tokens.utils'
 
     {/*ANTES DE COLOCAR O PROJETO EM PRODUÇÃO FAZER TESTES SALVANDO DADOS NO CACHE
     PRA DIMINUIR O NUMERO DE CONSULTAR NO BD E DIMINUIR A LATÊNCIA */}

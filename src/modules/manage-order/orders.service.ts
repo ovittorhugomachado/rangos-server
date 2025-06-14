@@ -1,5 +1,52 @@
 import { prisma } from "../../lib/prisma";
 import { NotFoundError, ValidationError } from "../../utils/errors";
+import { OrderStatus } from "@prisma/client";
+
+interface ListOrdersParams {
+    startDate?: Date;
+    endDate?: Date;
+    status?: OrderStatus;
+    limit?: number;
+    offset?: number;
+    storeId?: number;
+}
+
+export const listOrdersService = async ({
+    startDate,
+    endDate,
+    status,
+    limit,
+    offset,
+    storeId,
+}: ListOrdersParams) => {
+    const defaultStartDate = new Date();
+    defaultStartDate.setDate(defaultStartDate.getDate() - 7);
+
+    const where = {
+        createdAt: {
+            gte: startDate || defaultStartDate,
+            lte: endDate || new Date(),
+        },
+        ...(status && { status }),
+        ...(storeId && { storeId }),
+    };
+    const [orders, total] = await Promise.all([
+        prisma.order.findMany({
+            where,
+            orderBy: { createdAt: 'desc' },
+            skip: offset,
+            take: limit,
+            include: {
+                orderItems: true,
+                store: { select: { restaurantName: true, logoUrl: true } },
+            },
+        }),
+        prisma.order.count({ where }),
+    ]);
+
+    return { data: orders, total };
+
+};
 
 export const orderAcceptanceService = async (userId: number, orderId: number) => {
 
@@ -57,9 +104,9 @@ export const orderReadyService = async (userId: number, orderId: number) => {
         throw new ValidationError("Tipo de entrega inválido. Use 'delivery' ou 'pickup'.");
     };
 
-    const newStatus = order.deliveryType === 'delivery' 
-    ? 'a_caminho' 
-    : 'pronto_para_retirada';
+    const newStatus = order.deliveryType === 'delivery'
+        ? 'a_caminho'
+        : 'pronto_para_retirada';
 
     await prisma.order.update({
         where: { id: orderId },
