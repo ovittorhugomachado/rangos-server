@@ -3,6 +3,7 @@ import { authenticateToken } from "../../middlewares/authenticate-token.middlewa
 import {
     acceptOrder,
     cancelOrder,
+    listDetailsOrder,
     listOrders,
     orderDelivered,
     orderReady
@@ -11,6 +12,8 @@ import {
 const router = Router();
 
 router.get('/order/list', authenticateToken, listOrders);
+
+router.get('/order/:orderId/details', authenticateToken, listDetailsOrder);
 
 router.patch('/order/:orderId/accept', authenticateToken, acceptOrder);
 

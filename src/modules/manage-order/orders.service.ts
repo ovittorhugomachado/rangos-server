@@ -38,7 +38,6 @@ export const listOrdersService = async ({
             take: limit,
             include: {
                 orderItems: true,
-                store: { select: { restaurantName: true, logoUrl: true } },
             },
         }),
         prisma.order.count({ where }),
@@ -46,6 +45,21 @@ export const listOrdersService = async ({
 
     return { data: orders, total };
 
+};
+
+export const orderDetailingService = async (userId: number, orderId: number) => {
+
+    const store = await prisma.store.findUnique({ where: { userId } });
+    if (!store) throw new NotFoundError('Loja não encontrada');
+
+    const order = await prisma.order.findUnique({ where: { id: orderId } });
+    if (!order) throw new NotFoundError('Pedido não encontrado');
+
+    if (order.storeId !== store.id) {
+        throw new NotFoundError("Pedido não pertence a esta loja");
+    }
+
+    return order
 };
 
 export const orderAcceptanceService = async (userId: number, orderId: number) => {
