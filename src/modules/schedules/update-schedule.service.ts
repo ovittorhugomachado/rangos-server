@@ -1,6 +1,5 @@
-import { Prisma, PrismaClient, WeekDay } from "@prisma/client";
-
-const prisma = new PrismaClient();
+import { Prisma, WeekDay } from "@prisma/client";
+import { prisma } from "../../lib/prisma";
 
 interface TimeRange {
     start: string;

@@ -1,13 +1,11 @@
 import { Request, Response } from 'express';
-import { PrismaClient } from '.prisma/client';
+import { prisma } from '../../lib/prisma';
 import {
     generateResetTokenService,
     sendResetEmailService,
     validateTokenService,
     resetPasswordService
 } from './password.service';
-
-const prisma = new PrismaClient()
 
 export const requestPasswordReset = async (req: Request, res: Response) => {
     const { email } = req.body;

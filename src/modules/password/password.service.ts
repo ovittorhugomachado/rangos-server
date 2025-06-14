@@ -1,9 +1,7 @@
 import bcrypt from 'bcrypt';
 import { randomUUID } from 'crypto';
-import { PrismaClient } from '.prisma/client';
+import { prisma } from '../../lib/prisma';
 import { transporter } from '../../utils/email';
-
-const prisma = new PrismaClient()
 
 export const generateResetTokenService = async (email: string) => {
     const user = await prisma.user.findUnique({ where: { email } });

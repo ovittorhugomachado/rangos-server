@@ -2,11 +2,11 @@ import bcrypt from 'bcrypt';
 import dotenv from 'dotenv';
 import jwt from 'jsonwebtoken'
 import { stripNonDigits } from '../../utils/stripFormating';
-import { PrismaClient, WeekDay } from '.prisma/client';
+import { WeekDay } from '.prisma/client';
+import { prisma } from '../../lib/prisma';
 import { generateTokens } from './auth.utils';
 
 dotenv.config();
-const prisma = new PrismaClient();
 const JWT_SECRET = process.env.JWT_SECRET || 'secreto'
 const REFRESH_SECRET = process.env.REFRESH_SECRET || 'refresh_secreto';
 
