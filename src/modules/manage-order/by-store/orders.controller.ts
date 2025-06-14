@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { NotFoundError } from "../../utils/errors";
+import { NotFoundError } from "../../../utils/errors";
 import { OrderStatus } from "@prisma/client";
 import { listOrdersService, orderAcceptanceService, orderCancellationService, orderDeliveredService, orderDetailingService, orderReadyService } from "./orders.service";
 

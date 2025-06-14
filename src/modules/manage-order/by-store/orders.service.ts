@@ -1,5 +1,5 @@
-import { prisma } from "../../lib/prisma";
-import { NotFoundError, ValidationError } from "../../utils/errors";
+import { prisma } from "../../../lib/prisma";
+import { NotFoundError, ValidationError } from "../../../utils/errors";
 import { OrderStatus } from "@prisma/client";
 
 interface ListOrdersParams {

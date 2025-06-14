@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { authenticateToken } from "../../middlewares/authenticate-token.middleware";
+import { authenticateToken } from "../../../middlewares/authenticate-token.middleware";
 import {
     acceptOrder,
     cancelOrder,
