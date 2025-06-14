@@ -1,15 +1,13 @@
 import { prisma } from "../../lib/prisma";
 
 export const getStoreCustomizationByUserId = async (userId: number) => {
-    return await prisma.storeCustomization.findUnique({
-        where: { userId },
+    return await prisma.storeStyle.findUnique({
+        where: { id: userId },
         select: {
             primaryColor: true,
             backgroundColor: true,
             textColor: true,
             textButtonColor: true,
-            logoUrl: true,
-            bannerUrl: true,
         },
     });
 };
