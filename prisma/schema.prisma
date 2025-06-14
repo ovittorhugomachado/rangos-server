@@ -137,7 +137,7 @@ model Order {
   deliveryType            DeliveryType
   paymentMethod           PaymentMethod
   totalAmount             Decimal       @db.Decimal(10, 2)
-  status                  OrderStaus    @default(aguardando_aprovacao)
+  status                  OrderStatus    @default(aguardando_aprovacao)
   createdAt               DateTime      @default(now())
   orderItems              OrderItem[]
   cancellationScheduledAt DateTime? 
@@ -190,7 +190,7 @@ enum PaymentMethod {
   pix
 }
 
-enum OrderStaus {
+enum OrderStatus {
   aguardando_aprovacao
   em_preparo
   pronto_para_retirada
