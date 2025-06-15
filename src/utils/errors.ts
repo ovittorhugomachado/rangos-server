@@ -19,6 +19,12 @@ export class ValidationError extends AppError {
     }
 }
 
+export class ConflictError extends AppError {
+    constructor(message: string) {
+        super(message, 409);
+    }
+}
+
 export class InternalServerError extends AppError {
     constructor(message: string = 'Erro interno no servidor') {
         super(message, 500);

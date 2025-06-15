@@ -5,6 +5,7 @@ import { stripNonDigits } from '../../utils/stripFormating';
 import { WeekDay } from '.prisma/client';
 import { prisma } from '../../lib/prisma';
 import { generateTokens } from './auth.utils';
+import { ConflictError, ValidationError } from '../../utils/errors';
 
 dotenv.config();
 const JWT_SECRET = process.env.JWT_SECRET || 'secreto'
@@ -27,16 +28,16 @@ export const signUpService = async (data: AccountData) => {
     const rawCnpj = cnpj ? stripNonDigits(cnpj) : null;
     const rawPhoneNumber = stripNonDigits(phoneNumber);
 
-    if (password.length < 8) throw new Error('Senha fraca');
-    if (!email.includes('@')) throw new Error('Email inválido');
-    if (rawCpf.length !== 11) throw new Error('CPF inválido');
-    if (cnpj && rawCnpj && rawCnpj.length !== 14) throw new Error('CNPJ inválido');
-    if (password.length > 72) throw new Error('Senha muito longa');
-    if (!/[A-Z]/.test(password)) throw new Error('Senha sem letra maiúscula');
-    if (!/[0-9]/.test(password)) throw new Error('Senha sem número');
+    if (password.length < 8) throw new ValidationError('Senha fraca');
+    if (!email.includes('@')) throw new ValidationError('Email inválido');
+    if (rawCpf.length !== 11) throw new ValidationError('CPF inválido');
+    if (cnpj && rawCnpj && rawCnpj.length !== 14) throw new ValidationError('CNPJ inválido');
+    if (password.length > 72) throw new ValidationError('Senha muito longa');
+    if (!/[A-Z]/.test(password)) throw new ValidationError('Senha sem letra maiúscula');
+    if (!/[0-9]/.test(password)) throw new ValidationError('Senha sem número');
 
     const existingUser = await prisma.user.findUnique({ where: { email } })
-    if (existingUser) throw new Error('Email já cadastrado');
+    if (existingUser) throw new ConflictError('Email já cadastrado');
 
     const hashedPassword = await bcrypt.hash(password, 10);
 

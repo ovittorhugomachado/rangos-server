@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { signUpService, loginService, refreshTokenService, logoutService } from "./auth.service";
 import { loginFieldsErrorChecker, signUpFieldsErrorChecker } from "./error-checker";
+import { ConflictError, NotFoundError, ValidationError } from "../../utils/errors";
 
 export const signUp = async (req: Request, res: Response) => {
 
@@ -15,17 +16,21 @@ export const signUp = async (req: Request, res: Response) => {
         return res.status(201).json({ message: 'Usuário criado com sucesso' });
 
     } catch (error: any) {
-        const errorMap: Record<string, number> = {
-            'Email já cadastrado': 409,
-            'CPF inválido': 400,
-            'CNPJ inválido': 400,
-            'Senha fraca': 400,
-            'Email inválido': 400
-        };
+        console.error('Erro no cadastro:', error);
 
-        const statusCode = errorMap[error.message] || 500;
-        return res.status(statusCode).json({
-            message: error.message || 'Erro interno do servidor'
+        if (error instanceof NotFoundError) {
+            return res.status(404).json({ success: false, message: error.message });
+        }
+        if (error instanceof ValidationError) {
+            return res.status(422).json({ success: false, message: error.message });
+        }
+        if (error instanceof ConflictError) {
+            return res.status(409).json({ success: false, message: error.message });
+        }
+
+        return res.status(500).json({
+            success: false,
+            message: error.message || "Erro interno no servidor" 
         });
     }
 };

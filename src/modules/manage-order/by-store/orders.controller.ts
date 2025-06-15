@@ -88,7 +88,7 @@ export const listDetailsOrder = async (req: Request, res: Response): Promise<voi
             });
         }
     }
-}
+};
 
 export const acceptOrder = async (req: Request, res: Response): Promise<void> => {
     try {
