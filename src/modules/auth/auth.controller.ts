@@ -18,9 +18,6 @@ export const signUp = async (req: Request, res: Response) => {
     } catch (error: any) {
         console.error('Erro no cadastro:', error);
 
-        if (error instanceof NotFoundError) {
-            return res.status(404).json({ success: false, message: error.message });
-        }
         if (error instanceof ValidationError) {
             return res.status(422).json({ success: false, message: error.message });
         }
