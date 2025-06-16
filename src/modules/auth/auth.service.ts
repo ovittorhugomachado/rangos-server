@@ -90,7 +90,7 @@ export const signUpService = async (data: AccountData) => {
 };
 
 export const loginService = async (data: AccountData) => {
-    
+
     const { email, password } = data
 
     const user = await prisma.user.findUnique({ where: { email } })
@@ -118,7 +118,8 @@ export const loginService = async (data: AccountData) => {
 
 }
 
-export const refreshTokenService = async (refreshToken: string): Promise<string> => {
+export const refreshTokenService = async (refreshToken: string) => {
+    
     const payload = jwt.verify(refreshToken, REFRESH_SECRET) as any;
 
     const user = await prisma.user.findUnique({
@@ -126,7 +127,7 @@ export const refreshTokenService = async (refreshToken: string): Promise<string>
     });
 
     if (!user || user.refreshToken !== refreshToken) {
-        throw new Error('INVALID_REFRESH_TOKEN');
+        throw new UnauthorizedError('Registro não encontrado através do token fornecido');
     }
 
     const newAccessToken = jwt.sign(

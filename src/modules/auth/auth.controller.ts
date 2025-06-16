@@ -103,9 +103,18 @@ export const refreshAccessToken = async (req: Request, res: Response) => {
         });
 
         return res.status(200).json({ message: 'Token renovado com sucesso' });
-    } catch (error) {
-        console.error('Erro ao renovar token:', error);
-        return res.status(403).json({ message: 'Refresh token inválido ou expirado' });
+    } catch (error: any) {
+ 
+        console.error('Erro na criação de um novo token:', error);
+
+        if (error instanceof UnauthorizedError) {
+            return res.status(401).json({ success: false, message: error.message });
+        }
+
+        return res.status(500).json({
+            success: false,
+            message: error.message || "Erro interno no servidor"
+        });
     }
 };
 
