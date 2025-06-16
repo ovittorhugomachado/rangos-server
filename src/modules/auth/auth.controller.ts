@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { signUpService, loginService, refreshTokenService, logoutService } from "./auth.service";
-import { loginFieldsErrorChecker, signUpFieldsErrorChecker } from "./error-checker";
-import { ConflictError, ValidationError } from "../../utils/errors";
+import { loginFieldsErrorChecker, signUpFieldsErrorChecker } from "./field-error-checker";
+import { ConflictError, UnauthorizedError, ValidationError } from "../../utils/errors";
 
 export const signUp = async (req: Request, res: Response) => {
 
@@ -19,17 +19,18 @@ export const signUp = async (req: Request, res: Response) => {
     } catch (error: any) {
 
         console.error('Erro no cadastro:', error);
-
-        if (error instanceof ValidationError) {
-            return res.status(422).json({ success: false, message: error.message });
-        }
+                
         if (error instanceof ConflictError) {
             return res.status(409).json({ success: false, message: error.message });
         }
 
+        if (error instanceof ValidationError) {
+            return res.status(422).json({ success: false, message: error.message });
+        }
+
         return res.status(500).json({
             success: false,
-            message: error.message || "Erro interno no servidor" 
+            message: error.message || "Erro interno no servidor"
         });
     }
 };
@@ -58,14 +59,29 @@ export const login = async (req: Request, res: Response) => {
             sameSite: 'lax',
             maxAge: 30 * 24 * 60 * 60 * 1000, // 30 dias
         });
+
         return res.status(200).json({ message: 'Login realizado com sucesso' });
 
-    } catch (error: unknown) {
-        if (error instanceof Error && error.message === 'INVALID_DATA') {
-            return res.status(401).json({ message: 'Email ou senha inválidos' });
+    } catch (error: any) {
+
+        console.error('Erro no login:', error);
+
+        if (error instanceof UnauthorizedError) {
+            return res.status(401).json({ success: false, message: error.message });
         }
-        console.error('Erro ao criar usuário:', error);
-        return res.status(500).json({ message: 'Erro interno do servidor' });
+
+        if (error instanceof ConflictError) {
+            return res.status(409).json({ success: false, message: error.message });
+        }
+
+        if (error instanceof ValidationError) {
+            return res.status(422).json({ success: false, message: error.message });
+        }
+
+        return res.status(500).json({
+            success: false,
+            message: error.message || "Erro interno no servidor"
+        });
     }
 };
 

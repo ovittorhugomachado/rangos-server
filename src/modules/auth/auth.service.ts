@@ -4,8 +4,8 @@ import jwt from 'jsonwebtoken'
 import { stripNonDigits } from '../../utils/stripFormating';
 import { WeekDay } from '.prisma/client';
 import { prisma } from '../../lib/prisma';
-import { generateTokens } from './auth.utils';
-import { ConflictError, ValidationError } from '../../utils/errors';
+import { generateTokens } from './generate-tokens';
+import { ConflictError, UnauthorizedError, ValidationError } from '../../utils/errors';
 
 dotenv.config();
 const JWT_SECRET = process.env.JWT_SECRET || 'secreto'
@@ -90,16 +90,17 @@ export const signUpService = async (data: AccountData) => {
 };
 
 export const loginService = async (data: AccountData) => {
+    
     const { email, password } = data
 
     const user = await prisma.user.findUnique({ where: { email } })
     if (!user) {
-        throw new Error('INVALID_DATA');
+        throw new UnauthorizedError('credenciais inválidas');
     }
 
     const passwordMatch = await bcrypt.compare(password, user.password)
     if (!passwordMatch) {
-        throw new Error('INVALID_DATA')
+        throw new UnauthorizedError('credenciais inválidas');
     }
 
     const payload = {
