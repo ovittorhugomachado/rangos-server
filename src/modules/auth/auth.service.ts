@@ -22,6 +22,7 @@ interface AccountData {
 }
 
 export const signUpService = async (data: AccountData) => {
+
     const { restaurantName, cnpj, ownersName, cpf, phoneNumber, email, password } = data;
 
     const rawCpf = stripNonDigits(cpf);
@@ -41,7 +42,7 @@ export const signUpService = async (data: AccountData) => {
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    const newUser = await prisma.$transaction(async (prisma) => {
+    await prisma.$transaction(async (prisma) => {
 
         const user = await prisma.user.create({
             data: {
@@ -86,8 +87,6 @@ export const signUpService = async (data: AccountData) => {
 
         return user;
     });
-
-    return newUser;
 };
 
 export const loginService = async (data: AccountData) => {

@@ -1,21 +1,23 @@
 import { Request, Response } from "express";
 import { signUpService, loginService, refreshTokenService, logoutService } from "./auth.service";
 import { loginFieldsErrorChecker, signUpFieldsErrorChecker } from "./error-checker";
-import { ConflictError, NotFoundError, ValidationError } from "../../utils/errors";
+import { ConflictError, ValidationError } from "../../utils/errors";
 
 export const signUp = async (req: Request, res: Response) => {
 
     try {
-        const validationError = signUpFieldsErrorChecker(req.body);
 
+        const validationError = signUpFieldsErrorChecker(req.body);
         if (validationError) {
             return res.status(400).json({ error: validationError });
         }
 
         await signUpService(req.body);
+
         return res.status(201).json({ message: 'Usuário criado com sucesso' });
 
     } catch (error: any) {
+
         console.error('Erro no cadastro:', error);
 
         if (error instanceof ValidationError) {
