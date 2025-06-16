@@ -1,8 +1,8 @@
 import { Router } from 'express';
-import { asyncHandler } from '../../utils/async-handler';
-import { signUp, login, refreshAccessToken, logout } from './auth.controller';
 import { authLimiter } from './auth-limiter.middleware';
+import { asyncHandler } from '../../utils/async-handler';
 import { authenticateToken } from '../../middlewares/authenticate-token.middleware';
+import { signUp, login, refreshAccessToken, logout } from './auth.controller';
 
 const router = Router();
 

@@ -6,9 +6,10 @@ interface AccountDataBody {
     phoneNumber: string;
     email: string;
     password: string;
-}
+};
 
 export const signUpFieldsErrorChecker = (body: AccountDataBody): string | null => {
+    
     const requiredFields = ['restaurantName', 'ownersName', 'cpf', 'phoneNumber', 'email', 'password'];
 
     for (const field of requiredFields) {
@@ -18,9 +19,10 @@ export const signUpFieldsErrorChecker = (body: AccountDataBody): string | null =
     }
 
     return null;
-}
+};
 
 export const loginFieldsErrorChecker = (body: AccountDataBody): string | null => {
+
     const { email, password } = body;
 
     if (!email || !password) {
@@ -28,6 +30,7 @@ export const loginFieldsErrorChecker = (body: AccountDataBody): string | null =>
     }
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
     if (!emailRegex.test(email)) {
         return 'Email inválido';
     }
@@ -37,4 +40,4 @@ export const loginFieldsErrorChecker = (body: AccountDataBody): string | null =>
     }
 
     return null;
-}
+};

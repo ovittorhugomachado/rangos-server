@@ -1,14 +1,14 @@
+import jwt from 'jsonwebtoken'
 import bcrypt from 'bcrypt';
 import dotenv from 'dotenv';
-import jwt from 'jsonwebtoken'
-import { stripNonDigits } from '../../utils/stripFormating';
-import { WeekDay } from '.prisma/client';
 import { prisma } from '../../lib/prisma';
+import { WeekDay } from '.prisma/client';
+import { stripNonDigits } from '../../utils/stripFormating';
 import { generateTokens } from './generate-tokens';
 import { ConflictError, UnauthorizedError, ValidationError } from '../../utils/errors';
 
 dotenv.config();
-const JWT_SECRET = process.env.JWT_SECRET || 'secreto'
+const JWT_SECRET = process.env.JWT_SECRET || 'secreto';
 const REFRESH_SECRET = process.env.REFRESH_SECRET || 'refresh_secreto';
 
 interface AccountData {
@@ -19,7 +19,7 @@ interface AccountData {
     phoneNumber: string;
     email: string;
     password: string;
-}
+};
 
 export const signUpService = async (data: AccountData) => {
 
@@ -116,10 +116,10 @@ export const loginService = async (data: AccountData) => {
 
     return { accessToken, refreshToken };
 
-}
+};
 
 export const refreshTokenService = async (refreshToken: string) => {
-    
+
     const payload = jwt.verify(refreshToken, REFRESH_SECRET) as any;
 
     const user = await prisma.user.findUnique({

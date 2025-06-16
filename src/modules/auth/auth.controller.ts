@@ -1,7 +1,8 @@
 import { Request, Response } from "express";
-import { signUpService, loginService, refreshTokenService, logoutService } from "./auth.service";
 import { loginFieldsErrorChecker, signUpFieldsErrorChecker } from "./field-error-checker";
 import { ConflictError, UnauthorizedError, ValidationError } from "../../utils/errors";
+import { signUpService, loginService, refreshTokenService, logoutService } from "./auth.service";
+
 
 export const signUp = async (req: Request, res: Response) => {
 
@@ -103,6 +104,7 @@ export const refreshAccessToken = async (req: Request, res: Response) => {
         });
 
         return res.status(200).json({ message: 'Token renovado com sucesso' });
+
     } catch (error: any) {
  
         console.error('Erro na criação de um novo token:', error);
@@ -119,7 +121,9 @@ export const refreshAccessToken = async (req: Request, res: Response) => {
 };
 
 export const logout = async (req: Request & { user?: any }, res: Response) => {
+
     try {
+
         const userId = req.user?.userId;
         if (!userId) {
             return res.status(401).json({ message: 'Usuário não autenticado' });
@@ -132,7 +136,9 @@ export const logout = async (req: Request & { user?: any }, res: Response) => {
         return res.status(200).json({ message: 'Logout efetuado com sucesso' });
 
     } catch (error) {
+
         console.error('Erro no logout:', error);
+
         return res.status(500).json({ message: 'Erro interno do servidor' });
     }
 };
