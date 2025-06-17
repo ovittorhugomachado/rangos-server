@@ -8,8 +8,6 @@ router.post('/recover-password', asyncHandler(requestPasswordReset));
 
 router.patch('/create-new-password/:token', asyncHandler(resetPassword));
 
-router.get('/validate-token/:token', (req, res, next) => {
-    validateToken(req, res).catch(next)
-});
+router.get('/validate-token/:token', asyncHandler(validateToken));
 
 export default router ;

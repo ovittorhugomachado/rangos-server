@@ -66,12 +66,26 @@ export const resetPassword = async (req: Request, res: Response) => {
 };
 
 export const validateToken = async (req: Request, res: Response) => {
+
     const { token } = req.params;
 
     try {
+
         await validateTokenService(token);
+
         return res.status(200).json({ message: 'Token válido' });
-    } catch (error) {
-        return res.status(401).json({ message: 'Token inválido ou expirado' });
+
+    } catch (error: any) {
+
+        console.error('Erro na validação do token:', error);
+                
+        if (error instanceof NotFoundError) {
+            return res.status(409).json({ success: false, message: error.message });
+        }
+
+        return res.status(500).json({
+            success: false,
+            message: error.message || "Erro interno no servidor"
+        });
     }
 };

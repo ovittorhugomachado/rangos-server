@@ -66,7 +66,8 @@ export const resetPasswordService = async (token: string, newPassword: string) =
 };
 
 export const validateTokenService = async (token: string) => {
+
     const tokenData = await prisma.passwordResetToken.findFirst({ where: { token } });
-    if (!tokenData || tokenData.expiresAt < new Date()) throw new Error('INVALID_OR_EXPIRED_TOKEN');
+    if (!tokenData || tokenData.expiresAt < new Date()) throw new NotFoundError('INVALID_OR_EXPIRED_TOKEN');
 };
 
