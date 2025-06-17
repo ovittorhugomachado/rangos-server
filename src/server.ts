@@ -1,6 +1,6 @@
+import 'dotenv/config'
 import express from 'express';
 import cors from 'cors';
-import dotenv from 'dotenv';
 import cookieParser from 'cookie-parser';
 import authRoutes from './modules/auth/auth.routes';
 import resetPasswordRoutes from './modules/password/password.routes';
@@ -17,7 +17,6 @@ import './modules/password/clean-expired-tokens.utils'
 
     {/*ANTES DE COLOCAR O PROJETO EM PRODUÇÃO FAZER TESTES SALVANDO DADOS NO CACHE
     PRA DIMINUIR O NUMERO DE CONSULTAR NO BD E DIMINUIR A LATÊNCIA */}
-dotenv.config();
 
 const app = express();
 const port = process.env.PORT || 3000;
