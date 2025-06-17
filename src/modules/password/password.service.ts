@@ -2,10 +2,11 @@ import bcrypt from 'bcrypt';
 import { randomUUID } from 'crypto';
 import { prisma } from '../../lib/prisma';
 import { transporter } from '../../utils/email';
+import { NotFoundError } from '../../utils/errors';
 
 export const generateResetTokenService = async (email: string) => {
     const user = await prisma.user.findUnique({ where: { email } });
-    if (!user) throw new Error('USER_NOT_FOUND');
+    if (!user) throw new NotFoundError('Usuário não encontrado');
 
     await prisma.passwordResetToken.deleteMany({ where: { userId: user.id } });
 
@@ -13,13 +14,18 @@ export const generateResetTokenService = async (email: string) => {
     const expiresAt = new Date(Date.now() + 3600000); // 1h
 
     await prisma.passwordResetToken.create({
-        data: { token, userId: user.id, expiresAt }
+        data: { 
+            token, 
+            userId: user.id, 
+            expiresAt, 
+            createdAt: new Date(Date.now())
+        }
     });
 
     return { token, userId: user.id };
 };
 
-export const sendResetEmailService = async (email: string, token: string, restaurantName?: string) => {
+export const passwordResetEmailService = async (email: string, token: string, restaurantName?: string) => {
     
     const resetLink = `http://localhost:5173/create-new-password/${token}`;
 

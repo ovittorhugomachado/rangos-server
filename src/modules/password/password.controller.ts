@@ -2,31 +2,39 @@ import { Request, Response } from 'express';
 import { prisma } from '../../lib/prisma';
 import {
     generateResetTokenService,
-    sendResetEmailService,
     validateTokenService,
-    resetPasswordService
+    resetPasswordService,
+    passwordResetEmailService
 } from './password.service';
+import { NotFoundError } from '../../utils/errors';
 
 export const requestPasswordReset = async (req: Request, res: Response) => {
     const { email } = req.body;
 
     try {
-        const user = await prisma.user.findUnique({ where: { email } });
+
         const restaurant = await prisma.user.findFirst({
             where: { email },
             select: { restaurantName: true }
         });
 
-        if (!user) return res.status(401).json({ message: 'Usuário não encontrado' });
-
         const { token } = await generateResetTokenService(email);
-        await sendResetEmailService(email, token, restaurant?.restaurantName);
+        await passwordResetEmailService(email, token, restaurant?.restaurantName);
 
         return res.status(200).json({ message: 'Um link de redefinição de senha foi enviado para seu email' });
 
-    } catch (error) {
-        console.error('[ERRO]', error);
-        return res.status(500).json({ message: 'Erro ao recuperar senha' });
+    } catch (error: any) {
+
+        console.error('Erro na redefinição de senha:', error);
+                
+        if (error instanceof NotFoundError) {
+            return res.status(409).json({ success: false, message: error.message });
+        }
+
+        return res.status(500).json({
+            success: false,
+            message: error.message || "Erro interno no servidor"
+        });
     }
 };
 
