@@ -1,12 +1,13 @@
 import { Request, Response } from 'express';
 import { prisma } from '../../lib/prisma';
+import { NotFoundError } from '../../utils/errors';
 import {
     generateResetTokenService,
     validateTokenService,
     resetPasswordService,
     passwordResetEmailService
 } from './password.service';
-import { NotFoundError } from '../../utils/errors';
+
 
 export const requestPasswordReset = async (req: Request, res: Response) => {
     const { email } = req.body;
@@ -39,18 +40,28 @@ export const requestPasswordReset = async (req: Request, res: Response) => {
 };
 
 export const resetPassword = async (req: Request, res: Response) => {
+
     const { newPassword } = req.body;
     const { token } = req.params;
 
     try {
+
         await resetPasswordService(token, newPassword);
+
         return res.status(200).json({ message: 'Senha redefinida com sucesso' });
-    } catch (error) {
-        if (error instanceof Error && error.message === 'INVALID_OR_EXPIRED_TOKEN') {
-            return res.status(400).json({ message: 'Link inválido ou expirado' });
+
+    } catch (error: any) {
+
+        console.error('Erro na criação da nova senha:', error);
+                
+        if (error instanceof NotFoundError) {
+            return res.status(409).json({ success: false, message: error.message });
         }
-        console.error('[ERRO]', error);
-        return res.status(500).json({ message: 'Erro ao criar nova senha' });
+
+        return res.status(500).json({
+            success: false,
+            message: error.message || "Erro interno no servidor"
+        });
     }
 };
 

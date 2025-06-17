@@ -53,7 +53,7 @@ export const resetPasswordService = async (token: string, newPassword: string) =
         include: { user: true }
     });
 
-    if (!tokenRecord || tokenRecord.expiresAt < new Date()) throw new Error('INVALID_OR_EXPIRED_TOKEN');
+    if (!tokenRecord || tokenRecord.expiresAt < new Date()) throw new NotFoundError('Token inválido ou expirado');
 
     const hashedPassword = await bcrypt.hash(newPassword, 10);
 
