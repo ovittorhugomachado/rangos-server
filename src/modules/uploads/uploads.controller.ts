@@ -3,7 +3,8 @@ import {
     profileBannerUpdateService,
     profileLogoUpdateService,
     menuItemImageUpdateService
-} from './upload-profile-logo.service';
+} from './uploads.service';
+import { AppError, NotFoundError } from '../../utils/errors';
 
 export const updateProfileLogo = async (req: Request, res: Response): Promise<void> => {
 
@@ -20,12 +21,25 @@ export const updateProfileLogo = async (req: Request, res: Response): Promise<vo
 
         res.status(200).json({ message: 'Logo atualizado com sucesso' });
 
-    } catch (error) {
-        console.error('Erro atualizar imagem:', error);
+    } catch (error: any) {
+
+        console.error('Erro no cadastro:', error);
+                
+        if (error instanceof NotFoundError) {
+            res.status(error.statusCode).json({ success: false, message: error.message });
+            return 
+        }
+
+        if (error instanceof AppError) {
+            res.status(error.statusCode).json({ success: false, message: error.message });
+            return 
+        }
+
         res.status(500).json({
             success: false,
-            message: error instanceof Error ? error.message : "Erro desconhecido"
+            message: error.message || "Erro interno no servidor"
         });
+        return 
     }
 };
 

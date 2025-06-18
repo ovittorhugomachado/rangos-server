@@ -1,5 +1,5 @@
 import express from 'express';
-import { updateMenuItemImage, updateProfileBanner, updateProfileLogo } from './upload-profile-logo.controller';
+import { updateMenuItemImage, updateProfileBanner, updateProfileLogo } from './uploads.controller';
 import { uploadBanner, uploadLogo, uploadMenuItemImage } from '../../middlewares/multer.middleware';
 import { authenticateToken } from '../../middlewares/authenticate-token.middleware';
 

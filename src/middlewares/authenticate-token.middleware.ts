@@ -23,8 +23,6 @@ export function authenticateToken(req: Request, res: Response, next: NextFunctio
 
     const token = req.cookies.token
 
-    console.log(token)
-
     if (!token) {
         res.status(401).json({ message: 'Token não fornecido' });
         return;

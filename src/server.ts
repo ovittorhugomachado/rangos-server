@@ -6,7 +6,7 @@ import authRoutes from './modules/auth/auth.routes';
 import resetPasswordRoutes from './modules/password/password.routes';
 import userDataRouter from './modules/user/user.routes';
 import storeDataRoutes from './modules/store/store.routes';
-import uploadFile from './modules/uploads/upload-profile-logo.routes';
+import uploadFile from './modules/uploads/upload.routes';
 import updateSchedule from './modules/schedules/schedules.routes';
 import menuCategoriesRoutes from './modules/manage-menu/menu-category/menu-category.routes'
 import menuItemRoutes from './modules/manage-menu/menu-items/menu-item.routes'
