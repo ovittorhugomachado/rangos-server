@@ -1,6 +1,5 @@
 import { Router } from 'express';
 import { authLimiter } from './auth-limiter.middleware';
-import { asyncHandler } from '../../utils/async-handler';
 import { authenticateToken } from '../../middlewares/authenticate-token.middleware';
 import { signUp, login, refreshAccessToken, logout } from './auth.controller';
 
