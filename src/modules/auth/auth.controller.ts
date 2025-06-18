@@ -33,7 +33,7 @@ export const login = async (req: Request, res: Response): Promise<void> => {
         const validationError = loginFieldsErrorChecker(req.body);
         if (validationError) {
             res.status(400).json({ message: validationError });
-            return 
+            return
         }
 
         const { accessToken, refreshToken } = await loginService(req.body);
@@ -53,7 +53,7 @@ export const login = async (req: Request, res: Response): Promise<void> => {
         });
 
         res.status(200).json({ message: 'Login realizado com sucesso' });
-        return 
+        return
 
     } catch (error: any) {
 

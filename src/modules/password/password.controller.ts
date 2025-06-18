@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { prisma } from '../../lib/prisma';
-import { NotFoundError } from '../../utils/errors';
+import { handleControllerError, NotFoundError } from '../../utils/errors';
 import {
     generateResetTokenService,
     validateTokenService,
@@ -9,7 +9,8 @@ import {
 } from './password.service';
 
 
-export const requestPasswordReset = async (req: Request, res: Response) => {
+export const requestPasswordReset = async (req: Request, res: Response): Promise<void> => {
+
     const { email } = req.body;
 
     try {
@@ -22,24 +23,17 @@ export const requestPasswordReset = async (req: Request, res: Response) => {
         const { token } = await generateResetTokenService(email);
         await passwordResetEmailService(email, token, restaurant?.restaurantName);
 
-        return res.status(200).json({ message: 'Um link de redefinição de senha foi enviado para seu email' });
+        res.status(200).json({ message: 'Um link de redefinição de senha foi enviado para seu email' });
+        return
 
     } catch (error: any) {
 
-        console.error('Erro na redefinição de senha:', error);
-                
-        if (error instanceof NotFoundError) {
-            return res.status(error.statusCode).json({ success: false, message: error.message });
-        }
+        handleControllerError(res, error);
 
-        return res.status(500).json({
-            success: false,
-            message: error.message || "Erro interno no servidor"
-        });
     }
 };
 
-export const resetPassword = async (req: Request, res: Response) => {
+export const resetPassword = async (req: Request, res: Response): Promise<void> => {
 
     const { newPassword } = req.body;
     const { token } = req.params;
@@ -48,24 +42,17 @@ export const resetPassword = async (req: Request, res: Response) => {
 
         await resetPasswordService(token, newPassword);
 
-        return res.status(200).json({ message: 'Senha redefinida com sucesso' });
+        res.status(200).json({ message: 'Senha redefinida com sucesso' });
+        return
 
     } catch (error: any) {
 
-        console.error('Erro na criação da nova senha:', error);
-                
-        if (error instanceof NotFoundError) {
-            return res.status(error.statusCode).json({ success: false, message: error.message });
-        }
+        handleControllerError(res, error);
 
-        return res.status(500).json({
-            success: false,
-            message: error.message || "Erro interno no servidor"
-        });
     }
 };
 
-export const validateToken = async (req: Request, res: Response) => {
+export const validateToken = async (req: Request, res: Response): Promise<void> => {
 
     const { token } = req.params;
 
@@ -73,19 +60,12 @@ export const validateToken = async (req: Request, res: Response) => {
 
         await validateTokenService(token);
 
-        return res.status(200).json({ message: 'Token válido' });
+        res.status(200).json({ message: 'Token válido' });
+        return
 
     } catch (error: any) {
 
-        console.error('Erro na validação do token:', error);
-                
-        if (error instanceof NotFoundError) {
-            return res.status(error.statusCode).json({ success: false, message: error.message });
-        }
+        handleControllerError(res, error);
 
-        return res.status(500).json({
-            success: false,
-            message: error.message || "Erro interno no servidor"
-        });
     }
 };

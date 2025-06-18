@@ -4,10 +4,10 @@ import { requestPasswordReset, resetPassword, validateToken } from './password.c
 
 const router = Router();
 
-router.post('/recover-password', asyncHandler(requestPasswordReset));
+router.post('/recover-password', requestPasswordReset);
 
-router.patch('/create-new-password/:token', asyncHandler(resetPassword));
+router.patch('/create-new-password/:token', resetPassword);
 
-router.get('/validate-token/:token', asyncHandler(validateToken));
+router.get('/validate-token/:token', validateToken);
 
 export default router ;
