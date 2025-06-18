@@ -1,10 +1,10 @@
 import { Request, Response } from 'express';
+import { handleControllerError } from '../../utils/errors';
 import {
     profileBannerUpdateService,
     profileLogoUpdateService,
     menuItemImageUpdateService
 } from './uploads.service';
-import { AppError, InternalServerError, NotFoundError } from '../../utils/errors';
 
 export const updateProfileLogo = async (req: Request, res: Response): Promise<void> => {
 
@@ -23,28 +23,8 @@ export const updateProfileLogo = async (req: Request, res: Response): Promise<vo
 
     } catch (error: any) {
 
-        console.error('Erro no cadastro:', error);
-
-        if (error instanceof NotFoundError) {
-            res.status(error.statusCode).json({ success: false, message: error.message });
-            return
-        }
-
-        if (error instanceof AppError) {
-            res.status(error.statusCode).json({ success: false, message: error.message });
-            return
-        }
+        handleControllerError(res, error);
         
-        if (error instanceof InternalServerError) {
-            res.status(error.statusCode).json({ success: false, message: error.message });
-            return
-        }
-
-        res.status(500).json({
-            success: false,
-            message: error.message || "Erro interno no servidor"
-        });
-        return
     }
 };
 
@@ -65,28 +45,8 @@ export const updateProfileBanner = async (req: Request, res: Response): Promise<
 
     } catch (error: any) {
 
-        console.error('Erro no cadastro:', error);
-
-        if (error instanceof NotFoundError) {
-            res.status(error.statusCode).json({ success: false, message: error.message });
-            return
-        }
-
-        if (error instanceof AppError) {
-            res.status(error.statusCode).json({ success: false, message: error.message });
-            return
-        }
-
-        if (error instanceof InternalServerError) {
-            res.status(error.statusCode).json({ success: false, message: error.message });
-            return
-        }
-
-        res.status(500).json({
-            success: false,
-            message: error.message || "Erro interno no servidor"
-        });
-        return
+        handleControllerError(res, error);
+        
     }
 };
 
@@ -100,10 +60,10 @@ export const updateMenuItemImage = async (req: Request, res: Response): Promise<
         }
 
         const userId = Number(req.user?.userId);
-        const itemId = Number(req.params.menuItemId);
         const categoryId = Number(req.params.categoryId);
+        const itemId = Number(req.params.menuItemId);
 
-        if (!userId || isNaN(userId)) {
+        if (isNaN(userId) || isNaN(categoryId) || isNaN(itemId)) {
             res.status(400).json({
                 error: 'Parâmetros inválidos',
                 details: {
@@ -118,11 +78,9 @@ export const updateMenuItemImage = async (req: Request, res: Response): Promise<
 
         res.status(200).json({ message: 'imagem do produto atualizada com sucesso' });
 
-    } catch (error) {
-        console.error('Erro atualizar imagem:', error);
-        res.status(500).json({
-            success: false,
-            message: error instanceof Error ? error.message : "Erro desconhecido"
-        });
+    } catch (error: any) {
+
+        handleControllerError(res, error);
+
     }
 };
