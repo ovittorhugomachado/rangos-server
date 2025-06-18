@@ -4,7 +4,7 @@ import {
     profileLogoUpdateService,
     menuItemImageUpdateService
 } from './uploads.service';
-import { AppError, NotFoundError } from '../../utils/errors';
+import { AppError, InternalServerError, NotFoundError } from '../../utils/errors';
 
 export const updateProfileLogo = async (req: Request, res: Response): Promise<void> => {
 
@@ -24,22 +24,27 @@ export const updateProfileLogo = async (req: Request, res: Response): Promise<vo
     } catch (error: any) {
 
         console.error('Erro no cadastro:', error);
-                
+
         if (error instanceof NotFoundError) {
             res.status(error.statusCode).json({ success: false, message: error.message });
-            return 
+            return
         }
 
         if (error instanceof AppError) {
             res.status(error.statusCode).json({ success: false, message: error.message });
-            return 
+            return
+        }
+        
+        if (error instanceof InternalServerError) {
+            res.status(error.statusCode).json({ success: false, message: error.message });
+            return
         }
 
         res.status(500).json({
             success: false,
             message: error.message || "Erro interno no servidor"
         });
-        return 
+        return
     }
 };
 
@@ -58,12 +63,30 @@ export const updateProfileBanner = async (req: Request, res: Response): Promise<
 
         res.status(200).json({ message: 'Banner atualizada com sucesso' });
 
-    } catch (error) {
-        console.error('Erro atualizar imagem:', error);
+    } catch (error: any) {
+
+        console.error('Erro no cadastro:', error);
+
+        if (error instanceof NotFoundError) {
+            res.status(error.statusCode).json({ success: false, message: error.message });
+            return
+        }
+
+        if (error instanceof AppError) {
+            res.status(error.statusCode).json({ success: false, message: error.message });
+            return
+        }
+
+        if (error instanceof InternalServerError) {
+            res.status(error.statusCode).json({ success: false, message: error.message });
+            return
+        }
+
         res.status(500).json({
             success: false,
-            message: error instanceof Error ? error.message : "Erro desconhecido"
+            message: error.message || "Erro interno no servidor"
         });
+        return
     }
 };
 
