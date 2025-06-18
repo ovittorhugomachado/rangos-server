@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
+import { handleControllerError } from '../../utils/errors';
 import { prisma } from '../../lib/prisma';
-import { handleControllerError, NotFoundError } from '../../utils/errors';
 import {
     generateResetTokenService,
     validateTokenService,

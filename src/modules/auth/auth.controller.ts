@@ -1,8 +1,7 @@
 import { Request, Response } from "express";
 import { loginFieldsErrorChecker, signUpFieldsErrorChecker } from "./field-error-checker";
-import { ConflictError, handleControllerError, UnauthorizedError, ValidationError } from "../../utils/errors";
+import { handleControllerError } from "../../utils/errors";
 import { signUpService, loginService, refreshTokenService, logoutService } from "./auth.service";
-
 
 export const signUp = async (req: Request, res: Response): Promise<void> => {
 

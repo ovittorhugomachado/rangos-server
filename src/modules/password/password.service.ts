@@ -1,6 +1,6 @@
 import bcrypt from 'bcrypt';
-import { randomUUID } from 'crypto';
 import { prisma } from '../../lib/prisma';
+import { randomUUID } from 'crypto';
 import { transporter } from '../../utils/email';
 import { NotFoundError } from '../../utils/errors';
 
