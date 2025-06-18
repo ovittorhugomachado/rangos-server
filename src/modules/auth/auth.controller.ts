@@ -1,48 +1,39 @@
 import { Request, Response } from "express";
 import { loginFieldsErrorChecker, signUpFieldsErrorChecker } from "./field-error-checker";
-import { ConflictError, UnauthorizedError, ValidationError } from "../../utils/errors";
+import { ConflictError, handleControllerError, UnauthorizedError, ValidationError } from "../../utils/errors";
 import { signUpService, loginService, refreshTokenService, logoutService } from "./auth.service";
 
 
-export const signUp = async (req: Request, res: Response) => {
+export const signUp = async (req: Request, res: Response): Promise<void> => {
 
     try {
 
         const validationError = signUpFieldsErrorChecker(req.body);
         if (validationError) {
-            return res.status(400).json({ error: validationError });
+            res.status(400).json({ error: validationError });
+            return
         }
 
         await signUpService(req.body);
 
-        return res.status(201).json({ message: 'Usuário criado com sucesso' });
+        res.status(201).json({ message: 'Usuário criado com sucesso' });
+        return
 
     } catch (error: any) {
 
-        console.error('Erro no cadastro:', error);
-                
-        if (error instanceof ConflictError) {
-            return res.status(error.statusCode).json({ success: false, message: error.message });
-        }
+        handleControllerError(res, error);
 
-        if (error instanceof ValidationError) {
-            return res.status(error.statusCode).json({ success: false, message: error.message });
-        }
-
-        return res.status(500).json({
-            success: false,
-            message: error.message || "Erro interno no servidor"
-        });
     }
 };
 
-export const login = async (req: Request, res: Response) => {
+export const login = async (req: Request, res: Response): Promise<void> => {
 
     try {
 
         const validationError = loginFieldsErrorChecker(req.body);
         if (validationError) {
-            return res.status(400).json({ message: validationError });
+            res.status(400).json({ message: validationError });
+            return 
         }
 
         const { accessToken, refreshToken } = await loginService(req.body);
@@ -61,36 +52,22 @@ export const login = async (req: Request, res: Response) => {
             maxAge: 30 * 24 * 60 * 60 * 1000, // 30 dias
         });
 
-        return res.status(200).json({ message: 'Login realizado com sucesso' });
+        res.status(200).json({ message: 'Login realizado com sucesso' });
+        return 
 
     } catch (error: any) {
 
-        console.error('Erro no login:', error);
+        handleControllerError(res, error);
 
-        if (error instanceof UnauthorizedError) {
-            return res.status(error.statusCode).json({ success: false, message: error.message });
-        }
-
-        if (error instanceof ConflictError) {
-            return res.status(error.statusCode).json({ success: false, message: error.message });
-        }
-
-        if (error instanceof ValidationError) {
-            return res.status(error.statusCode).json({ success: false, message: error.message });
-        }
-
-        return res.status(500).json({
-            success: false,
-            message: error.message || "Erro interno no servidor"
-        });
     }
 };
 
-export const refreshAccessToken = async (req: Request, res: Response) => {
+export const refreshAccessToken = async (req: Request, res: Response): Promise<void> => {
 
     const refreshToken = req.cookies.refreshToken;
     if (!refreshToken) {
-        return res.status(401).json({ message: 'Refresh token não fornecido' });
+        res.status(401).json({ message: 'Refresh token não fornecido' });
+        return
     }
 
     try {
@@ -103,42 +80,36 @@ export const refreshAccessToken = async (req: Request, res: Response) => {
             maxAge: 15 * 60 * 1000,
         });
 
-        return res.status(200).json({ message: 'Token renovado com sucesso' });
+        res.status(200).json({ message: 'Token renovado com sucesso' });
+        return
 
     } catch (error: any) {
- 
-        console.error('Erro na criação de um novo token:', error);
 
-        if (error instanceof UnauthorizedError) {
-            return res.status(error.statusCode).json({ success: false, message: error.message });
-        }
+        handleControllerError(res, error);
 
-        return res.status(500).json({
-            success: false,
-            message: error.message || "Erro interno no servidor"
-        });
     }
 };
 
-export const logout = async (req: Request & { user?: any }, res: Response) => {
+export const logout = async (req: Request & { user?: any }, res: Response): Promise<void> => {
 
     try {
 
         const userId = req.user?.userId;
         if (!userId) {
-            return res.status(401).json({ message: 'Usuário não autenticado' });
+            res.status(401).json({ message: 'Usuário não autenticado' });
+            return
         }
 
         await logoutService(userId);
 
         res.clearCookie('token');
         res.clearCookie('refreshToken');
-        return res.status(200).json({ message: 'Logout efetuado com sucesso' });
+        res.status(200).json({ message: 'Logout efetuado com sucesso' });
+        return
 
     } catch (error) {
 
-        console.error('Erro no logout:', error);
+        handleControllerError(res, error);
 
-        return res.status(500).json({ message: 'Erro interno do servidor' });
     }
 };

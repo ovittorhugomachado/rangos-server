@@ -6,12 +6,12 @@ import { signUp, login, refreshAccessToken, logout } from './auth.controller';
 
 const router = Router();
 
-router.post('/signup', asyncHandler(signUp));
+router.post('/signup', signUp);
 
-router.post('/login', authLimiter, asyncHandler(login));
+router.post('/login', authLimiter, login);
 
-router.post('/refresh-token', asyncHandler(refreshAccessToken));
+router.post('/refresh-token', refreshAccessToken);
 
-router.post('/logout', authenticateToken, asyncHandler(logout));
+router.post('/logout', authenticateToken, logout);
 
 export default router;
