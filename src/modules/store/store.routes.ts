@@ -4,12 +4,8 @@ import { getStoreData, updateStoreData } from "./store.controller";
 
 const router = Router();
 
-router.get('/store', authenticateToken, (req, res, next) => {
-    getStoreData(req, res).catch(next);
-});
+router.get('/store', authenticateToken, getStoreData);
 
-router.patch('/store', authenticateToken, (req, res, next) => {
-    updateStoreData(req, res).catch(next);
-});
+router.patch('/store', authenticateToken, updateStoreData);
 
 export default router;

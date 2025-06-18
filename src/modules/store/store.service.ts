@@ -1,5 +1,6 @@
 import { Prisma } from "@prisma/client";
 import { prisma } from "../../lib/prisma";
+import { AppError, NotFoundError } from "../../utils/errors";
 
 interface StoreData {
     restaurantName?: string | null;
@@ -40,7 +41,7 @@ export const serviceGetStoreData = async (userId: number): Promise<StoreData> =>
     })
 
     if (!store) {
-        throw new Error("STORE_NOT_FOUND");
+        throw new NotFoundError("Loja não encontrada");
     }
 
     return store
@@ -50,11 +51,11 @@ export const storeDataUpdateService = async (userId: number, updateData: UpdateS
 
 
     if (!userId || isNaN(userId)) {
-        throw new Error('ID_INVALIDO');
+        throw new NotFoundError('Usuário não encontrado');
     };
 
     if (Object.keys(updateData).length === 0) {
-        throw new Error('DADOS_ATUALIZACAO_VAZIOS');
+        throw new AppError('Dados de atualização vazios');
     };
 
     return await prisma.store.update({

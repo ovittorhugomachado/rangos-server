@@ -13,7 +13,7 @@ interface UserRequest extends Request {
         ownersName?: string;
         cpf?: string;
     }
-}
+};
 
 export const getUserData = async (req: UserRequest, res: Response): Promise<void> => {
 
@@ -58,7 +58,7 @@ export const updateUserData = async (req: UserRequest, res: Response): Promise<v
         handleControllerError(res, error);
 
     }
-}
+};
 
 export const deleteUser = async (req: UserRequest, res: Response): Promise<void> => {
 
@@ -76,4 +76,4 @@ export const deleteUser = async (req: UserRequest, res: Response): Promise<void>
         handleControllerError(res, error);
 
     }
-}
+};

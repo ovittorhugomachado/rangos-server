@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import { serviceGetStoreData, storeDataUpdateService } from "./store.service";
+import { AppError, handleControllerError } from "../../utils/errors";
 
 interface StoreRequest extends Request {
     user?: { userId: number };
@@ -15,50 +16,49 @@ interface StoreRequest extends Request {
     };
 }
 
-export const getStoreData = async (req: StoreRequest, res: Response) => {
+export const getStoreData = async (req: StoreRequest, res: Response): Promise<void> => {
 
     const userId = Number(req.user?.userId);
 
     try {
 
         const store = await serviceGetStoreData(userId);
-        return res.status(200).json(store);
+
+        res.status(200).json(store);
+        return 
 
     } catch (error: any) {
 
-        if (error.message === 'STORE_NOT_FOUND') {
-            return res.status(404).json({ message: 'Loja não encontrada' });
-        }
+        handleControllerError(res, error);
 
-        console.error('[ERRO /me]', error);
-        return res.status(500).json({ message: 'Erro ao buscar dados da loja' });
     }
-}
+};
 
-export const updateStoreData = async (req: StoreRequest, res: Response) => {
-
-    const userId = Number(req.user?.userId);
-    const updateData = req.body;
-
-    const allowedFields = ['restaurantName', 'phoneNumber', 'address', 'logoUrl', 'delivery', 'pickup'];
-    const isValidUpdate = Object.keys(updateData).every(key => allowedFields.includes(key));
-
-    if (!isValidUpdate) {
-        throw new Error('DADOS_INVALIDOS');
-    };
+export const updateStoreData = async (req: StoreRequest, res: Response): Promise<void> => {
 
     try {
 
+        const userId = Number(req.user?.userId);
+
+        const updateData = req.body;
+
+        const allowedFields = ['restaurantName', 'phoneNumber', 'address', 'logoUrl', 'delivery', 'pickup'];
+
+        const isValidUpdate = Object.keys(updateData).every(key => allowedFields.includes(key));
+        if (!isValidUpdate) {
+            throw new AppError('Dados inválidos');
+        };
+
+
+
         await storeDataUpdateService(userId, updateData);
-        return res.status(200).json({ message: 'Dados atualizados com sucesso' });
+
+        res.status(200).json({ message: 'Dados atualizados com sucesso' });
+        return 
 
     } catch (error: any) {
 
-        if (error.message === 'STORE_NOT_FOUND') {
-            return res.status(404).json({ message: 'Loja não encontrada' });
-        }
+        handleControllerError(res, error);
 
-        console.error('[ERRO /me]', error);
-        return res.status(500).json({ message: 'Erro ao buscar dados da loja' });
     }
 };
