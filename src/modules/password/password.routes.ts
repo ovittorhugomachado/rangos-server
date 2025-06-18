@@ -1,5 +1,4 @@
 import { Router } from 'express';
-import { asyncHandler } from '../../utils/async-handler';
 import { requestPasswordReset, resetPassword, validateToken } from './password.controller';
 
 const router = Router();

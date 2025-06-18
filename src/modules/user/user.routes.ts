@@ -4,16 +4,10 @@ import { authenticateToken } from '../../middlewares/authenticate-token.middlewa
 
 const router = Router();
 
-router.get('/user', authenticateToken, (req, res, next) => {
-    getUserData(req, res).catch(next);
-});
+router.get('/user', authenticateToken, getUserData);
 
-router.patch('/user', authenticateToken, (req, res, next) => {
-    updateUserData(req, res).catch(next);
-});
+router.patch('/user', authenticateToken, updateUserData);
 
-router.delete('/user', authenticateToken, (req, res, next) => {
-    deleteUser(req, res).catch(next);
-});
+router.delete('/user', authenticateToken, deleteUser);
 
 export default router 

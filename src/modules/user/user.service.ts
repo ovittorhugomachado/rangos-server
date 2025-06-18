@@ -1,4 +1,5 @@
 import { prisma } from "../../lib/prisma";
+import { AppError, NotFoundError } from "../../utils/errors";
 
 interface UserProfileData {
     restaurantName: string | null;
@@ -33,7 +34,7 @@ export const serviceGetUserData = async (userId: number): Promise<UserProfileDat
     });
 
     if (!user) {
-        throw new Error('USER_NOT_FOUND');
+        throw new NotFoundError('Usuário não encontrado');
     }
 
     return user;
@@ -42,11 +43,11 @@ export const serviceGetUserData = async (userId: number): Promise<UserProfileDat
 export const userDataUpdateService = async (userId: number, updateData: UpdateUserData): Promise<UserProfileData> => {
 
     if (!userId || isNaN(userId)) {
-        throw new Error('ID_INVALIDO');
+        throw new NotFoundError('Usuário não encontrado');
     };
 
     if (Object.keys(updateData).length === 0) {
-        throw new Error('DADOS_ATUALIZACAO_VAZIOS');
+        throw new AppError('Dados de atualização vazios');
     };
 
     return await prisma.user.update({
@@ -66,8 +67,8 @@ export const userDataUpdateService = async (userId: number, updateData: UpdateUs
 export const serviceDeleteUser = async (userId: number) => {
 
     if (!userId || isNaN(userId)) {
-        throw new Error('ID_INVALIDO');
-    }
+        throw new NotFoundError('Usuário não encontrado');
+    };
 
     const user = await prisma.user.delete({
         where: { id: userId },

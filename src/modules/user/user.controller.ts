@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import { serviceDeleteUser, serviceGetUserData, userDataUpdateService } from './user.service';
 import { Prisma } from '@prisma/client';
+import { AppError, handleControllerError } from '../../utils/errors';
 
 interface UserRequest extends Request {
     user?: { userId: number };
@@ -14,73 +15,65 @@ interface UserRequest extends Request {
     }
 }
 
-export const getUserData = async (req: UserRequest, res: Response) => {
+export const getUserData = async (req: UserRequest, res: Response): Promise<void> => {
 
     const userId = Number(req.user?.userId);
 
     try {
 
         const user = await serviceGetUserData(userId);
-        return res.status(200).json(user);
+
+        res.status(200).json(user);
+        return
 
     } catch (error: any) {
 
-        if (error.message === 'USER_NOT_FOUND') {
-            return res.status(404).json({ message: 'Usuário não encontrado' });
-        }
+        handleControllerError(res, error);
 
-        console.error('[ERRO /me]', error);
-        return res.status(500).json({ message: 'Erro ao buscar dados do usuário' });
     }
 };
 
-export const updateUserData = async (req: UserRequest, res: Response) => {
-
-    const userId = Number(req.user?.userId);
-    const updateData = req.body;
-
-    const allowedFields = ['restaurantName', 'phoneNumber', 'email', 'cnpj', 'ownersName', 'cpf'];
-    const isValidUpdate = Object.keys(updateData).every(key => allowedFields.includes(key));
-
-    if (!isValidUpdate) {
-        throw new Error('DADOS_INVALIDOS');
-    }
-
+export const updateUserData = async (req: UserRequest, res: Response): Promise<void> => {
+    
     try {
 
-        await userDataUpdateService(userId, updateData)
-        return res.status(200).json({ message: 'Dados atualizados com sucesso' })
+        const userId = Number(req.user?.userId);
+
+        const updateData = req.body;
+
+        const allowedFields = ['restaurantName', 'phoneNumber', 'email', 'cnpj', 'ownersName', 'cpf'];
+        
+        const isValidUpdate = Object.keys(updateData).every(key => allowedFields.includes(key));
+        if (!isValidUpdate) {
+            throw new AppError('Dados inválidos');
+        }
+
+        await userDataUpdateService(userId, updateData);
+
+        res.status(200).json({ message: 'Dados atualizados com sucesso' });
+        return
 
     } catch (error: any) {
 
-        switch (error.message) {
-            case 'ID_INVALIDO':
-                return res.status(400).json({ message: 'ID do usuário inválido' });
-            case 'DADOS_ATUALIZACAO_VAZIOS':
-                return res.status(400).json({ message: 'Nenhum dado fornecido para atualização' });
-            case 'USUARIO_NAO_ENCONTRADO':
-                return res.status(404).json({ message: 'Usuário não encontrado' });
-            default:
-                console.error('[ERRO] updateUserProfile:', error);
-                return res.status(500).json({ message: 'Erro deletar usuário' });
-        }
+        handleControllerError(res, error);
+
     }
 }
 
-export const deleteUser = async (req: UserRequest, res: Response) => {
+export const deleteUser = async (req: UserRequest, res: Response): Promise<void> => {
 
     const userId = Number(req.user?.userId);
 
     try {
 
-        await serviceDeleteUser(userId)
-        return res.status(200).json({ message: 'Usuário deletado com sucesso' })
+        await serviceDeleteUser(userId);
+
+        res.status(200).json({ message: 'Usuário deletado com sucesso' });
+        return
 
     } catch (error: any) {
 
-        if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2025') {
-            throw new Error('USER_NOT_FOUND');
-        }
-        throw error;
+        handleControllerError(res, error);
+
     }
 }
