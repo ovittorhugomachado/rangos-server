@@ -22,11 +22,11 @@ export const signUp = async (req: Request, res: Response) => {
         console.error('Erro no cadastro:', error);
                 
         if (error instanceof ConflictError) {
-            return res.status(409).json({ success: false, message: error.message });
+            return res.status(error.statusCode).json({ success: false, message: error.message });
         }
 
         if (error instanceof ValidationError) {
-            return res.status(422).json({ success: false, message: error.message });
+            return res.status(error.statusCode).json({ success: false, message: error.message });
         }
 
         return res.status(500).json({
@@ -68,15 +68,15 @@ export const login = async (req: Request, res: Response) => {
         console.error('Erro no login:', error);
 
         if (error instanceof UnauthorizedError) {
-            return res.status(401).json({ success: false, message: error.message });
+            return res.status(error.statusCode).json({ success: false, message: error.message });
         }
 
         if (error instanceof ConflictError) {
-            return res.status(409).json({ success: false, message: error.message });
+            return res.status(error.statusCode).json({ success: false, message: error.message });
         }
 
         if (error instanceof ValidationError) {
-            return res.status(422).json({ success: false, message: error.message });
+            return res.status(error.statusCode).json({ success: false, message: error.message });
         }
 
         return res.status(500).json({
@@ -110,7 +110,7 @@ export const refreshAccessToken = async (req: Request, res: Response) => {
         console.error('Erro na criação de um novo token:', error);
 
         if (error instanceof UnauthorizedError) {
-            return res.status(401).json({ success: false, message: error.message });
+            return res.status(error.statusCode).json({ success: false, message: error.message });
         }
 
         return res.status(500).json({
