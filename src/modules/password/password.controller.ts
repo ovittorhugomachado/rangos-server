@@ -29,7 +29,7 @@ export const requestPasswordReset = async (req: Request, res: Response) => {
         console.error('Erro na redefinição de senha:', error);
                 
         if (error instanceof NotFoundError) {
-            return res.status(409).json({ success: false, message: error.message });
+            return res.status(error.statusCode).json({ success: false, message: error.message });
         }
 
         return res.status(500).json({
@@ -55,7 +55,7 @@ export const resetPassword = async (req: Request, res: Response) => {
         console.error('Erro na criação da nova senha:', error);
                 
         if (error instanceof NotFoundError) {
-            return res.status(409).json({ success: false, message: error.message });
+            return res.status(error.statusCode).json({ success: false, message: error.message });
         }
 
         return res.status(500).json({
@@ -80,7 +80,7 @@ export const validateToken = async (req: Request, res: Response) => {
         console.error('Erro na validação do token:', error);
                 
         if (error instanceof NotFoundError) {
-            return res.status(409).json({ success: false, message: error.message });
+            return res.status(error.statusCode).json({ success: false, message: error.message });
         }
 
         return res.status(500).json({
