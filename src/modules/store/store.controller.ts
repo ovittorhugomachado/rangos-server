@@ -2,21 +2,7 @@ import { Request, Response } from "express";
 import { serviceGetStoreData, storeDataUpdateService } from "./store.service";
 import { AppError, handleControllerError } from "../../utils/errors";
 
-interface StoreRequest extends Request {
-    user?: { userId: number };
-    body: {
-        restaurantName?: string | null;
-        phoneNumber?: string | null;
-        address?: string | null;
-        logoUrl?: string | null;
-        bannerUrl?: string | null;
-        delivery?: boolean;
-        pickup?: boolean;
-        openingHours?: object | undefined;
-    };
-}
-
-export const getStoreData = async (req: StoreRequest, res: Response): Promise<void> => {
+export const getStoreData = async (req: Request, res: Response): Promise<void> => {
 
     const userId = Number(req.user?.userId);
 
@@ -34,7 +20,7 @@ export const getStoreData = async (req: StoreRequest, res: Response): Promise<vo
     }
 };
 
-export const updateStoreData = async (req: StoreRequest, res: Response): Promise<void> => {
+export const updateStoreData = async (req: Request, res: Response): Promise<void> => {
 
     try {
 

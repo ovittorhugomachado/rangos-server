@@ -11,18 +11,16 @@ interface StoreData {
     delivery?: boolean | null;
     pickup?: boolean | null;
     openingHours?: object | null;
-}
+};
 
 interface UpdateStoreData {
     restaurantName?: string | null;
     phoneNumber?: string | null;
     address?: string | null;
-    logoUrl?: string | null;
-    bannerUrl?: string | null;
     delivery?: boolean;
     pickup?: boolean;
     openingHours?: Prisma.OpeningHourUpdateManyWithoutStoreNestedInput;
-}
+};
 
 export const serviceGetStoreData = async (userId: number): Promise<StoreData> => {
 
