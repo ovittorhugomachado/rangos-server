@@ -1,4 +1,5 @@
 import { prisma } from "../../../lib/prisma";
+import { ForbiddenError, NotFoundError } from "../../../utils/errors";
 
 export const createMenuItemService = async (
     userId: number,
@@ -19,9 +20,9 @@ export const createMenuItemService = async (
     const store = await prisma.store.findUnique({ where: { userId } });
     const category = await prisma.menuCategory.findUnique({ where: { id: categoryId } });
 
-    if (!store) throw new Error('Loja não encontrada');
+    if (!store) throw new NotFoundError('Loja não encontrada');
 
-    if (!category || category.storeId !== store.id) throw new Error('Categoria inválida');
+    if (!category || category.storeId !== store.id) throw new NotFoundError('Categoria inválida');
 
     const menuItem = await prisma.menuItem.create({
         data: {
@@ -73,10 +74,10 @@ export const menuItemUpdateService = async (
         }
     });
 
-    if (!store) throw new Error('Loja não encontrada');
+    if (!store) throw new NotFoundError('Loja não encontrada');
 
     if (updateData.categoryId && !store.MenuCategory.some(c => c.id === updateData.categoryId)) {
-        throw new Error('Categoria não pertence à loja');
+        throw new ForbiddenError('Categoria não pertence à loja');
     };
 
     const existingItem = await prisma.menuItem.findFirst({
@@ -89,7 +90,7 @@ export const menuItemUpdateService = async (
     });
 
     if (!existingItem) {
-        throw new Error('Item não encontrado ou não pertence à sua loja');
+        throw new NotFoundError('Item não encontrado ou não pertence à sua loja');
     }
 
     return await prisma.menuItem.update({
@@ -116,12 +117,12 @@ export const menuItemStatusToggleService = async (userId: number, itemId: number
         },
     });
 
-    if (!store) throw new Error('Loja não encontrada');
+    if (!store) throw new NotFoundError('Loja não encontrada');
 
     const item = await prisma.menuItem.findUnique({ where: { id: itemId } });
 
     if (!item || !store.MenuCategory.some(c => c.id === item.categoryId)) {
-        throw new Error("Item não encontrado ou não pertence à loja");
+        throw new ForbiddenError("Item não encontrado ou não pertence à loja");
     };
 
     return await prisma.menuItem.update({
@@ -143,12 +144,12 @@ export const deleteMenuItemService = async (userId: number, itemId: number) => {
         },
     });
 
-    if (!store) throw new Error('Loja não encontrada');
+    if (!store) throw new NotFoundError('Loja não encontrada');
 
     const item = await prisma.menuItem.findUnique({ where: { id: itemId } });
 
     if (!item || !store.MenuCategory.some(c => c.id === item.categoryId)) {
-        throw new Error("Item não encontrado ou não pertence à loja");
+        throw new ForbiddenError("Item não encontrado ou não pertence à loja");
     };
 
     return await prisma.menuItem.delete({

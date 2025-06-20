@@ -6,13 +6,15 @@ import {
     serviceGetMenuCategories,
     toggleMenuCategoryService
 } from "./menu-category.service";
+import { handleControllerError } from "../../../utils/errors";
 
-export const getMenuCategories = async (req: Request, res: Response) => {
+export const getMenuCategories = async (req: Request, res: Response): Promise<void> => {
 
     const userId = Number(req.user?.userId);
 
     if (!userId) {
-        return res.status(401).json({ message: 'Erro na validação do usuário' })
+        res.status(401).json({ message: 'Erro na validação do usuário' });
+        return
     };
 
     try {
@@ -20,26 +22,26 @@ export const getMenuCategories = async (req: Request, res: Response) => {
         const categories = await serviceGetMenuCategories(userId);
         res.status(200).json(categories);
 
-    } catch (error) {
-        console.error('Erro ao criar nova categoria:', error);
-        res.status(500).json({
-            success: false,
-            message: error instanceof Error ? error.message : "Erro desconhecido"
-        });
+    } catch (error: any) {
+
+        handleControllerError(res, error);
+
     };
 };
 
-export const createMenuCategory = async (req: Request, res: Response) => {
+export const createMenuCategory = async (req: Request, res: Response): Promise<void> => {
 
     const userId = Number(req.user?.userId);
     const { name } = req.body;
 
     if (!userId) {
-        return res.status(401).json({ message: 'Erro na validação do usuário' })
+        res.status(401).json({ message: 'Erro na validação do usuário' });
+        return
     };
 
     if (!name || typeof name !== 'string') {
-        return res.status(400).json({ message: 'Nome da categoria é obrigatório' })
+        res.status(400).json({ message: 'Nome da categoria é obrigatório' });
+        return
     };
 
     try {
@@ -47,27 +49,27 @@ export const createMenuCategory = async (req: Request, res: Response) => {
         const newCategory = await createCategoryMenuService(userId, name);
         res.status(201).json(newCategory);
 
-    } catch (error) {
-        console.error('Erro ao criar nova categoria:', error);
-        res.status(500).json({
-            success: false,
-            message: error instanceof Error ? error.message : "Erro desconhecido"
-        });
+    } catch (error: any) {
+
+        handleControllerError(res, error);
+
     };
 };
 
-export const renameMenuCategory = async (req: Request, res: Response) => {
+export const renameMenuCategory = async (req: Request, res: Response): Promise<void> => {
 
     const userId = Number(req.user?.userId);
     const categoryId = Number(req.params.id);
     const { newName } = req.body;
 
     if (!userId) {
-        return res.status(401).json({ message: 'Erro na validação do usuário' });
+        res.status(401).json({ message: 'Erro na validação do usuário' });
+        return
     };
 
     if (!newName || typeof newName !== 'string') {
-        return res.status(400).json({ message: 'Nome da categoria é obrigatório' });
+        res.status(400).json({ message: 'Nome da categoria é obrigatório' });
+        return
     };
 
     try {
@@ -75,22 +77,21 @@ export const renameMenuCategory = async (req: Request, res: Response) => {
         const updatedCategory = await menuCategoryRenameService(userId, categoryId, newName)
         res.status(200).json(updatedCategory)
 
-    } catch (error) {
-        console.error('Erro ao renomear categoria:', error);
-        res.status(500).json({
-            success: false,
-            message: error instanceof Error ? error.message : "Erro desconhecido"
-        });
+    } catch (error: any) {
+
+        handleControllerError(res, error);
+
     };
 };
 
-export const toggleMenuCategoryStatus = async (req: Request, res: Response) => {
+export const toggleMenuCategoryStatus = async (req: Request, res: Response): Promise<void> => {
 
     const userId = Number(req.user?.userId);
     const categoryId = Number(req.params.id);
 
     if (!userId) {
-        return res.status(401).json({ message: 'Erro na validação do usuário' });
+        res.status(401).json({ message: 'Erro na validação do usuário' });
+        return
     };
 
     try {
@@ -101,34 +102,32 @@ export const toggleMenuCategoryStatus = async (req: Request, res: Response) => {
             isActive: updatedStatus.isActive
         });
 
-    } catch (error) {
-        console.error('Erro ao atualizar status da categoria:', error);
-        res.status(500).json({
-            success: false,
-            message: error instanceof Error ? error.message : "Erro desconhecido"
-        });
+    } catch (error: any) {
+
+        handleControllerError(res, error);
+
     };
 };
 
-export const deleteMenuCategory = async (req: Request, res: Response) => {
+export const deleteMenuCategory = async (req: Request, res: Response): Promise<void> => {
 
     const userId = Number(req.user?.userId);
     const categoryId = Number(req.params.id);
 
     if (!userId) {
-        return res.status(401).json({ message: 'Erro na validação do usuário' });
+        res.status(401).json({ message: 'Erro na validação do usuário' });
+        return
     };
 
     try {
 
         await serviceDeleteMenuCategory(userId, categoryId);
-        return res.status(200).json({ message: 'Categoria deletada com sucesso' })
+        res.status(200).json({ message: 'Categoria deletada com sucesso' });
+        return
 
-    } catch (error) {
-        console.error('Erro ao deletar categoria:', error);
-        res.status(500).json({
-            success: false,
-            message: error instanceof Error ? error.message : "Erro desconhecido"
-        });
+    } catch (error: any) {
+
+        handleControllerError(res, error);
+
     };
 };

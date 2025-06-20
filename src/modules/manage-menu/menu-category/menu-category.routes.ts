@@ -10,24 +10,14 @@ import {
 
 const router = Router();
 
-router.get('/categories', authenticateToken, (req, res, next) => {
-    getMenuCategories(req, res).catch(next);
-});
+router.get('/categories', authenticateToken, getMenuCategories);
 
-router.post('/categories', authenticateToken, (req, res, next) => {
-    createMenuCategory(req, res).catch(next);
-});
+router.post('/categories', authenticateToken, createMenuCategory);
 
-router.put('/categories/:id', authenticateToken, (req, res, next) => {
-    renameMenuCategory(req, res).catch(next);
-});
+router.put('/categories/:id', authenticateToken, renameMenuCategory);
 
-router.patch('/categories/:id/toggle-status', authenticateToken, (req, res, next) => {
-    toggleMenuCategoryStatus(req, res).catch(next);
-});
+router.patch('/categories/:id/toggle-status', authenticateToken, toggleMenuCategoryStatus);
 
-router.delete('/categories/:id', authenticateToken, (req, res, next) => {
-    deleteMenuCategory(req, res).catch(next);
-});
+router.delete('/categories/:id', authenticateToken, deleteMenuCategory);
 
 export default router;

@@ -21,6 +21,7 @@ export const requestPasswordReset = async (req: Request, res: Response): Promise
         });
 
         const { token } = await generateResetTokenService(email);
+        
         await passwordResetEmailService(email, token, restaurant?.restaurantName);
 
         res.status(200).json({ message: 'Um link de redefinição de senha foi enviado para seu email' });

@@ -10,4 +10,4 @@ export function generateTokens(payload: object) {
   const refreshToken = jwt.sign(payload, REFRESH_SECRET, { expiresIn: '30d' });
 
   return { accessToken, refreshToken };
-}
+};

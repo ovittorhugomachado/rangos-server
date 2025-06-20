@@ -7,7 +7,6 @@ import { stripNonDigits } from '../../utils/stripFormating';
 import { generateTokens } from './generate-tokens';
 import { ConflictError, UnauthorizedError, ValidationError } from '../../utils/errors';
 
-dotenv.config();
 const JWT_SECRET = process.env.JWT_SECRET || 'secreto';
 const REFRESH_SECRET = process.env.REFRESH_SECRET || 'refresh_secreto';
 
@@ -128,7 +127,7 @@ export const refreshTokenService = async (refreshToken: string) => {
 
     if (!user || user.refreshToken !== refreshToken) {
         throw new UnauthorizedError('Registro não encontrado através do token fornecido');
-    }
+    };
 
     const newAccessToken = jwt.sign(
         {
