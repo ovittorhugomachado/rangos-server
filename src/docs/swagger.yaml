@@ -1,0 +1,81 @@
+openapi: 3.0.0
+info:
+  title: Rangos API
+  version: 1.0.0
+  description: API REST para gestão de pedidos e cardápios de restaurantes.
+
+servers:
+  - url: http://localhost:3000
+    description: Local development
+
+tags:
+  - name: Auth
+  - name: User
+  - name: Stores
+  - name: Password Reset
+  - name: Uploads
+  - name: Schedules
+  - name: Menu Categories
+  - name: Menu Items
+  - name: Orders
+  - name: Manage Orders
+
+
+paths:
+
+  /signup:
+    post:
+      tags:
+        - Auth
+      summary: Criação da conta
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                restaurantName:
+                  type: string
+                cnpj:
+                  type: string
+                ownersName:
+                  type: string
+                cpf:
+                  type: string
+                phoneNumber: 
+                  type: string
+                email:
+                  type: string
+                password:
+                  type: string
+              required: [email, password, restaurantName, ownersName, cpf, phoneNumber]
+      responses:
+        '201':
+          description: Campos obrigatórios
+        '409':
+          description: Email já cadastrado
+        '422':
+          description: Erro de validação de campos
+
+  /login:
+    post:
+      tags:
+        - Auth
+
+  /refresh-token:
+    post:
+      tags:
+        - Auth
+
+  /logout:
+    post:
+      tags:
+        - Auth
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

@@ -28,10 +28,10 @@ export const signUpService = async (data: AccountData) => {
     const rawCnpj = cnpj ? stripNonDigits(cnpj) : null;
     const rawPhoneNumber = stripNonDigits(phoneNumber);
 
-    if (password.length < 8) throw new ValidationError('Senha fraca');
     if (!email.includes('@')) throw new ValidationError('Email inválido');
     if (rawCpf.length !== 11) throw new ValidationError('CPF inválido');
     if (cnpj && rawCnpj && rawCnpj.length !== 14) throw new ValidationError('CNPJ inválido');
+    if (password.length < 8) throw new ValidationError('Senha fraca');
     if (password.length > 72) throw new ValidationError('Senha muito longa');
     if (!/[A-Z]/.test(password)) throw new ValidationError('Senha sem letra maiúscula');
     if (!/[0-9]/.test(password)) throw new ValidationError('Senha sem número');

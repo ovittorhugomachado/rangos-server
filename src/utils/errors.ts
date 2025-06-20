@@ -27,15 +27,15 @@ export class NotFoundError extends AppError {
     }
 };
 
-export class ValidationError extends AppError {
-    constructor(message: string) {
-        super(message, 422);
-    }
-};
-
 export class ConflictError extends AppError {
     constructor(message: string) {
         super(message, 409);
+    }
+};
+
+export class ValidationError extends AppError {
+    constructor(message: string) {
+        super(message, 422);
     }
 };
 
