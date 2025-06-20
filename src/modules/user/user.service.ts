@@ -1,3 +1,4 @@
+import { Prisma } from "@prisma/client";
 import { prisma } from "../../lib/prisma";
 import { AppError, NotFoundError } from "../../utils/errors";
 
@@ -8,15 +9,6 @@ interface UserProfileData {
     cnpj: string | null;
     ownersName: string | null;
     cpf: string | null;
-};
-
-interface UpdateUserData {
-    restaurantName?: string;
-    phoneNumber?: string;
-    email?: string;
-    cnpj?: string;
-    ownersName?: string;
-    cpf?: string;
 };
 
 export const serviceGetUserData = async (userId: number): Promise<UserProfileData> => {
@@ -40,7 +32,7 @@ export const serviceGetUserData = async (userId: number): Promise<UserProfileDat
     return user;
 };
 
-export const userDataUpdateService = async (userId: number, updateData: UpdateUserData): Promise<UserProfileData> => {
+export const userDataUpdateService = async (userId: number, updateData: UserProfileData): Promise<UserProfileData> => {
 
     if (!userId || isNaN(userId)) {
         throw new NotFoundError('Usuário não encontrado');
@@ -50,9 +42,17 @@ export const userDataUpdateService = async (userId: number, updateData: UpdateUs
         throw new AppError('Dados de atualização vazios');
     };
 
+    const cleanData: Partial<Prisma.UserUpdateInput> = {};
+    for (const key in updateData) {
+        const value = updateData[key as keyof UserProfileData];
+        if (value !== null && value !== undefined) {
+            cleanData[key as keyof Prisma.UserUpdateInput] = value;
+        }
+    };
+
     return await prisma.user.update({
         where: { id: userId },
-        data: updateData,
+        data: cleanData,
         select: {
             restaurantName: true,
             phoneNumber: true,
@@ -75,6 +75,6 @@ export const serviceDeleteUser = async (userId: number) => {
     })
 
     if (!user) {
-        throw new Error('USER_NOT_FOUND');
+        throw new NotFoundError('Usuário não encontrado');
     }
 };

@@ -1,21 +1,8 @@
 import { Request, Response } from 'express';
 import { serviceDeleteUser, serviceGetUserData, userDataUpdateService } from './user.service';
-import { Prisma } from '@prisma/client';
 import { AppError, handleControllerError } from '../../utils/errors';
 
-interface UserRequest extends Request {
-    user?: { userId: number };
-    body: {
-        restaurantName?: string;
-        phoneNumber?: string;
-        email?: string;
-        cnpj?: string;
-        ownersName?: string;
-        cpf?: string;
-    }
-};
-
-export const getUserData = async (req: UserRequest, res: Response): Promise<void> => {
+export const getUserData = async (req: Request, res: Response): Promise<void> => {
 
     const userId = Number(req.user?.userId);
 
@@ -33,7 +20,7 @@ export const getUserData = async (req: UserRequest, res: Response): Promise<void
     }
 };
 
-export const updateUserData = async (req: UserRequest, res: Response): Promise<void> => {
+export const updateUserData = async (req: Request, res: Response): Promise<void> => {
     
     try {
 
@@ -60,7 +47,7 @@ export const updateUserData = async (req: UserRequest, res: Response): Promise<v
     }
 };
 
-export const deleteUser = async (req: UserRequest, res: Response): Promise<void> => {
+export const deleteUser = async (req: Request, res: Response): Promise<void> => {
 
     const userId = Number(req.user?.userId);
 
