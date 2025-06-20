@@ -9,7 +9,7 @@ export const signUp = async (req: Request, res: Response): Promise<void> => {
 
         const validationError = signUpFieldsErrorChecker(req.body);
         if (validationError) {
-            res.status(400).json({ error: validationError });
+            res.status(422).json({ error: validationError });
             return
         }
 
