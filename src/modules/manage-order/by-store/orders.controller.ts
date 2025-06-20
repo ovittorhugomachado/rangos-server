@@ -5,37 +5,36 @@ import { listOrdersService, orderAcceptanceService, orderCancellationService, or
 
 export const listOrders = async (req: Request, res: Response): Promise<void> => {
     try {
-
         const { startDate, endDate, status, limit = '300', offset = '0' } = req.query;
-
         const userId = Number(req.user?.userId);
+
         if (!userId) {
             res.status(401).json({ message: 'Erro na validação do usuário' });
-            return
+            return;
         };
 
-        const parsedStatus = (status && Object.values(OrderStatus).includes(status as OrderStatus))
-            ? status as OrderStatus
-            : undefined;
-
+        const parseDate = (dateStr: string | undefined): Date | undefined => {
+            if (!dateStr) return undefined;
+            const date = new Date(dateStr);
+            return isNaN(date.getTime()) ? undefined : date;
+        };
 
         const parsedParams = {
-            startDate: startDate ? new Date(startDate as string) : undefined,
-            endDate: endDate ? new Date(endDate as string) : undefined,
-            status: parsedStatus,
+            startDate: parseDate(startDate as string),
+            endDate: parseDate(endDate as string),
+            status: (status && Object.values(OrderStatus).includes(status as OrderStatus))
+                ? status as OrderStatus
+                : undefined,
             limit: parseInt(limit as string),
             offset: parseInt(offset as string),
             storeId: userId
         };
 
         const { data, total } = await listOrdersService(parsedParams);
-
-        res.status(200).json({ success: 'true', data, total });
+        res.status(200).json({ success: true, data, total });
 
     } catch (error: any) {
-
         handleControllerError(res, error);
-
     }
 };
 

@@ -19,32 +19,49 @@ export const listOrdersService = async ({
     offset,
     storeId,
 }: ListOrdersParams) => {
-    const defaultStartDate = new Date();
-    defaultStartDate.setDate(defaultStartDate.getDate() - 7);
+
+    let createdAtFilter: { gte?: Date; lte?: Date } | undefined;
+
+    const adjustDateToEndOfDayUTC = (date: Date): Date => {
+        const adjusted = new Date(date);
+        adjusted.setUTCHours(23, 59, 59, 999);
+        return adjusted;
+    };
+
+    if (startDate && !endDate) {
+        createdAtFilter = {
+            gte: startDate,
+            lte: adjustDateToEndOfDayUTC(new Date()) 
+        };
+    } else if (!startDate && endDate) {
+        createdAtFilter = {
+            lte: adjustDateToEndOfDayUTC(endDate)
+        };
+    } else if (startDate && endDate) {
+        createdAtFilter = {
+            gte: startDate,
+            lte: adjustDateToEndOfDayUTC(endDate)
+        };
+    }
 
     const where = {
-        createdAt: {
-            gte: startDate || defaultStartDate,
-            lte: endDate || new Date(),
-        },
-        ...(status && { status }),
-        ...(storeId && { storeId }),
+        ...(createdAtFilter && { createdAt: createdAtFilter }),
+        ...(status && { status: { equals: status } }),
+        ...(storeId && { storeId: { equals: storeId } }), 
     };
+
     const [orders, total] = await Promise.all([
         prisma.order.findMany({
             where,
             orderBy: { createdAt: 'desc' },
             skip: offset,
             take: limit,
-            include: {
-                orderItems: true,
-            },
+            include: { orderItems: true },
         }),
         prisma.order.count({ where }),
     ]);
 
     return { data: orders, total };
-
 };
 
 export const orderDetailingService = async (userId: number, orderId: number) => {
@@ -52,9 +69,9 @@ export const orderDetailingService = async (userId: number, orderId: number) => 
     const store = await prisma.store.findUnique({ where: { userId } });
     if (!store) throw new NotFoundError('Loja não encontrada');
 
-    const order = await prisma.order.findUnique({ 
+    const order = await prisma.order.findUnique({
         where: { id: orderId },
-        include: { orderItems: true } 
+        include: { orderItems: true }
     });
     if (!order) throw new NotFoundError('Pedido não encontrado');
 

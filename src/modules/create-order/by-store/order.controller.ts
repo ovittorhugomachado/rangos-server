@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { DeliveryType, PaymentMethod } from "@prisma/client";
 import { createOrderService } from "./order.service";
-import { NotFoundError, ValidationError } from "../../../utils/errors";
+import { handleControllerError,  ValidationError } from "../../../utils/errors";
 
 export const createOrder = async (req: Request, res: Response): Promise<void> => {
     try {
@@ -61,27 +61,9 @@ export const createOrder = async (req: Request, res: Response): Promise<void> =>
 
         res.status(201).json({ message: 'Pedido criado com sucesso', data: order });
 
-    } catch (error) {
+    } catch (error: any) {
 
-        console.error('Erro ao criar pedido:', error);
+        handleControllerError(res, error);
 
-        if (error instanceof ValidationError) {
-            res.status(400).json({
-                success: false,
-                message: error.message
-            });
-        }
-        else if (error instanceof NotFoundError) {
-            res.status(404).json({
-                success: false,
-                message: error.message
-            });
-        }
-        else {
-            res.status(500).json({
-                success: false,
-                message: "Erro interno no servidor"
-            });
-        }
     }
 };
