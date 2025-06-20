@@ -1,5 +1,5 @@
 import { prisma } from "../../../lib/prisma";
-import { NotFoundError, ValidationError } from "../../../utils/errors";
+import { ForbiddenError, NotFoundError, ValidationError } from "../../../utils/errors";
 import { OrderStatus } from "@prisma/client";
 
 interface ListOrdersParams {
@@ -59,7 +59,7 @@ export const orderDetailingService = async (userId: number, orderId: number) => 
     if (!order) throw new NotFoundError('Pedido não encontrado');
 
     if (order.storeId !== store.id) {
-        throw new NotFoundError("Pedido não pertence a esta loja");
+        throw new ForbiddenError("Pedido não pertence a esta loja");
     }
 
     return order
@@ -74,7 +74,7 @@ export const orderAcceptanceService = async (userId: number, orderId: number) =>
     if (!order) throw new NotFoundError('Pedido não encontrado');
 
     if (order.storeId !== store.id) {
-        throw new NotFoundError("Pedido não pertence a esta loja");
+        throw new ForbiddenError("Pedido não pertence a esta loja");
     }
 
     await prisma.order.update({
@@ -94,7 +94,7 @@ export const orderCancellationService = async (userId: number, orderId: number) 
     if (!order) throw new NotFoundError('Pedido não encontrado');
 
     if (order.storeId !== store.id) {
-        throw new NotFoundError("Pedido não pertence a esta loja");
+        throw new ForbiddenError("Pedido não pertence a esta loja");
     }
 
     await prisma.order.update({
@@ -114,7 +114,7 @@ export const orderReadyService = async (userId: number, orderId: number) => {
     if (!order) throw new NotFoundError('Pedido não encontrado');
 
     if (order.storeId !== store.id) {
-        throw new NotFoundError("Pedido não pertence a esta loja");
+        throw new ForbiddenError("Pedido não pertence a esta loja");
     };
 
     if (order.deliveryType !== 'delivery' && order.deliveryType !== 'pickup') {
@@ -140,7 +140,7 @@ export const orderDeliveredService = async (userId: number, orderId: number) => 
     if (!order) throw new NotFoundError('Pedido não encontrado');
 
     if (order.storeId !== store.id) {
-        throw new NotFoundError("Pedido não pertence a esta loja");
+        throw new ForbiddenError("Pedido não pertence a esta loja");
     };
 
     await prisma.order.update({

@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { NotFoundError } from "../../../utils/errors";
+import { handleControllerError } from "../../../utils/errors";
 import { OrderStatus } from "@prisma/client";
 import { listOrdersService, orderAcceptanceService, orderCancellationService, orderDeliveredService, orderDetailingService, orderReadyService } from "./orders.service";
 
@@ -32,22 +32,10 @@ export const listOrders = async (req: Request, res: Response): Promise<void> => 
 
         res.status(200).json({ success: 'true', data, total });
 
-    } catch (error) {
+    } catch (error: any) {
 
-        console.error('Erro ao listar pedidos:', error);
+        handleControllerError(res, error);
 
-        if (error instanceof NotFoundError) {
-            res.status(404).json({
-                success: false,
-                message: error.message
-            });
-        }
-        else {
-            res.status(500).json({
-                success: false,
-                message: "Erro interno no servidor"
-            });
-        }
     }
 };
 
@@ -71,22 +59,10 @@ export const listDetailsOrder = async (req: Request, res: Response): Promise<voi
 
         res.status(200).json({ success: 'true', order })
 
-    } catch (error) {
+    } catch (error: any) {
 
-        console.error('Erro ao detalhar pedido:', error);
+        handleControllerError(res, error);
 
-        if (error instanceof NotFoundError) {
-            res.status(404).json({
-                success: false,
-                message: error.message
-            });
-        }
-        else {
-            res.status(500).json({
-                success: false,
-                message: "Erro interno no servidor"
-            });
-        }
     }
 };
 
@@ -109,22 +85,10 @@ export const acceptOrder = async (req: Request, res: Response): Promise<void> =>
 
         res.status(200).json({ message: 'Pedido aceito com sucesso' });
 
-    } catch (error) {
+    } catch (error: any) {
 
-        console.error('Erro ao aceitar pedido:', error);
+        handleControllerError(res, error);
 
-        if (error instanceof NotFoundError) {
-            res.status(404).json({
-                success: false,
-                message: error.message
-            });
-        }
-        else {
-            res.status(500).json({
-                success: false,
-                message: "Erro interno no servidor"
-            });
-        }
     }
 };
 
@@ -147,22 +111,10 @@ export const cancelOrder = async (req: Request, res: Response) => {
 
         res.status(200).json({ message: 'Pedido cancelado com sucesso' });
 
-    } catch (error) {
+    } catch (error: any) {
 
-        console.error('Erro ao cancelar pedido:', error);
+        handleControllerError(res, error);
 
-        if (error instanceof NotFoundError) {
-            res.status(404).json({
-                success: false,
-                message: error.message
-            });
-        }
-        else {
-            res.status(500).json({
-                success: false,
-                message: "Erro interno no servidor"
-            });
-        }
     }
 };
 
@@ -185,22 +137,10 @@ export const orderReady = async (req: Request, res: Response) => {
 
         res.status(200).json({ message: 'Pedido atualizado com sucesso' });
 
-    } catch (error) {
+    } catch (error: any) {
 
-        console.error('Erro ao atualizar status do pedido:', error);
+        handleControllerError(res, error);
 
-        if (error instanceof NotFoundError) {
-            res.status(404).json({
-                success: false,
-                message: error.message
-            });
-        }
-        else {
-            res.status(500).json({
-                success: false,
-                message: "Erro interno no servidor"
-            });
-        }
     }
 };
 
@@ -223,21 +163,9 @@ export const orderDelivered = async (req: Request, res: Response) => {
 
         res.status(200).json({ message: 'Pedido atualizado com sucesso' });
 
-    } catch (error) {
+    } catch (error: any) {
 
-        console.error('Erro ao atualizar status do pedido:', error);
+        handleControllerError(res, error);
 
-        if (error instanceof NotFoundError) {
-            res.status(404).json({
-                success: false,
-                message: error.message
-            });
-        }
-        else {
-            res.status(500).json({
-                success: false,
-                message: "Erro interno no servidor"
-            });
-        }
     }
 };
