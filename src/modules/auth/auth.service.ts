@@ -58,7 +58,8 @@ export const signUpService = async (data: AccountData) => {
         const store = await prisma.store.create({
             data: {
                 userId: user.id,
-
+                restaurantName,
+                phoneNumber,
                 style: {
                     create: {}
                 }
