@@ -3,7 +3,6 @@ import { handleControllerError } from '../../utils/errors';
 import { prisma } from '../../lib/prisma';
 import {
     generateResetTokenService,
-    validateTokenService,
     resetPasswordService,
     passwordResetEmailService
 } from './password.service';
@@ -44,24 +43,6 @@ export const resetPassword = async (req: Request, res: Response): Promise<void> 
         await resetPasswordService(token, newPassword);
 
         res.status(200).json({ message: 'Senha redefinida com sucesso' });
-        return
-
-    } catch (error: any) {
-
-        handleControllerError(res, error);
-
-    }
-};
-
-export const validateToken = async (req: Request, res: Response): Promise<void> => {
-
-    const { token } = req.params;
-
-    try {
-
-        await validateTokenService(token);
-
-        res.status(200).json({ message: 'Token válido' });
         return
 
     } catch (error: any) {

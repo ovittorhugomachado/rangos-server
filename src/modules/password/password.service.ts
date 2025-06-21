@@ -2,7 +2,7 @@ import bcrypt from 'bcrypt';
 import { prisma } from '../../lib/prisma';
 import { randomUUID } from 'crypto';
 import { transporter } from '../../utils/email';
-import { NotFoundError } from '../../utils/errors';
+import { NotFoundError, ValidationError } from '../../utils/errors';
 
 export const generateResetTokenService = async (email: string) => {
     const user = await prisma.user.findUnique({ where: { email } });
@@ -14,10 +14,10 @@ export const generateResetTokenService = async (email: string) => {
     const expiresAt = new Date(Date.now() + 3600000); // 1h
 
     await prisma.passwordResetToken.create({
-        data: { 
-            token, 
-            userId: user.id, 
-            expiresAt, 
+        data: {
+            token,
+            userId: user.id,
+            expiresAt,
             createdAt: new Date(Date.now())
         }
     });
@@ -26,7 +26,7 @@ export const generateResetTokenService = async (email: string) => {
 };
 
 export const passwordResetEmailService = async (email: string, token: string, restaurantName?: string) => {
-    
+
     const resetLink = `http://localhost:5173/create-new-password/${token}`;
 
     await transporter.sendMail({
@@ -53,6 +53,11 @@ export const resetPasswordService = async (token: string, newPassword: string) =
         include: { user: true }
     });
 
+    if (newPassword.length < 8) throw new ValidationError('Senha fraca');
+    if (newPassword.length > 72) throw new ValidationError('Senha muito longa');
+    if (!/[A-Z]/.test(newPassword)) throw new ValidationError('Senha sem letra maiúscula');
+    if (!/[0-9]/.test(newPassword)) throw new ValidationError('Senha sem número');
+
     if (!tokenRecord || tokenRecord.expiresAt < new Date()) throw new NotFoundError('Token inválido ou expirado');
 
     const hashedPassword = await bcrypt.hash(newPassword, 10);
@@ -65,9 +70,4 @@ export const resetPasswordService = async (token: string, newPassword: string) =
     await prisma.passwordResetToken.delete({ where: { token } });
 };
 
-export const validateTokenService = async (token: string) => {
-
-    const tokenData = await prisma.passwordResetToken.findFirst({ where: { token } });
-    if (!tokenData || tokenData.expiresAt < new Date()) throw new NotFoundError('INVALID_OR_EXPIRED_TOKEN');
-};
 
