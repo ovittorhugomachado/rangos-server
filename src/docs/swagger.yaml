@@ -3,6 +3,10 @@ info:
   title: Rangos API
   version: 1.0.0
   description: API REST para gestão de pedidos e cardápios de restaurantes.
+  contact:
+    email: ovitorhugoalvesmachado@gmail.com.br
+  license:
+    name: Vitor Hugo Alves Machado
 
 servers:
   - url: http://localhost:3000
@@ -10,16 +14,6 @@ servers:
 
 tags:
   - name: Auth
-  - name: User
-  - name: Stores
-  - name: Password Reset
-  - name: Uploads
-  - name: Schedules
-  - name: Menu Categories
-  - name: Menu Items
-  - name: Orders
-  - name: Manage Orders
-
 
 paths:
 
@@ -27,7 +21,7 @@ paths:
     post:
       tags:
         - Auth
-      summary: Criação da conta
+      summary: Criar conta
       requestBody:
         required: true
         content:
@@ -37,41 +31,118 @@ paths:
               properties:
                 restaurantName:
                   type: string
+                  example: "Meu Restaurante"
                 cnpj:
                   type: string
+                  example: "12.345.678/0001-99"
+                  description: CNPJ no formato XX.XXX.XXX/XXXX-XX
                 ownersName:
                   type: string
+                  example: "Fulano da Silva"
                 cpf:
                   type: string
+                  example: "123.456.789-09"
+                  description: CPF no formato XXX.XXX.XXX-XX
                 phoneNumber: 
                   type: string
+                  example: "(11) 98765-4321"
+                  description: Telefone com DDD
                 email:
                   type: string
+                  format: email
+                  example: "contato@meurestaurante.com.br"
                 password:
                   type: string
+                  description: >
+                    A senha deve ter entre 8 e 72 caracteres, conter pelo menos uma letra maiúscula e um número.
               required: [email, password, restaurantName, ownersName, cpf, phoneNumber]
       responses:
         '201':
-          description: Campos obrigatórios
+          description: Usuário criado com sucesso
         '409':
           description: Email já cadastrado
         '422':
           description: Erro de validação de campos
+        '500':
+          description: Erro interno no servidor
 
   /login:
     post:
       tags:
         - Auth
+      summary: Entrar na conta
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  format: email
+                password:
+                  type: string
+              required: [email, password]
+      responses:
+        '200':
+          description: Login realizado com sucesso
+          headers:
+            Set-Cookie:
+              description: Cookies de autenticação definidos (token e refreshToken)
+              schema:
+                type: string
+              example: token=abc123; Path=/; HttpOnly; Max-Age=900
+        '400':
+          description: Erro de validação de campos
+        '401':
+          description: Credenciais inválidas
+        '500':
+          description: Erro interno no servidor
 
   /refresh-token:
     post:
       tags:
         - Auth
+      summary: Atualizar token de acesso
+      description: >
+        Essa rota exige o cookie `refreshToken` presente na requisição. Ela retorna um novo access token no cookie `token`.
+      parameters:
+        - in: cookie
+          name: refreshToken
+          schema:
+            type: string
+          required: true
+          description: Token de atualização armazenado em cookie.
+      responses:
+        '200':
+          description: Token renovado com sucesso
+          headers:
+            Set-Cookie:
+              description: Novo access token enviado via cookie `token`
+              schema:
+                type: string
+              example: token=abc123; Path=/; HttpOnly; Max-Age=900
+        '401':
+          description: Token de atualização ausente ou inválido
+        '500':
+          description: Erro interno no servidor
 
   /logout:
     post:
       tags:
         - Auth
+      summary: Sair da conta
+      security:
+        - bearerAuth: []
+      description: Requer um access token válido no cookie ou header para remover sessão.
+      responses:
+        '200':
+          description: Logout efetuado com sucesso
+        '401':
+          description: Usuário não autenticado
+        '500':
+          description: Erro interno no servidor
 
 components:
   securitySchemes:
@@ -79,3 +150,8 @@ components:
       type: http
       scheme: bearer
       bearerFormat: JWT
+      description: >
+        Autenticação via token JWT obtido no login.
+        Pode ser enviado como:
+        - Header: Authorization: Bearer <token>
+        - Cookie: token=<token>
