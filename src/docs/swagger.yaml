@@ -14,6 +14,7 @@ servers:
 
 tags:
   - name: Auth
+  - name: Password
 
 paths:
 
@@ -45,7 +46,7 @@ paths:
                   description: CPF no formato XXX.XXX.XXX-XX
                 phoneNumber: 
                   type: string
-                  example: "(11) 98765-4321"
+                  example: "(51) 98765-4321"
                   description: Telefone com DDD
                 email:
                   type: string
@@ -53,6 +54,7 @@ paths:
                   example: "contato@meurestaurante.com.br"
                 password:
                   type: string
+                  example: senhaForte123
                   description: >
                     A senha deve ter entre 8 e 72 caracteres, conter pelo menos uma letra maiúscula e um número.
               required: [email, password, restaurantName, ownersName, cpf, phoneNumber]
@@ -81,8 +83,10 @@ paths:
                 email:
                   type: string
                   format: email
+                  example: "contato@meurestaurante.com.br"
                 password:
                   type: string
+                  example: senhaForte123
               required: [email, password]
       responses:
         '200':
@@ -117,12 +121,6 @@ paths:
       responses:
         '200':
           description: Token renovado com sucesso
-          headers:
-            Set-Cookie:
-              description: Novo access token enviado via cookie `token`
-              schema:
-                type: string
-              example: token=abc123; Path=/; HttpOnly; Max-Age=900
         '401':
           description: Token de atualização ausente ou inválido
         '500':
@@ -143,6 +141,69 @@ paths:
           description: Usuário não autenticado
         '500':
           description: Erro interno no servidor
+
+  /recover-password: 
+    post: 
+      tags:
+        - Password
+      summary: Enviar link de alteração de senha
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  format: email
+      responses:
+        '200':
+          description: Link enviado com sucesso
+        '404':
+          description: Usuário não encontrado
+          
+  /create-new-password/{token}:
+    patch:
+      tags:
+        - Password
+      summary: Criar nova senha
+      description: >
+        Cria uma nova senha usando um token de redefinição válido.
+        O token é geralmente enviado por email após solicitação de redefinição.
+      parameters:
+        - name: token
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Token de redefinição de senha (JWT ou token único)
+      requestBody:
+        required: true
+        content: 
+          application/json:
+            schema:
+              type: object
+              required:
+                - newPassword
+              properties:
+                newPassword:
+                  type: string
+                  format: password
+                  minLength: 8
+                  maxLength: 72
+                  example: novaSenhaSegura123
+                  description: >
+                    A senha deve ter entre 8 e 72 caracteres, conter pelo menos uma letra maiúscula e um número.           
+      responses:
+        '200':
+          description: Senha redefinida com sucesso
+        '404':
+          description: Token inválido ou expirado
+        '422':
+          description: Senha fraca
+        '500':
+          description: Erro interno no servidor  
 
 components:
   securitySchemes:
