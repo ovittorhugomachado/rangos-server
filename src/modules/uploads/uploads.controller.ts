@@ -19,7 +19,7 @@ export const updateProfileLogo = async (req: Request, res: Response): Promise<vo
 
         await profileLogoUpdateService(userId, (req.file as any).location);
 
-        res.status(200).json({ message: 'Logo atualizado com sucesso' });
+        res.status(200).json({ message: 'Logo atualizada com sucesso' });
 
     } catch (error: any) {
 
@@ -41,7 +41,7 @@ export const updateProfileBanner = async (req: Request, res: Response): Promise<
 
         await profileBannerUpdateService(userId, (req.file as any).location);
 
-        res.status(200).json({ message: 'Banner atualizada com sucesso' });
+        res.status(200).json({ message: 'Banner atualizado com sucesso' });
 
     } catch (error: any) {
 
@@ -64,7 +64,7 @@ export const updateMenuItemImage = async (req: Request, res: Response): Promise<
         const itemId = Number(req.params.menuItemId);
 
         if (isNaN(userId) || isNaN(categoryId) || isNaN(itemId)) {
-            res.status(400).json({
+            res.status(404).json({
                 error: 'Parâmetros inválidos',
                 details: {
                     userId: userId,

@@ -15,6 +15,7 @@ servers:
 tags:
   - name: Auth
   - name: Password
+  - name: Uploads
 
 paths:
 
@@ -204,7 +205,107 @@ paths:
           description: Senha fraca
         '500':
           description: Erro interno no servidor  
-
+          
+  /logo:
+    patch:
+      tags:
+        - Uploads
+      summary: Atualiza a logo da loja
+      security:
+        - bearerAuth: []
+      consumes:
+        - multipart/form-data
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                logo:
+                  type: string
+                  format: binary
+      responses:
+        '200':
+          description: Logo atualizada com sucesso
+        '400':
+          description: Erro no processamento do arquivo
+        '404':
+          description: Usuário não encontrado
+        '500':
+          description: Erro interno no servidor
+          
+  /banner:
+    patch:
+      tags:
+        - Uploads
+      summary: Atualiza a imagem do banner da loja
+      security:
+        - bearerAuth: []
+      consumes:
+        - multipart/form-data
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                banner:
+                  type: string
+                  format: binary
+      responses:
+        '200':
+          description: Banner atualizado com sucesso
+        '400':
+          description: Erro no processamento do arquivo
+        '404':
+          description: Usuário não encontrado
+        '500':
+          description: Erro interno no servidor
+        
+  /{categoryId}/{menuItemId}:
+    patch:
+      tags:
+        - Uploads
+      summary: Atualiza a imagem de um produto selecionado pelos parâmetros
+      security:
+        - bearerAuth: []
+      consumes:
+        - multipart/form-data
+      parameters:
+        - in: path
+          name: categoryId
+          required: true
+          schema:
+            type: integer
+          description: ID da categoria do item
+        - in: path
+          name: menuItemId
+          required: true
+          schema:
+            type: integer
+          description: ID do item do menu
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                menu-item:
+                  type: string
+                  format: binary
+      responses:
+        '200':
+          description: Banner atualizado com sucesso
+        '400':
+          description: Erro no processamento do arquivo
+        '404':
+          description: Usuário não encontrado
+        '500':
+          description: Erro interno no servidor
+        
 components:
   securitySchemes:
     bearerAuth:
