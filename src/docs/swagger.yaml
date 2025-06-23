@@ -17,6 +17,7 @@ tags:
   - name: Password
   - name: Uploads
   - name: User
+  - name: Store
 
 paths:
 
@@ -378,6 +379,59 @@ paths:
         '500':
           description: Erro interno no servidor
           
+  /store:
+    get:
+      tags:
+        - Store
+      summary: Busca os dados da loja
+      security:
+        - bearerAuth: []
+      description: Requer um access token válido no cookie para retornar os dados.
+      responses:
+        '200':
+          description: Retorna um objeto com os dados da loja
+        '404':
+          description: loja não encontrada
+        '500':
+          description: Erro interno no servidor
+          
+    patch:
+      tags:
+        - Store
+      summary: Atualiza os dados da loja
+      security:
+        - bearerAuth: []
+      description: Requer um access token válido no cookie para atualizar os dados.
+      requestBody:
+        required: true
+        content: 
+          application/json:
+            schema:
+              type: object
+              properties:
+                restaurantName:
+                  type: string
+                  example: "Nome atualizado"
+                phoneNumber: 
+                  type: string
+                  example: "(51) 98765-4321"
+                address:
+                  type: string
+                  example: "Rua A"
+                delivery:
+                  type: boolean
+                pickup:
+                  type: boolean
+      responses:
+        '200':
+          description: Dados atualizados com sucesso
+        '400':
+          description: Dados inválidos
+        '404':
+          description: Usuário não encontrado
+        '500':
+          description: Erro interno no servidor
+
 components:
   securitySchemes:
     bearerAuth:
