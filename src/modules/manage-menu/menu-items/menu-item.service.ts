@@ -55,12 +55,12 @@ export const createMenuItemService = async (
 
 export const menuItemUpdateService = async (
     userId: number,
+    categoryId: number,
     itemId: number,
     updateData: {
         name?: string;
         description?: string;
         price?: number;
-        categoryId?: number;
     }
 ) => {
 
@@ -68,7 +68,7 @@ export const menuItemUpdateService = async (
         where: { userId },
         include: {
             MenuCategory: {
-                where: { id: updateData.categoryId },
+                where: { id: categoryId },
                 select: { id: true }
             }
         }
@@ -76,7 +76,7 @@ export const menuItemUpdateService = async (
 
     if (!store) throw new NotFoundError('Loja não encontrada');
 
-    if (updateData.categoryId && !store.MenuCategory.some(c => c.id === updateData.categoryId)) {
+    if (categoryId && !store.MenuCategory.some(c => c.id === categoryId)) {
         throw new ForbiddenError('Categoria não pertence à loja');
     };
 
@@ -101,7 +101,7 @@ export const menuItemUpdateService = async (
             name: updateData.name,
             description: updateData.description,
             price: updateData.price,
-            ...(updateData.categoryId && { categoryId: updateData.categoryId })
+            ...(categoryId && { categoryId: categoryId })
         }
     });
 };

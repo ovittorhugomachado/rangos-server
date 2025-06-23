@@ -5,7 +5,8 @@ import { handleControllerError } from "../../../utils/errors";
 export const createMenuItem = async (req: Request, res: Response): Promise<void> => {
 
     const userId = Number(req.user?.userId);
-    const { name, description, price, categoryId, optionGroups } = req.body;
+    const categoryId = Number(req.params.categoryId);
+    const { name, description, price, optionGroups } = req.body;
 
     if (!userId) {
         res.status(401).json({ message: 'Erro na validação do usuário' });
@@ -41,8 +42,9 @@ export const createMenuItem = async (req: Request, res: Response): Promise<void>
 export const updateMenuItem = async (req: Request, res: Response): Promise<void> => {
 
     const userId = Number(req.user?.userId);
-    const itemId = Number(req.params.id);
-    const { name, description, price, categoryId } = req.body;
+    const categoryId = Number(req.params.categoryId);
+    const itemId = Number(req.params.itemId);
+    const { name, description, price } = req.body;
 
     if (!userId) {
         res.status(401).json({ success: false, message: 'Usuário não autenticado' });
@@ -77,8 +79,9 @@ export const updateMenuItem = async (req: Request, res: Response): Promise<void>
     try {
         const updatedItem = await menuItemUpdateService(
             userId,
+            categoryId,
             itemId,
-            { name, description, price, categoryId }
+            { name, description, price }
         );
 
         if (!updatedItem) {
@@ -99,10 +102,16 @@ export const updateMenuItem = async (req: Request, res: Response): Promise<void>
 export const toggleMenuItemStatus = async (req: Request, res: Response): Promise<void> => {
 
     const userId = Number(req.user?.userId);
-    const itemId = Number(req.params.id);
+    const categoryId = Number(req.params.categoryId);
+    const itemId = Number(req.params.itemId);
 
     if (!userId) {
         res.status(401).json({ success: false, message: 'Usuário não autenticado' });
+        return
+    };
+
+    if (!categoryId || isNaN(categoryId)) {
+        res.status(400).json({ success: false, message: 'ID da categoria inválido' });
         return
     };
 
@@ -127,7 +136,7 @@ export const toggleMenuItemStatus = async (req: Request, res: Response): Promise
 export const deleteMenuItem = async (req: Request, res: Response): Promise<void> => {
 
     const userId = Number(req.user?.userId);
-    const itemId = Number(req.params.id);
+    const itemId = Number(req.params.itemId);
 
     if (!userId) {
         res.status(401).json({ success: false, message: 'Usuário não autenticado' });

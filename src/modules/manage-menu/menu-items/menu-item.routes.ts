@@ -4,12 +4,12 @@ import { createMenuItem, deleteMenuItem, toggleMenuItemStatus, updateMenuItem } 
 
 const router = Router();
 
-router.post('/menu-items', authenticateToken, createMenuItem);
+router.post('/menu-items/:categoryId', authenticateToken, createMenuItem);
 
-router.put('/menu-items/:id', authenticateToken, updateMenuItem);
+router.put('/menu-items/:categoryId/:itemId', authenticateToken, updateMenuItem);
 
-router.patch('/menu-items/:id/toggle-status', authenticateToken, toggleMenuItemStatus);
+router.patch('/menu-items/:categoryId/:itemId/toggle-status', authenticateToken, toggleMenuItemStatus);
 
-router.delete('/menu-items/:id', authenticateToken, deleteMenuItem);
+router.delete('/menu-items/:itemId', authenticateToken, deleteMenuItem);
 
 export default router
