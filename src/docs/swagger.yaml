@@ -19,6 +19,7 @@ tags:
   - name: User
   - name: Store
   - name: Schedules
+  - name: Categories
 
 paths:
 
@@ -504,25 +505,96 @@ paths:
                     example: "Horários atualizados com sucesso"
         '400':
           description: Erro de validação
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  error:
-                    type: string
-                    examples:
-                      invalidStructure: "Estrutura inválida no índice 0. Verifique os campos 'day' e 'timeRanges'."
-                      invalidTime: "Horário inválido no índice 1. Verifique os campos 'start' e 'end'."
-                      timeOrder: "Erro no índice 2: O horário de término (17:00) deve ser maior que o de início (18:00)."
-                      overlapping: "Horários sobrepostos no dia: TUESDAY"
         '401':
           description: Token inválido ou não fornecido
         '404':
           description: Loja não encontrada
         '500':
           description: Erro interno no servidor
-
+          
+  /categories:
+    get:
+      tags: 
+        - Categories
+      summary: Lista as categorias do menu
+      security:
+        - bearerAuth: []
+      description: Requer um access token válido no cookie para bsucar os dados.
+      responses:
+        '200':
+          description: Retorna as categorias
+        '401':
+          description: Erro na validação do usuário
+        '404':
+          description: Loja não encontrada
+        '500':
+          description: Erro interno no servidor
+      
+    post:
+      tags: 
+        - Categories
+      summary: Cria uma nova categoria no menu
+      security:
+        - bearerAuth: []
+      description: Requer um access token válido no cookie para bsucar os dados.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  example: "Bebidas"
+      responses:
+        '201':
+          description: Categoria criada
+        '400':
+          description: Nome da categoria não inserido
+        '401':
+          description: Erro na validação do usuário
+        '404':
+          description: Loja não encontrada
+        '500':
+          description: Erro interno no servidor
+          
+  /categories/{id}:
+    put:
+      tags: 
+        - Categories
+      summary: Renomeia a categoria
+      security:
+        - bearerAuth: []
+      description: Requer um access token válido no cookie para bsucar os dados.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: number
+          description: Id da categoria a ser renomeada
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                newName:
+                  type: string
+                  example: "Bebidas"
+      responses:
+        '200':
+          description: Categoria renomeada
+        '400':
+          description: Nome da categoria não inserido
+        '401':
+          description: Erro na validação do usuário
+        '404':
+          description: Loja não encontrada
+        '500':
+          description: Erro interno no servidor
 
 components:
   securitySchemes:

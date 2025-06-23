@@ -34,4 +34,4 @@ export const updateScheduleController = async (req: Request, res: Response) => {
         });
 
     }
-}
+};

@@ -4,12 +4,12 @@ import { prisma } from "../../lib/prisma";
 interface TimeRange {
     start: string;
     end: string;
-}
+};
 
 interface ScheduleItem {
     day: WeekDay;
     timeRanges: TimeRange[];
-}
+};
 
 export const updateSchedule = async (userId: number, schedule: ScheduleItem[]) => {
     const store = await prisma.store.findFirst({
