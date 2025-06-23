@@ -596,6 +596,31 @@ paths:
         '500':
           description: Erro interno no servidor
 
+  /categories/{id}/toggle-status:
+    patch:
+      tags: 
+        - Categories
+      summary: Alterna status da categoria (ativado/desativado)
+      security:
+        - bearerAuth: []
+      description: Requer um access token válido no cookie para bsucar os dados.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: number
+          description: Id da categoria a ser alterada
+      responses:
+        '200':
+          description: Status da categoria alternado com sucesso
+        '401':
+          description: Erro na validação do usuário
+        '404':
+          description: Loja/categoria não encontrada
+        '500':
+          description: Erro interno no servidor
+
 components:
   securitySchemes:
     bearerAuth:
