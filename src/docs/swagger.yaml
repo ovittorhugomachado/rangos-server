@@ -18,6 +18,7 @@ tags:
   - name: Uploads
   - name: User
   - name: Store
+  - name: Schedules
 
 paths:
 
@@ -431,6 +432,97 @@ paths:
           description: Usuário não encontrado
         '500':
           description: Erro interno no servidor
+
+  /schedules:
+    put:
+      tags: 
+        - Schedules
+      summary: Atualiza os horários de funcionamento
+      security:
+        - bearerAuth: []
+      description: Requer um access token válido no cookie para atualizar os dados.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                schedule:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      day:
+                        type: string
+                        enum: [segunda, terca, quarta, quinta, sexta, sabado, domingo]
+                        description: Dia da semana (em inglês)
+                      timeRanges:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            start:
+                              type: string
+                              format: time
+                              pattern: '^([01]\d|2[0-3]):([0-5]\d)$'
+                              example: "08:00"
+                              description: Horário de abertura no formato HH:MM (24h)
+                            end:
+                              type: string
+                              format: time
+                              pattern: '^([01]\d|2[0-3]):([0-5]\d)$'
+                              example: "18:00"
+                              description: Horário de fechamento no formato HH:MM (24h)
+                          required: [start, end]
+                    required: [day, timeRanges]
+              example:
+                schedule:
+                  - day: segunda
+                    timeRanges:
+                      - start: "08:00"
+                        end: "12:00"
+                      - start: "13:00"
+                        end: "18:00"
+                  - day: terca
+                    timeRanges:
+                      - start: "09:00"
+                        end: "18:00"
+      responses:
+        '200':
+          description: Horários atualizados com sucesso
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: "Horários atualizados com sucesso"
+        '400':
+          description: Erro de validação
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    examples:
+                      invalidStructure: "Estrutura inválida no índice 0. Verifique os campos 'day' e 'timeRanges'."
+                      invalidTime: "Horário inválido no índice 1. Verifique os campos 'start' e 'end'."
+                      timeOrder: "Erro no índice 2: O horário de término (17:00) deve ser maior que o de início (18:00)."
+                      overlapping: "Horários sobrepostos no dia: TUESDAY"
+        '401':
+          description: Token inválido ou não fornecido
+        '404':
+          description: Loja não encontrada
+        '500':
+          description: Erro interno no servidor
+
 
 components:
   securitySchemes:
