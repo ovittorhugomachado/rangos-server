@@ -16,8 +16,8 @@ router.post('/categories', authenticateToken, createMenuCategory);
 
 router.put('/categories/:id', authenticateToken, renameMenuCategory);
 
-router.patch('/categories/:id/toggle-status', authenticateToken, toggleMenuCategoryStatus);
-
 router.delete('/categories/:id', authenticateToken, deleteMenuCategory);
+
+router.patch('/categories/:id/toggle-status', authenticateToken, toggleMenuCategoryStatus);
 
 export default router;
