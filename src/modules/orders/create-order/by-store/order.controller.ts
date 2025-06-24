@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { DeliveryType, PaymentMethod } from "@prisma/client";
 import { createOrderService } from "./order.service";
-import { handleControllerError,  ValidationError } from "../../../utils/errors";
+import { handleControllerError,  ValidationError } from "../../../../utils/errors";
 
 export const createOrder = async (req: Request, res: Response): Promise<void> => {
     try {

@@ -1,6 +1,6 @@
 import { Prisma, DeliveryType, PaymentMethod } from "@prisma/client";
-import { ValidationError, NotFoundError } from '../../../utils/errors';
-import { prisma } from "../../../lib/prisma";
+import { ValidationError, NotFoundError } from '../../../../utils/errors';
+import { prisma } from "../../../../lib/prisma";
 
 interface OrderItemInput {
     menuItemId: number;
