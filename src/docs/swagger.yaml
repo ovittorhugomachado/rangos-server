@@ -21,6 +21,7 @@ tags:
   - name: Schedules
   - name: Categories
   - name: Menu Items
+  - name: Orders
 
 paths:
 
@@ -870,6 +871,66 @@ paths:
         '500':
           description: Erro interno do servidor
 
+  /order:
+    post:
+      tags: 
+        - Orders
+      summary: Cria um novo pedido
+      security:
+        - bearerAuth: []
+      description: Requer um access token válido no cookie para bsucar os dados.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                customerName:
+                  type: string
+                  example: "Fulano de Tal"
+                  description: Nome do cliente
+                customerPhone:
+                  type: string
+                  example: "(51) 99999-9999"
+                  description: Celular do cliente
+                typeOfDelivery:
+                  type: string
+                  example: "delivery"
+                  description: Tipo de entrega (delivery/pickup)
+                address:
+                  type: string
+                  example: Rua A, 295
+                  description: Endereço do cliente
+                paymentMethod:
+                  type: string
+                  example: pix
+                  description: Tipo de pagamento (dinheiro, cartão ou pix)
+                items: 
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      menuItemId: 
+                        type: number
+                        description: Número do id do item
+                      note: 
+                        type: string
+                        example: Sem Queijo
+                        description: Observações do usuário para o pedido
+                      optionIds:
+                        type: array
+                        items:
+                          type: number
+      responses:
+        '201':
+          description: Pedido criado com sucesso
+        '404':
+          description: Item do menu não encontrado ou sem preço
+        '422':
+          description: Erro de validação
+        '500':
+          description: Erro interno do servidor
 
 components:
   securitySchemes:

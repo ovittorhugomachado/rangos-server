@@ -10,7 +10,7 @@ import uploadFile from './modules/uploads/upload.routes';
 import updateSchedule from './modules/schedules/schedules.routes';
 import menuCategoriesRoutes from './modules/manage-menu/menu-category/menu-category.routes';
 import menuItemRoutes from './modules/manage-menu/menu-items/menu-item.routes';
-import ordersRoutes from './modules/create-order/by-store/order.routes';
+import ordersRoutes from './modules/orders/by-store/order.routes';
 import manageOrdersRoutes from './modules/manage-order/by-store/orders.routes';
 import pageStyle from './modules/menu-customization/store-customization.routes';
 import './modules/password/clean-expired-tokens.utils';
