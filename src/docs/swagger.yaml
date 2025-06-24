@@ -20,6 +20,7 @@ tags:
   - name: Store
   - name: Schedules
   - name: Categories
+  - name: Menu Items
 
 paths:
 
@@ -644,6 +645,231 @@ paths:
           description: Loja/categoria não encontrada
         '500':
           description: Erro interno no servidor
+
+  /menu-items/{categoryId}:
+    post:
+      tags: 
+        - Menu Items
+      summary: Cria um item no menu
+      security:
+        - bearerAuth: []
+      description: Requer um access token válido no cookie para bsucar os dados.
+      parameters:
+        - name: categoryId
+          in: path
+          required: true
+          schema:
+            type: number
+          description: Id da categoria onde o o item vai ficar
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  example: "Prato do dia"
+                  description: Nome do item do menu
+                description:
+                  type: string
+                  example: "Pra de arroz e feijão"
+                  description: Descrição detalhada do item
+                price:
+                  type: number
+                  format: float
+                  example: 30.50
+                  description: Preço base do item
+                optionGroups:
+                  type: array
+                  description: Grupos de opções personalizáveis
+                  items:
+                    type: object
+                    properties:
+                      title:
+                        type: string
+                        example: "Adicionais"
+                        description: Nome do grupo de opções
+                      required:
+                        type: boolean
+                        example: false
+                        description: Se a escolha de pelo menos uma opção é obrigatória
+                      options:
+                        type: array
+                        description: Lista de opções disponíveis
+                        items:
+                          type: object
+                          properties:
+                            name:
+                              type: string
+                              example: "Queijo extra"
+                              description: Nome da opção
+                            additionalPrice:
+                              type: number
+                              format: float
+                              example: 5.00
+                              description: Valor adicional quando esta opção é selecionada
+                          required: [name, additionalPrice]
+                    required: [title, required, options]
+              required: [name, description, price, categoryId]
+      responses:
+        '200':
+          description: Item criado com sucesso
+        '400':
+          description: Dados obrigatórios ausentes
+        '401':
+          description: Erro na validação do usuário
+        '404':
+          description: Loja/categoria não encontrada
+        '500':
+          description: Erro interno no servidor
+
+  /menu-items/{categoryId}/{itemId}:
+    put:
+      tags: 
+        - Menu Items
+      summary: Atualiza as informações do item
+      security:
+        - bearerAuth: []
+      description: Requer um access token válido no cookie para bsucar os dados.
+      parameters:
+        - in: path
+          name: categoryId
+          required: true
+          schema:
+            type: integer
+          description: ID da categoria do item
+        - in: path
+          name: itemId
+          required: true
+          schema:
+            type: integer
+          description: ID do item do menu
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  nullable: true
+                  minLength: 1
+                  example: "Prato atualizado"
+                description:
+                  type: string
+                  nullable: true
+                  example: "Nova descrição do prato"
+                price:
+                  type: number
+                  format: float
+                  minimum: 0.01
+                  nullable: true
+                  example: 35.90
+              additionalProperties: false
+      responses:
+        '200':
+          description: Item atualizado com sucesso
+        '400':
+          description: Erro na validação
+        '401':
+          description: Usuário não autenticado
+        '403':
+          description: Categoria não pertence à loja
+        '404':
+          description: Item não encontrado ou não pertence à loja
+        '500':
+          description: Erro interno no servidor
+  
+  /menu-items/{categoryId}/{itemId}/toggle-status:
+    patch:
+      tags: 
+        - Menu Items
+      summary: Alterna o status do item (disponpivel/indisponível)
+      security:
+        - bearerAuth: []
+      description: Requer um access token válido no cookie para bsucar os dados.
+      parameters:
+        - in: path
+          name: categoryId
+          required: true
+          schema:
+            type: integer
+          description: ID da categoria do item
+        - in: path
+          name: itemId
+          required: true
+          schema:
+            type: integer
+          description: ID do item do menu
+      responses:
+        '200':
+          description: Item atualizado com sucesso
+        '400':
+          description: Erro na validação do item
+        '401':
+          description: Usuário não autenticado
+        '404':
+          description: Item não encontrado ou não pertence à loja
+        '500':
+          description: Erro interno no servidor
+          
+  /menu-Items/{itemId}:
+    delete:
+      tags: 
+        - Menu Items
+      summary: Remove permanentemente um item do menu
+      description: |
+        Requer autenticação via JWT (armazenado em cookie).
+        Apenas o dono da loja pode deletar itens vinculados às suas categorias.
+      security:
+        - bearerAuth: []  # Corrigido para refletir autenticação por cookie
+      parameters:
+        - name: itemId  # Adicionado o hífen para indicar item de lista
+          in: path
+          required: true
+          schema:
+            type: integer
+            minimum: 1  # Validação adicional
+          description: ID numérico do item a ser removido
+      responses:
+        '200':
+          description: Item removido com sucesso
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: "Item deletado com sucesso"
+        '400':
+          description: ID inválido ou formato incorreto
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: "ID do item inválido"
+        '401':
+          description: Token JWT inválido ou não fornecido
+        '403':
+          description: Item não pertence à loja do usuário
+        '404':
+          description: Loja ou item não encontrado
+        '500':
+          description: Erro interno do servidor
+
 
 components:
   securitySchemes:
