@@ -47,6 +47,12 @@ export const passwordResetEmailService = async (email: string, token: string, re
     });
 };
 
+export const validateTokenService = async (token: string) => {
+
+    const tokenData = await prisma.passwordResetToken.findFirst({ where: { token } });
+    if (!tokenData || tokenData.expiresAt < new Date()) throw new NotFoundError('Token inválido');
+};
+
 export const resetPasswordService = async (token: string, newPassword: string) => {
     const tokenRecord = await prisma.passwordResetToken.findUnique({
         where: { token },
@@ -59,7 +65,7 @@ export const resetPasswordService = async (token: string, newPassword: string) =
     if (!/[0-9]/.test(newPassword)) throw new ValidationError('Senha sem número');
 
     if (!tokenRecord || tokenRecord.expiresAt < new Date()) throw new NotFoundError('Token inválido ou expirado');
-
+    console.log(tokenRecord.expiresAt)
     const hashedPassword = await bcrypt.hash(newPassword, 10);
 
     await prisma.user.update({
@@ -69,5 +75,8 @@ export const resetPasswordService = async (token: string, newPassword: string) =
 
     await prisma.passwordResetToken.delete({ where: { token } });
 };
+
+
+
 
 

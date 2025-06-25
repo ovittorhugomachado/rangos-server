@@ -169,7 +169,28 @@ paths:
           description: Link enviado com sucesso
         '404':
           description: Usuário não encontrado
-          
+
+  /validate-token/{token}:
+    get:
+      tags:
+        - Password
+      summary: Valida um token para criação de nova senha
+      description: Verifica se um token é válido e não expirado
+      parameters:
+        - name: token
+          in: path
+          required: true
+          description: Token a ser validado
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Token válido
+        '404':
+          description: Token inválido ou expirado
+        '500':
+          description: Erro interno do servidor
+
   /create-new-password/{token}:
     patch:
       tags:

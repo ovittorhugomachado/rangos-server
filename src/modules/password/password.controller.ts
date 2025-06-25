@@ -4,9 +4,9 @@ import { prisma } from '../../lib/prisma';
 import {
     generateResetTokenService,
     resetPasswordService,
-    passwordResetEmailService
+    passwordResetEmailService,
+    validateTokenService,
 } from './password.service';
-
 
 export const requestPasswordReset = async (req: Request, res: Response): Promise<void> => {
 
@@ -24,6 +24,24 @@ export const requestPasswordReset = async (req: Request, res: Response): Promise
         await passwordResetEmailService(email, token, restaurant?.restaurantName);
 
         res.status(200).json({ message: 'Um link de redefinição de senha foi enviado para seu email' });
+        return
+
+    } catch (error: any) {
+
+        handleControllerError(res, error);
+
+    }
+};
+
+export const validateToken = async (req: Request, res: Response): Promise<void> => {
+
+    const { token } = req.params;
+
+    try {
+
+        await validateTokenService(token);
+
+        res.status(200).json({ message: 'Token válido' });
         return
 
     } catch (error: any) {
@@ -51,3 +69,5 @@ export const resetPassword = async (req: Request, res: Response): Promise<void> 
 
     }
 };
+
+
