@@ -32,7 +32,10 @@ app.use(express.json());
 app.use(cookieParser());
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument))
 
-app.use(cors());
+app.use(cors({
+  origin: 'http://localhost:5173', // Seu frontend
+  credentials: true // Permite credenciais
+}));
 
 app.use('/', authRoutes);
 app.use('/', resetPasswordRoutes);
