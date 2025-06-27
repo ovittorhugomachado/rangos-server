@@ -48,7 +48,7 @@ model Store {
 model StoreStyle {
   id              Int    @id @default(autoincrement())
   primaryColor    String @default("#4F46E5")
-  backgroundColor String @default("#FFFFFF")
+  backgroundColor backgroundColor @default(white)
   textColor       String @default("#1F2937")
   textButtonColor String @default("#FFFFFF")
   storeId         Int    @unique
@@ -167,6 +167,11 @@ model OrderItemOption {
   option      MenuItemOption @relation(fields: [optionId], references: [id], onDelete: Cascade)
 
   @@map("order_item_options")
+}
+
+enum backgroundColor {
+  black
+  white
 }
 
 enum WeekDay {
