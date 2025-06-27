@@ -457,6 +457,55 @@ paths:
         '500':
           description: Erro interno no servidor
 
+  /store/style:
+    get:
+      tags:
+        - Store
+      summary: Busca os estilos da loja
+      security:
+        - bearerAuth: []
+      description: Requer um access token válido no cookie para retornar os estilos.
+      responses:
+        '200':
+          description: Retorna um objeto com os estilos da loja
+        '404':
+          description: loja não encontrada
+        '500':
+          description: Erro interno no servidor
+    
+    patch:
+      tags:
+        - Store
+      summary: Atualiza os estilos da loja
+      security:
+        - bearerAuth: []
+      description: Requer um access token válido no cookie para atualizar os estilos.
+      requestBody:
+        required: true
+        content: 
+          application/json:
+            schema:
+              type: object
+              properties:
+                primaryColor:
+                  type: string
+                  example: "#FF5733"
+                backgroundColor:
+                  type: string
+                  example: "#FFFFFF"
+                textButtonColor:
+                  type: string
+                  example: "#000000"
+      responses:
+        '200':
+          description: Estilos atualizados com sucesso
+        '400':
+          description: Dados inválidos
+        '404':
+          description: Usuário não encontrado
+        '500':
+          description: Erro interno no servidor       
+          
   /schedules:
     put:
       tags: 
