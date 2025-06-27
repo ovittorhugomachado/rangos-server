@@ -95,12 +95,12 @@ export const loginService = async (data: AccountData) => {
 
     const user = await prisma.user.findUnique({ where: { email } })
     if (!user) {
-        throw new UnauthorizedError('credenciais inválidas');
+        throw new UnauthorizedError('Email ou senha inválidos');
     }
 
     const passwordMatch = await bcrypt.compare(password, user.password)
     if (!passwordMatch) {
-        throw new UnauthorizedError('credenciais inválidas');
+        throw new UnauthorizedError('Email ou senha inválidos');
     }
 
     const payload = {
