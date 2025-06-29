@@ -48,9 +48,9 @@ model Store {
 model StoreStyle {
   id              Int    @id @default(autoincrement())
   primaryColor    String @default("#4F46E5")
-  backgroundColor backgroundColor @default(white)
+  backgroundColor BackgroundColor @default(white)
   textColor       String @default("#1F2937")
-  textButtonColor String @default("#FFFFFF")
+  textButtonColor TextButtonColor @default(black)
   storeId         Int    @unique
   store           Store  @relation(fields: [storeId], references: [id], onDelete: Cascade)
 
@@ -169,7 +169,12 @@ model OrderItemOption {
   @@map("order_item_options")
 }
 
-enum backgroundColor {
+enum BackgroundColor {
+  black
+  white
+}
+
+enum TextButtonColor {
   black
   white
 }

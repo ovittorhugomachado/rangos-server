@@ -492,10 +492,10 @@ paths:
                   example: "#FF5733"
                 backgroundColor:
                   type: string
-                  example: "#FFFFFF"
+                  example: "white"
                 textButtonColor:
                   type: string
-                  example: "#000000"
+                  example: "black"
       responses:
         '200':
           description: Estilos atualizados com sucesso

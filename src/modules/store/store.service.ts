@@ -103,10 +103,10 @@ export const storeStyleDataUpdateService = async (userId: number, updateData: St
         throw new AppError('Dados de atualização vazios');
     };
 
-        const prismaUpdateData = {
-        primaryColor: updateData.primaryColor ?? undefined,
-        backgroundColor: updateData.backgroundColor ?? undefined,
-        textButtonColor: updateData.textButtonColor ?? undefined,
+    const prismaUpdateData: any = {
+        ...(updateData.primaryColor !== undefined && { primaryColor: { set: updateData.primaryColor } }),
+        ...(updateData.backgroundColor !== undefined && { backgroundColor: { set: updateData.backgroundColor } }),
+        ...(updateData.textButtonColor !== undefined && { textButtonColor: { set: updateData.textButtonColor } }),
     };
 
     return await prisma.storeStyle.update({
