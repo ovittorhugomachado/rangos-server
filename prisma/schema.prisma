@@ -47,7 +47,7 @@ model Store {
 
 model StoreStyle {
   id              Int    @id @default(autoincrement())
-  primaryColor    String @default("#4F46E5")
+  primaryColor    String @default("#138636")
   backgroundColor BackgroundColor @default(white)
   textButtonColor TextButtonColor @default(black)
   storeId         Int    @unique
