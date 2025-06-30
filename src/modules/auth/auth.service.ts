@@ -66,6 +66,13 @@ export const signUpService = async (data: AccountData) => {
             },
         });
 
+        await prisma.menuCategory.createMany({
+            data: [
+                { name: 'Pratos', storeId: store.id },
+                { name: 'Bebidas', storeId: store.id }
+            ]
+        });
+
         const daysOfWeek: WeekDay[] = [
             'segunda',
             'terca',
