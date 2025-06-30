@@ -6,7 +6,6 @@ export const getStoreCustomizationByUserId = async (userId: number) => {
         select: {
             primaryColor: true,
             backgroundColor: true,
-            textColor: true,
             textButtonColor: true,
         },
     });
