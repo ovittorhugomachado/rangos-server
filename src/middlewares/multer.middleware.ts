@@ -90,6 +90,7 @@ const multerConfig = {
             'image/pjpeg',
             'image/png',
             'image/gif',
+            'image/webp',
         ];
 
         if (allowedMimes.includes(file.mimetype)) {
