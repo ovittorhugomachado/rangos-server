@@ -1,6 +1,28 @@
 import { Request, Response } from "express";
-import { createMenuItemService, deleteMenuItemService, menuItemStatusToggleService, menuItemUpdateService } from "./menu-item.service";
+import { getMenuItemsByCategoryService, createMenuItemService, deleteMenuItemService, menuItemStatusToggleService, menuItemUpdateService } from "./menu-item.service";
 import { handleControllerError } from "../../../utils/errors";
+
+export const getMenuItemsByCategory = async (req: Request, res: Response): Promise<void> => {
+    const userId = Number(req.user?.userId);
+    const categoryId = Number(req.params.categoryId);
+
+    if (!userId) {
+        res.status(401).json({ success: false, message: 'Usuário não autenticado' });
+        return;
+    }
+
+    if (!categoryId || isNaN(categoryId)) {
+        res.status(400).json({ success: false, message: 'ID da categoria inválido' });
+        return;
+    }
+
+    try {
+        const items = await getMenuItemsByCategoryService(userId, categoryId);
+        res.status(200).json({ success: true, data: items });
+    } catch (error: any) {
+        handleControllerError(res, error);
+    }
+};
 
 export const createMenuItem = async (req: Request, res: Response): Promise<void> => {
 

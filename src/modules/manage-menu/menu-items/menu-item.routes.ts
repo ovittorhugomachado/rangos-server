@@ -1,8 +1,10 @@
 import { Router } from "express";
 import { authenticateToken } from "../../../middlewares/authenticate-token.middleware";
-import { createMenuItem, deleteMenuItem, toggleMenuItemStatus, updateMenuItem } from "./menu-item.controller";
+import { getMenuItemsByCategory, createMenuItem, deleteMenuItem, toggleMenuItemStatus, updateMenuItem } from "./menu-item.controller";
 
 const router = Router();
+
+router.get('/menu-items/:categoryId', authenticateToken, getMenuItemsByCategory);
 
 router.post('/menu-items/:categoryId', authenticateToken, createMenuItem);
 

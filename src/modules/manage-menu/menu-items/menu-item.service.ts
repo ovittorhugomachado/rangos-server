@@ -1,6 +1,32 @@
 import { prisma } from "../../../lib/prisma";
 import { ForbiddenError, NotFoundError } from "../../../utils/errors";
 
+export const getMenuItemsByCategoryService = async (userId: number, categoryId: number) => {
+    const store = await prisma.store.findUnique({
+        where: { userId },
+        include: {
+            MenuCategory: {
+                where: { id: categoryId },
+                select: { id: true }
+            }
+        }
+    });
+
+    if (!store) throw new NotFoundError('Loja não encontrada');
+    if (!store.MenuCategory.some(c => c.id === categoryId)) {
+        throw new ForbiddenError('Categoria não pertence à loja');
+    }
+
+    return await prisma.menuItem.findMany({
+        where: { categoryId },
+        include: {
+            optionsGroups: {
+                include: { options: true }
+            }
+        }
+    });
+};
+
 export const createMenuItemService = async (
     userId: number,
     name: string,

@@ -718,6 +718,83 @@ paths:
           description: Erro interno no servidor
 
   /menu-items/{categoryId}:
+    get:
+      tags:
+        - Menu Items
+      summary: Lista os itens do menu de uma categoria
+      security:
+        - bearerAuth: []
+      description: Retorna todos os itens do menu pertencentes à categoria informada.
+      parameters:
+        - name: categoryId
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: Id da categoria para buscar os itens
+      responses:
+        '200':
+          description: Lista de itens retornada com sucesso
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                          example: 1
+                        name:
+                          type: string
+                          example: "Prato do dia"
+                        description:
+                          type: string
+                          example: "Arroz, feijão e bife"
+                        price:
+                          type: number
+                          example: 30.5
+                        isAvailable:
+                          type: boolean
+                          example: true
+                        optionsGroups:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              id:
+                                type: integer
+                              title:
+                                type: string
+                              required:
+                                type: boolean
+                              options:
+                                type: array
+                                items:
+                                  type: object
+                                  properties:
+                                    id:
+                                      type: integer
+                                    name:
+                                      type: string
+                                    additionalPrice:
+                                      type: number
+        '400':
+          description: ID da categoria inválido
+        '401':
+          description: Usuário não autenticado
+        '403':
+          description: Categoria não pertence à loja
+        '404':
+          description: Loja não encontrada
+        '500':
+          description: Erro interno no servidor
     post:
       tags: 
         - Menu Items
