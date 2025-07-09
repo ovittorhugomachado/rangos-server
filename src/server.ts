@@ -18,7 +18,7 @@ import swaggerUi from 'swagger-ui-express';
 import YAML from 'yamljs';
 import path from 'path';
 
-    {/*ANTES DE COLOCAR O PROJETO EM PRODUÇÃO FAZER TESTES SALVANDO DADOS NO CACHE
+{/*ANTES DE COLOCAR O PROJETO EM PRODUÇÃO FAZER TESTES SALVANDO DADOS NO CACHE
     PRA DIMINUIR O NUMERO DE CONSULTAR NO BD E DIMINUIR A LATÊNCIA */}
 
 const app = express();
@@ -33,8 +33,8 @@ app.use(cookieParser());
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument))
 
 app.use(cors({
-  origin: 'http://localhost:5173', // Seu frontend
-  credentials: true // Permite credenciais
+  origin: 'http://localhost:5173',
+  credentials: true
 }));
 
 app.use('/', authRoutes);
@@ -50,6 +50,6 @@ app.use('/', manageOrdersRoutes);
 app.use('/', pageStyle);
 
 app.listen(port, () => {
-    console.log(`Servidor rodando na porta ${port}`);
+  console.log(`Servidor rodando na porta ${port}`);
 });
 

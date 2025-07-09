@@ -65,18 +65,26 @@ const handledErrors = [
 
 export function handleControllerError(res: Response, error: any) {
     console.error('Erro no controller:', error);
-    
-    const matchedError = handledErrors.find( ErrorClass => error instanceof ErrorClass);
+
+    const matchedError = handledErrors.find(ErrorClass => error instanceof ErrorClass);
+
+    const MAX_ERROR_MSG_LENGTH = 150;
+    const defaultMsg = "Erro interno no servidor";
+
+    let message = error.message || defaultMsg;
+    if (typeof message === "string" && message.length > MAX_ERROR_MSG_LENGTH) {
+        message = defaultMsg;
+    }
 
     if (matchedError) {
         return res.status(error.statusCode).json({
             success: false,
-            message: error.message
-        })
+            message
+        });
     }
-    
+
     return res.status(500).json({
         success: false,
-        message: error.message || "Erro interno no servidor"
+        message
     });
 };
