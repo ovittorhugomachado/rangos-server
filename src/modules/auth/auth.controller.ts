@@ -41,7 +41,7 @@ export const login = async (req: Request, res: Response): Promise<void> => {
             httpOnly: true,
             secure: false, //EM PRODUÇÃOO MUDAR PARA TRUE
             sameSite: 'lax',
-            maxAge: 15 * 60 * 1000,
+            maxAge: 24 * 60 * 60 * 1000, //1 DIA
         });
 
         res.cookie('refreshToken', refreshToken, {
