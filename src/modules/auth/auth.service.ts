@@ -142,7 +142,7 @@ export const refreshTokenService = async (refreshToken: string) => {
             userId: user.id,
         },
         JWT_SECRET,
-        { expiresIn: '15m' }
+        { expiresIn: '1d' }
     );
 
     return newAccessToken;
