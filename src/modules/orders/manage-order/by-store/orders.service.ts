@@ -31,7 +31,7 @@ export const listOrdersService = async ({
     if (startDate && !endDate) {
         createdAtFilter = {
             gte: startDate,
-            lte: adjustDateToEndOfDayUTC(new Date()) 
+            lte: adjustDateToEndOfDayUTC(new Date())
         };
     } else if (!startDate && endDate) {
         createdAtFilter = {
@@ -47,7 +47,7 @@ export const listOrdersService = async ({
     const where = {
         ...(createdAtFilter && { createdAt: createdAtFilter }),
         ...(status && { status: { equals: status } }),
-        ...(storeId && { storeId: { equals: storeId } }), 
+        ...(storeId && { storeId: { equals: storeId } }),
     };
 
     const [orders, total] = await Promise.all([
@@ -56,7 +56,13 @@ export const listOrdersService = async ({
             orderBy: { createdAt: 'desc' },
             skip: offset,
             take: limit,
-            include: { orderItems: true },
+            include: {
+                orderItems: {
+                    include: {
+                        menuItem: { select: { name: true } }
+                    }
+                }
+            },
         }),
         prisma.order.count({ where }),
     ]);
@@ -71,8 +77,17 @@ export const orderDetailingService = async (userId: number, orderId: number) => 
 
     const order = await prisma.order.findUnique({
         where: { id: orderId },
-        include: { orderItems: true }
+        include: {
+            orderItems: {
+                include: {
+                    menuItem: { // Inclui o menu item relacionado
+                        select: { name: true }
+                    }
+                }
+            }
+        }
     });
+
     if (!order) throw new NotFoundError('Pedido não encontrado');
 
     if (order.storeId !== store.id) {
