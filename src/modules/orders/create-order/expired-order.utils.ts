@@ -1,5 +1,5 @@
 import cron from "node-cron";
-import { prisma } from "../../lib/prisma";
+import { prisma } from "../../../lib/prisma";
 
 const activeTimeouts: Record<string, NodeJS.Timeout> = {};
 
@@ -43,7 +43,7 @@ export async function scheduleOrderCancellation(orderId: number, status: string 
     let expectedStatus: string | string[];
 
     if (statusArray.includes('aguardando_aprovacao')) {
-        delay = 1 * 60 * 1000; // 10 minutos
+        delay = 10 * 60 * 1000; // 10 minutos
         expectedStatus = 'aguardando_aprovacao';
     } else if (statusArray.some(s => ['em_preparo', 'pronto_para_retirada', 'a_caminho'].includes(s))) {
         delay = 24 * 60 * 60 * 1000; // 24 horas

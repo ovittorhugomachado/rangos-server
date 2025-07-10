@@ -1,6 +1,7 @@
 import { Prisma, DeliveryType, PaymentMethod } from "@prisma/client";
 import { ValidationError, NotFoundError } from '../../../../utils/errors';
 import { prisma } from "../../../../lib/prisma";
+import { scheduleOrderCancellation } from "../expired-order.utils";
 
 interface OrderItemInput {
     menuItemId: number;
@@ -19,16 +20,13 @@ interface CreateOrderInput {
 }
 
 export const createOrderService = async (data: CreateOrderInput) => {
-
     const { userId, customerName, customerPhone, address, typeOfDelivery, paymentMethod, items } = data;
 
     const store = await prisma.store.findUnique({ where: { userId } });
-
     if (!store) throw new NotFoundError('Loja não encontrada');
-
     const storeId = store.id;
 
-    return await prisma.$transaction(async (tx) => {
+    const order = await prisma.$transaction(async (tx) => {
 
         const menuItems = await tx.menuItem.findMany({
             where: {
@@ -79,7 +77,7 @@ export const createOrderService = async (data: CreateOrderInput) => {
 
         const totalAmount = new Prisma.Decimal(total);
 
-        const order = await tx.order.create({
+        return await tx.order.create({
             data: {
                 store: { connect: { id: storeId } },
                 customerName,
@@ -110,9 +108,9 @@ export const createOrderService = async (data: CreateOrderInput) => {
                 }
             }
         });
-
-        //AQUI EU PRECISO CHAMAR A FUNÇÃO DE CANCELAR AUTOMATICAMNTE OS PEDIDOS ESQUECISOS
-
-        return order;
     });
+
+    await scheduleOrderCancellation(order.id, order.status);
+
+    return order;
 };
