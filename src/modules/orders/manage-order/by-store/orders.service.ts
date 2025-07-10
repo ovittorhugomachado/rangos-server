@@ -59,7 +59,10 @@ export const listOrdersService = async ({
             include: {
                 orderItems: {
                     include: {
-                        menuItem: { select: { name: true } }
+                        menuItem: { select: {
+                            name: true,
+                            price: true,
+                        } }
                     }
                 }
             },
@@ -80,8 +83,11 @@ export const orderDetailingService = async (userId: number, orderId: number) => 
         include: {
             orderItems: {
                 include: {
-                    menuItem: { // Inclui o menu item relacionado
-                        select: { name: true }
+                    menuItem: { 
+                        select: { 
+                            name: true, 
+                            price: true,
+                        }
                     }
                 }
             }
