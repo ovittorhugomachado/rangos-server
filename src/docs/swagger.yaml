@@ -403,7 +403,19 @@ paths:
           description: Usuário não encontrado
         '500':
           description: Erro interno no servidor
-          
+
+  /stores/list:
+    get:
+      tags:
+        - Store
+      summary: Lista as lojas cadastradas
+      description: Requer um access token válido no cookie para retornar a lista de lojas.
+      responses:
+        '200':
+          description: Retorna uma lista de objetos com os dados das lojas
+        '500':
+          description: Erro interno no servidor 
+
   /store:
     get:
       tags:

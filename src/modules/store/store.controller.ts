@@ -1,6 +1,21 @@
 import { Request, Response } from "express";
-import { serviceGetStoreData, serviceGetStoreStyleData, storeDataUpdateService, storeStyleDataUpdateService } from "./store.service";
+import { serviceGetStoreData, serviceGetStoresList, serviceGetStoreStyleData, storeDataUpdateService, storeStyleDataUpdateService } from "./store.service";
 import { AppError, handleControllerError } from "../../utils/errors";
+
+export const getStoreList = async (req: Request, res: Response): Promise<void> => {
+    try {
+
+        const stores = await serviceGetStoresList();;
+
+        res.status(200).json(stores);
+        return;
+
+    } catch (error: any) {
+
+        handleControllerError(res, error);
+
+    }
+};
 
 export const getStoreData = async (req: Request, res: Response): Promise<void> => {
 

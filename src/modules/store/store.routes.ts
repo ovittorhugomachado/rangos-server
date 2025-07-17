@@ -1,8 +1,10 @@
 import { Router } from "express";
 import { authenticateToken } from "../../middlewares/authenticate-token.middleware";
-import { getStoreData, updateStoreData, getStoreStyleData, updateStoreStyleData } from "./store.controller";
+import { getStoreData, updateStoreData, getStoreStyleData, updateStoreStyleData, getStoreList } from "./store.controller";
 
 const router = Router();
+
+router.get('/stores/list', getStoreList);
 
 router.get('/store', authenticateToken, getStoreData);
 

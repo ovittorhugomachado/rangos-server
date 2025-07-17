@@ -28,6 +28,13 @@ interface StoreStyleData {
     textButtonColor?: string | null;
 };
 
+export const serviceGetStoresList = async () => {
+
+    const stores = await prisma.store.findMany();
+
+    return stores;
+};
+
 export const serviceGetStoreData = async (userId: number): Promise<StoreData> => {
 
     const store = await prisma.store.findUnique({
