@@ -69,7 +69,7 @@ export const storeDataUpdateService = async (userId: number, updateData: UpdateS
         throw new AppError('Dados de atualização vazios');
     };
 
-    return await prisma.store.update({
+    const updatedStore = await prisma.store.update({
         where: { userId },
         data: updateData,
         select: {
@@ -80,6 +80,29 @@ export const storeDataUpdateService = async (userId: number, updateData: UpdateS
             pickup: true,
         }
     });
+
+    const userUpdateData: any = {};
+    if (updateData.restaurantName !== undefined && updateData.restaurantName !== null) {
+        userUpdateData.restaurantName = updateData.restaurantName;
+    }
+
+    if (updateData.phoneNumber !== undefined && updateData.phoneNumber !== null) {
+        userUpdateData.phoneNumber = updateData.phoneNumber;
+    }
+
+    if (Object.keys(userUpdateData).length > 0) {
+        await prisma.user.update({
+            where: { id: userId },
+            data: userUpdateData,
+            select: {
+                restaurantName: true,
+                phoneNumber: true,
+            }
+        });
+    };
+
+    return updatedStore;
+
 };
 
 export const serviceGetStoreStyleData = async (userId: number): Promise<StoreStyleData> => {
