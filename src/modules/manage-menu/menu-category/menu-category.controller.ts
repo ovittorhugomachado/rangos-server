@@ -4,11 +4,33 @@ import {
     menuCategoryRenameService,
     serviceDeleteMenuCategory,
     serviceGetMenuCategories,
+    serviceGetMyMenuCategories,
     toggleMenuCategoryService
 } from "./menu-category.service";
 import { handleControllerError } from "../../../utils/errors";
 
 export const getMenuCategories = async (req: Request, res: Response): Promise<void> => {
+
+    const storeId = Number(req.params.id);
+
+    if (!storeId) {
+        res.status(401).json({ message: 'Erro na validação da loja' });
+        return
+    };
+
+    try {
+
+        const categories = await serviceGetMenuCategories(storeId);
+        res.status(200).json(categories);
+
+    } catch (error: any) {
+
+        handleControllerError(res, error);
+
+    };
+};
+
+export const getMyMenuCategories = async (req: Request, res: Response): Promise<void> => {
 
     const userId = Number(req.user?.userId);
 
@@ -19,7 +41,7 @@ export const getMenuCategories = async (req: Request, res: Response): Promise<vo
 
     try {
 
-        const categories = await serviceGetMenuCategories(userId);
+        const categories = await serviceGetMyMenuCategories(userId);
         res.status(200).json(categories);
 
     } catch (error: any) {

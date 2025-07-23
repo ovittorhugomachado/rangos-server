@@ -4,13 +4,16 @@ import {
     createMenuCategory,
     deleteMenuCategory,
     getMenuCategories,
+    getMyMenuCategories,
     renameMenuCategory,
     toggleMenuCategoryStatus
 } from "./menu-category.controller";
 
 const router = Router();
 
-router.get('/categories', authenticateToken, getMenuCategories);
+router.get('/categories/:id', authenticateToken, getMenuCategories);
+
+router.get('/my-categories', authenticateToken, getMyMenuCategories);
 
 router.post('/categories', authenticateToken, createMenuCategory);
 

@@ -637,25 +637,60 @@ paths:
           description: Loja não encontrada
         '500':
           description: Erro interno no servidor
-          
-  /categories:
+
+  /categories/{id}:
     get:
       tags: 
         - Categories
-      summary: Lista as categorias do menu
-      security:
-        - bearerAuth: []
-      description: Requer um access token válido no cookie para bsucar os dados.
+      summary: Lista as minhas categorias do menu
+      description: Requer um parâmetro que é o id da loja a ser buscada.
+      parameters:
+        - name: id
+          in: path
+          type: integer
+          description: Id da loja
       responses:
         '200':
-          description: Retorna as categorias
+          description: Retorna as minhas categorias
         '401':
           description: Erro na validação do usuário
         '404':
           description: Loja não encontrada
         '500':
           description: Erro interno no servidor
-      
+
+  /my-categories:
+    get:
+      tags:
+        - Categories
+      summary: Lista as minhas categorias do menu
+      security:
+        - bearerAuth: []
+      description: Requer um access token válido no cookie para buscar os dados.
+      responses:
+        '200':
+          description: Retorna as minhas categorias
+        '401':
+          description: Erro na validação do usuário
+        '404':
+          description: Loja não encontrada
+        '500':
+          description: Erro interno no servidor
+
+      security:
+        - bearerAuth: []
+      description: Requer um access token válido no cookie para buscar os dados.
+      responses:
+        '200':
+          description: Retorna as minhas categorias
+        '401':
+          description: Erro na validação do usuário
+        '404':
+          description: Loja não encontrada
+        '500':
+          description: Erro interno no servidor
+
+  /categories:
     post:
       tags: 
         - Categories

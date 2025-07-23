@@ -17,6 +17,22 @@ export const serviceGetMenuCategories = async (userId: number) => {
     return store.MenuCategory
 };
 
+export const serviceGetMyMenuCategories = async (userId: number) => {
+
+    const store = await prisma.store.findUnique({
+        where: { userId },
+        include: {
+            MenuCategory: {
+                orderBy: { id: 'asc' }
+            }
+        }
+    });
+
+    if (!store) throw new NotFoundError('Loja não encontrada');
+
+    return store.MenuCategory
+};
+
 export const createCategoryMenuService = async (userId: number, name: string) => {
 
     const store = await prisma.store.findUnique({ where: { userId } });
