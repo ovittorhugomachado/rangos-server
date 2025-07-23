@@ -11,7 +11,7 @@ import {
 
 const router = Router();
 
-router.get('/categories/:id', authenticateToken, getMenuCategories);
+router.get('/categories/:id', getMenuCategories);
 
 router.get('/my-categories', authenticateToken, getMyMenuCategories);
 

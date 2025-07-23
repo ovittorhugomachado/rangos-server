@@ -22,8 +22,6 @@ export const getStoreData = async (req: Request, res: Response): Promise<void> =
 
     const storeId = Number(req.params.id);
 
-    console.log(req);
-
     if (isNaN(storeId)) {
         res.status(400).json({ message: 'ID da loja inválido' });
         return;
