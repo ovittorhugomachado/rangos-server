@@ -806,7 +806,7 @@ paths:
         '500':
           description: Erro interno no servidor
 
-  /menu-items/{categoryId}:
+  /store/{storeId}/menu-items/{categoryId}:
     get:
       tags:
         - Menu Items
@@ -815,6 +815,12 @@ paths:
         - bearerAuth: []
       description: Retorna todos os itens do menu pertencentes à categoria informada.
       parameters:
+        - name: storeId
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: Id da loja para buscar os itens
         - name: categoryId
           in: path
           required: true
@@ -884,6 +890,8 @@ paths:
           description: Loja não encontrada
         '500':
           description: Erro interno no servidor
+
+  /menu-items/{categoryId}:
     post:
       tags: 
         - Menu Items

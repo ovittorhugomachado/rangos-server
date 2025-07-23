@@ -3,7 +3,7 @@ import { getMenuItemsByCategoryService, createMenuItemService, deleteMenuItemSer
 import { handleControllerError } from "../../../utils/errors";
 
 export const getMenuItemsByCategory = async (req: Request, res: Response): Promise<void> => {
-    const userId = Number(req.user?.userId);
+    const userId = Number(req.params.storeId);
     const categoryId = Number(req.params.categoryId);
 
     if (!userId) {
