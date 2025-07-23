@@ -62,7 +62,7 @@ export const serviceGetStoreData = async (storeId: number): Promise<StoreData> =
 export const serviceGetStoreStyleData = async (storeId: number): Promise<StoreStyleData> => {
 
     const storeStyle = await prisma.storeStyle.findUnique({
-        where: { storeId },
+        where: { id: storeId },
         select: {
             primaryColor: true,
             backgroundColor: true,

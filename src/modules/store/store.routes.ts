@@ -12,12 +12,12 @@ router.get('/store/:id', getStoreData);
 router.get('/store/style/:id', getStoreStyleData);
 
 //Rotas do lado do proprietário da loja
-router.get('/store', authenticateToken, getMyStoreData);
+router.get('/my-store', authenticateToken, getMyStoreData);
 
-router.patch('/store', authenticateToken, updateMyStoreData);
+router.patch('/my-store', authenticateToken, updateMyStoreData);
 
-router.get('/store/style', authenticateToken, getMyStoreStyleData);
+router.get('/my-store/style', authenticateToken, getMyStoreStyleData);
 
-router.patch('/store/style', authenticateToken, updateMyStoreStyleData);
+router.patch('/my-store/style', authenticateToken, updateMyStoreStyleData);
 
 export default router;

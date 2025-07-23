@@ -458,7 +458,7 @@ paths:
         '500':
           description: Erro interno no servidor
 
-  /store:
+  /my-store:
     get:
       tags:
         - Store
@@ -511,7 +511,7 @@ paths:
         '500':
           description: Erro interno no servidor
 
-  /store/style:
+  /my-store/style:
     get:
       tags:
         - Store
