@@ -28,6 +28,7 @@ interface StoreStyleData {
     textButtonColor?: string | null;
 };
 
+//Services do lado do cliente
 export const serviceGetStoresList = async () => {
 
     const stores = await prisma.store.findMany();
@@ -58,6 +59,25 @@ export const serviceGetStoreData = async (storeId: number): Promise<StoreData> =
     return store
 };
 
+export const serviceGetStoreStyleData = async (storeId: number): Promise<StoreStyleData> => {
+
+    const storeStyle = await prisma.storeStyle.findUnique({
+        where: { storeId },
+        select: {
+            primaryColor: true,
+            backgroundColor: true,
+            textButtonColor: true,
+        }
+    })
+
+    if (!storeStyle) {
+        throw new NotFoundError("Loja não encontrada");
+    }
+
+    return storeStyle
+};
+
+//Services do lado da loja
 export const serviceGetMyStoreData = async (userId: number): Promise<StoreData> => {
 
     const store = await prisma.store.findUnique({

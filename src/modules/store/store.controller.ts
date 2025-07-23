@@ -1,7 +1,8 @@
 import { Request, Response } from "express";
-import { serviceGetMyStoreData, serviceGetStoresList, serviceGetMyStoreStyleData, myStoreDataUpdateService, myStoreStyleDataUpdateService, serviceGetStoreData } from "./store.service";
+import { serviceGetMyStoreData, serviceGetStoresList, serviceGetMyStoreStyleData, myStoreDataUpdateService, myStoreStyleDataUpdateService, serviceGetStoreData, serviceGetStoreStyleData } from "./store.service";
 import { AppError, handleControllerError } from "../../utils/errors";
 
+//Controller do lado do cliente
 export const getStoreList = async (req: Request, res: Response): Promise<void> => {
     try {
 
@@ -35,6 +36,25 @@ export const getStoreData = async (req: Request, res: Response): Promise<void> =
     }
 };
 
+export const getStoreStyleData = async (req: Request, res: Response): Promise<void> => {
+
+    const storeId = Number(req.params.id);
+
+    try {
+
+        const store = await serviceGetStoreStyleData(storeId);
+
+        res.status(200).json(store);
+        return 
+
+    } catch (error: any) {
+
+        handleControllerError(res, error);
+
+    }
+};
+
+//Controller do lado da loja
 export const getMyStoreData = async (req: Request, res: Response): Promise<void> => {
 
     const userId = Number(req.user?.userId);

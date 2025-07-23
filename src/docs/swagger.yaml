@@ -436,7 +436,28 @@ paths:
           description: loja não encontrada
         '500':
           description: Erro interno no servidor
-          
+
+  /store/style/{id}:
+    get:
+      tags:
+        - Store
+      summary: Busca os estilos da loja
+      description: Requer um parâmetro que é o id da loja para retornar os dados.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: Id da loja a ser buscada
+      responses:
+        '200':
+          description: Retorna um objeto com os estilos da loja
+        '404':
+          description: loja não encontrada
+        '500':
+          description: Erro interno no servidor
+
   /store:
     get:
       tags:
