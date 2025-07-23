@@ -806,7 +806,7 @@ paths:
         '500':
           description: Erro interno no servidor
 
-  /store/{storeId}/menu-items/{categoryId}:
+  /menu-items/{storeId}/{categoryId}:
     get:
       tags:
         - Menu Items

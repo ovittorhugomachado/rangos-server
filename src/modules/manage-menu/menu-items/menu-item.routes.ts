@@ -4,7 +4,7 @@ import { getMenuItemsByCategory, createMenuItem, deleteMenuItem, toggleMenuItemS
 
 const router = Router();
 
-router.get('/store/:storeId/menu-items/:categoryId', getMenuItemsByCategory);
+router.get('/menu-items/:storeId/:categoryId', getMenuItemsByCategory);
 
 router.post('/menu-items/:categoryId', authenticateToken, createMenuItem);
 
