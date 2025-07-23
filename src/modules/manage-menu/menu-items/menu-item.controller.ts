@@ -3,11 +3,11 @@ import { getMenuItemsByCategoryService, createMenuItemService, deleteMenuItemSer
 import { handleControllerError } from "../../../utils/errors";
 
 export const getMenuItemsByCategory = async (req: Request, res: Response): Promise<void> => {
-    const userId = Number(req.params.storeId);
+    const storeId = Number(req.params.storeId);
     const categoryId = Number(req.params.categoryId);
 
-    if (!userId) {
-        res.status(401).json({ success: false, message: 'Usuário não autenticado' });
+    if (!storeId) {
+        res.status(401).json({ success: false, message: 'Loja não encontrada' });
         return;
     }
 
@@ -17,7 +17,7 @@ export const getMenuItemsByCategory = async (req: Request, res: Response): Promi
     }
 
     try {
-        const items = await getMenuItemsByCategoryService(userId, categoryId);
+        const items = await getMenuItemsByCategoryService(storeId, categoryId);
         res.status(200).json({ success: true, data: items });
     } catch (error: any) {
         handleControllerError(res, error);

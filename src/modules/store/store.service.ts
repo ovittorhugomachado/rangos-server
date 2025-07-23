@@ -41,6 +41,7 @@ export const serviceGetStoreData = async (storeId: number): Promise<StoreData> =
     const store = await prisma.store.findUnique({
         where: { id: storeId },
         select: {
+            id: true,
             restaurantName: true,
             phoneNumber: true,
             address: true,
@@ -83,6 +84,7 @@ export const serviceGetMyStoreData = async (userId: number): Promise<StoreData> 
     const store = await prisma.store.findUnique({
         where: { userId },
         select: {
+            id: true,
             restaurantName: true,
             phoneNumber: true,
             address: true,
