@@ -35,7 +35,30 @@ export const serviceGetStoresList = async () => {
     return stores;
 };
 
-export const serviceGetStoreData = async (userId: number): Promise<StoreData> => {
+export const serviceGetStoreData = async (storeId: number): Promise<StoreData> => {
+
+    const store = await prisma.store.findUnique({
+        where: { id: storeId },
+        select: {
+            restaurantName: true,
+            phoneNumber: true,
+            address: true,
+            logoUrl: true,
+            bannerUrl: true,
+            delivery: true,
+            pickup: true,
+            openingHours: true,
+        }
+    })
+
+    if (!store) {
+        throw new NotFoundError("Loja não encontrada");
+    }
+
+    return store
+};
+
+export const serviceGetMyStoreData = async (userId: number): Promise<StoreData> => {
 
     const store = await prisma.store.findUnique({
         where: { userId },
@@ -58,7 +81,7 @@ export const serviceGetStoreData = async (userId: number): Promise<StoreData> =>
     return store
 };
 
-export const storeDataUpdateService = async (userId: number, updateData: UpdateStoreData) => {
+export const myStoreDataUpdateService = async (userId: number, updateData: UpdateStoreData) => {
 
 
     if (!userId || isNaN(userId)) {
@@ -85,7 +108,6 @@ export const storeDataUpdateService = async (userId: number, updateData: UpdateS
     if (updateData.restaurantName !== undefined && updateData.restaurantName !== null) {
         userUpdateData.restaurantName = updateData.restaurantName;
     }
-
     if (updateData.phoneNumber !== undefined && updateData.phoneNumber !== null) {
         userUpdateData.phoneNumber = updateData.phoneNumber;
     }
@@ -105,7 +127,7 @@ export const storeDataUpdateService = async (userId: number, updateData: UpdateS
 
 };
 
-export const serviceGetStoreStyleData = async (userId: number): Promise<StoreStyleData> => {
+export const serviceGetMyStoreStyleData = async (userId: number): Promise<StoreStyleData> => {
 
     const storeStyle = await prisma.storeStyle.findUnique({
         where: { id: userId },
@@ -123,7 +145,7 @@ export const serviceGetStoreStyleData = async (userId: number): Promise<StoreSty
     return storeStyle
 };
 
-export const storeStyleDataUpdateService = async (userId: number, updateData: StoreStyleData) => {
+export const myStoreStyleDataUpdateService = async (userId: number, updateData: StoreStyleData) => {
 
     if (!userId || isNaN(userId)) {
         throw new NotFoundError('Usuário não encontrado');

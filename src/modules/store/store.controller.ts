@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { serviceGetStoreData, serviceGetStoresList, serviceGetStoreStyleData, storeDataUpdateService, storeStyleDataUpdateService } from "./store.service";
+import { serviceGetMyStoreData, serviceGetStoresList, serviceGetMyStoreStyleData, myStoreDataUpdateService, myStoreStyleDataUpdateService, serviceGetStoreData } from "./store.service";
 import { AppError, handleControllerError } from "../../utils/errors";
 
 export const getStoreList = async (req: Request, res: Response): Promise<void> => {
@@ -19,11 +19,11 @@ export const getStoreList = async (req: Request, res: Response): Promise<void> =
 
 export const getStoreData = async (req: Request, res: Response): Promise<void> => {
 
-    const userId = Number(req.user?.userId);
+    const storeId = Number(req.params.id);
 
     try {
 
-        const store = await serviceGetStoreData(userId);
+        const store = await serviceGetStoreData(storeId);
 
         res.status(200).json(store);
         return 
@@ -35,7 +35,25 @@ export const getStoreData = async (req: Request, res: Response): Promise<void> =
     }
 };
 
-export const updateStoreData = async (req: Request, res: Response): Promise<void> => {
+export const getMyStoreData = async (req: Request, res: Response): Promise<void> => {
+
+    const userId = Number(req.user?.userId);
+
+    try {
+
+        const store = await serviceGetMyStoreData(userId);
+
+        res.status(200).json(store);
+        return 
+
+    } catch (error: any) {
+
+        handleControllerError(res, error);
+
+    }
+};
+
+export const updateMyStoreData = async (req: Request, res: Response): Promise<void> => {
 
     try {
 
@@ -52,7 +70,7 @@ export const updateStoreData = async (req: Request, res: Response): Promise<void
 
 
 
-        await storeDataUpdateService(userId, updateData);
+        await myStoreDataUpdateService(userId, updateData);
 
         res.status(200).json({ message: 'Dados atualizados com sucesso' });
         return 
@@ -64,13 +82,13 @@ export const updateStoreData = async (req: Request, res: Response): Promise<void
     }
 };
 
-export const getStoreStyleData = async (req: Request, res: Response): Promise<void> => {
+export const getMyStoreStyleData = async (req: Request, res: Response): Promise<void> => {
 
     const userId = Number(req.user?.userId);
 
     try {
 
-        const store = await serviceGetStoreStyleData(userId);
+        const store = await serviceGetMyStoreStyleData(userId);
 
         res.status(200).json(store);
         return 
@@ -82,7 +100,7 @@ export const getStoreStyleData = async (req: Request, res: Response): Promise<vo
     }
 };
 
-export const updateStoreStyleData = async (req: Request, res: Response): Promise<void> => {
+export const updateMyStoreStyleData = async (req: Request, res: Response): Promise<void> => {
 
     try {
 
@@ -97,7 +115,7 @@ export const updateStoreStyleData = async (req: Request, res: Response): Promise
             throw new AppError('Dados inválidos');
         };
 
-        await storeStyleDataUpdateService(userId, updateData);
+        await myStoreStyleDataUpdateService(userId, updateData);
 
         res.status(200).json({ message: 'Dados atualizados com sucesso' });
         return 
