@@ -1115,14 +1115,19 @@ paths:
         '500':
           description: Erro interno do servidor
 
-  /order:
+  /order/{userId}:
     post:
       tags: 
         - Orders
       summary: Cria um novo pedido
-      security:
-        - bearerAuth: []
       description: Requer um access token válido no cookie para bsucar os dados.
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: number
+          description: Id da loja que vai receber o pedido
       requestBody:
         required: true
         content:

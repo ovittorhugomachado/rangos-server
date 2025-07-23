@@ -16,6 +16,7 @@ export const serviceGetUserData = async (userId: number): Promise<UserProfileDat
     const user = await prisma.user.findUnique({
         where: { id: userId },
         select: {
+            id: true,
             restaurantName: true,
             phoneNumber: true,
             email: true,

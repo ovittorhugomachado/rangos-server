@@ -10,6 +10,7 @@ interface OrderItemInput {
 }
 
 interface CreateOrderInput {
+    storeId: number;
     userId: number;
     customerName: string;
     customerPhone: string;
@@ -20,11 +21,10 @@ interface CreateOrderInput {
 }
 
 export const createOrderService = async (data: CreateOrderInput) => {
-    const { userId, customerName, customerPhone, address, typeOfDelivery, paymentMethod, items } = data;
+    const { storeId, customerName, customerPhone, address, typeOfDelivery, paymentMethod, items } = data;
 
-    const store = await prisma.store.findUnique({ where: { userId } });
+    const store = await prisma.store.findUnique({ where: { id: storeId } });
     if (!store) throw new NotFoundError('Loja não encontrada');
-    const storeId = store.id;
 
     const order = await prisma.$transaction(async (tx) => {
 

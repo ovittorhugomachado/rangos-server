@@ -6,7 +6,7 @@ import { handleControllerError,  ValidationError } from "../../../../utils/error
 export const createOrder = async (req: Request, res: Response): Promise<void> => {
     try {
 
-        const userId = Number(req.user?.userId);
+        const userId = Number(req.params.storeId);
 
         const { customerName, customerPhone, address, typeOfDelivery, paymentMethod, items } = req.body;
 
@@ -50,13 +50,14 @@ export const createOrder = async (req: Request, res: Response): Promise<void> =>
         };
 
         const order = await createOrderService({
-            userId,
+            storeId: userId,
             customerName,
             customerPhone,
             address,
             typeOfDelivery,
             paymentMethod,
-            items
+            items,
+            userId
         });
 
         res.status(201).json({ message: 'Pedido criado com sucesso', data: order });

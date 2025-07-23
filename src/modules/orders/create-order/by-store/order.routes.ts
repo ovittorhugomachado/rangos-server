@@ -4,6 +4,6 @@ import { createOrder } from "./order.controller";
 
 const router = Router();
 
-router.post('/order', authenticateToken, createOrder);
+router.post('/order/:storeId', createOrder);
 
 export default router;
