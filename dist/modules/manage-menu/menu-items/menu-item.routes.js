@@ -1,0 +1,12 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = require("express");
+const authenticate_token_middleware_1 = require("../../../middlewares/authenticate-token.middleware");
+const menu_item_controller_1 = require("./menu-item.controller");
+const router = (0, express_1.Router)();
+router.get('/menu-items/:storeId/:categoryId', menu_item_controller_1.getMenuItemsByCategory);
+router.post('/menu-items/:categoryId', authenticate_token_middleware_1.authenticateToken, menu_item_controller_1.createMenuItem);
+router.put('/menu-items/:categoryId/:itemId', authenticate_token_middleware_1.authenticateToken, menu_item_controller_1.updateMenuItem);
+router.patch('/menu-items/:categoryId/:itemId/toggle-status', authenticate_token_middleware_1.authenticateToken, menu_item_controller_1.toggleMenuItemStatus);
+router.delete('/menu-items/:itemId', authenticate_token_middleware_1.authenticateToken, menu_item_controller_1.deleteMenuItem);
+exports.default = router;
