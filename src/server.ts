@@ -24,7 +24,7 @@ import swaggerUi from 'swagger-ui-express';
 const app = express();
 const port = process.env.PORT;
 const swaggerDocument = YAML.load(path.resolve(__dirname, './docs/swagger.yaml'));
-const apiUrl = `http://localhost:${port}`;
+const apiUrl = process.env.APP_URL || `http://localhost:${port}`;
 swaggerDocument.servers = [{ url: apiUrl, description: 'API Server' }];
 
 app.set('trust proxy', 1);
