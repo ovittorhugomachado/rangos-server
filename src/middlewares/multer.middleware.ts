@@ -31,7 +31,7 @@ const createStorage = (imageCategory: 'logo' | 'banner') => {
             filename: (req: Request, file: Express.Multer.File, cb: (error: Error | null, filename: string) => void) => {
                 const ext = path.extname(file.originalname);
                 const userId = (req.user as any)?.userId;
-                const fileName = `store${userId}/${imageCategory}${ext}`;
+                const fileName = `store${userId}-${imageCategory}${ext}`;
                 cb(null, fileName);
             }
         }),

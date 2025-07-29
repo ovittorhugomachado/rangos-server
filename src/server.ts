@@ -48,6 +48,7 @@ app.use('/', menuItemRoutes);
 app.use('/', ordersRoutes);
 app.use('/', manageOrdersRoutes);
 app.use('/', pageStyle);
+app.use('/uploads', express.static(path.resolve(__dirname, '..', 'tmp', 'uploads')));
 
 app.listen(port, () => {
   console.log(`Servidor rodando na porta ${port}`);
