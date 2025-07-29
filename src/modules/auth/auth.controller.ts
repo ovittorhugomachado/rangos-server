@@ -39,15 +39,17 @@ export const login = async (req: Request, res: Response): Promise<void> => {
 
         res.cookie('token', accessToken, {
             httpOnly: true,
-            secure: false, //EM PRODUÇÃOO MUDAR PARA TRUE
-            sameSite: 'lax',
+            secure: true,
+            sameSite: 'none',
+            path: '/',
             maxAge: 24 * 60 * 60 * 1000, //1 DIA
         });
 
         res.cookie('refreshToken', refreshToken, {
             httpOnly: true,
-            secure: false,//EM PRODUÇÃOO MUDAR PARA TRUE
-            sameSite: 'lax',
+            secure: true,
+            sameSite: 'none',
+            path: '/',
             maxAge: 30 * 24 * 60 * 60 * 1000, // 30 dias
         });
 
