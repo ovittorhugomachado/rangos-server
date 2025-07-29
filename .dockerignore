@@ -1,12 +1,4 @@
 node_modules
 dist
 .env
-.git
 .gitignore
-Dockerfile
-docker-compose.yaml
-npm-debug.log
-*.md
-.vscode
-.idea
-coverage
