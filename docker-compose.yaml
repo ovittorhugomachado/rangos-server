@@ -9,8 +9,8 @@ services:
       REFRESH_SECRET: jwt_refresh_secret_default
       EMAIL_USER: jwt_email_user_default
       EMAIL_PASS: jwt_email_pass_default
-      APP_URL: http://localhost:3000
-      STORAGE_TYPE: local
+      APP_URL: http://localhost:3001
+      STORAGE_TYPE: s3
       AWS_ACCESS_KEY_ID: jwt_aws_access_key_id_default
       AWS_SECRET_ACCESS_KEY: jwt_aws_secret_access_key_default
       AWS_DEFAULT_REGION: us-east-1

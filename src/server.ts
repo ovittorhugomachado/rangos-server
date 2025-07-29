@@ -14,16 +14,18 @@ import ordersRoutes from './modules/orders/create-order/by-store/order.routes';
 import manageOrdersRoutes from './modules/orders/manage-order/by-store/orders.routes';
 import pageStyle from './modules/menu-customization/store-customization.routes';
 import './modules/password/clean-expired-tokens.utils';
-import swaggerUi from 'swagger-ui-express';
 import YAML from 'yamljs';
 import path from 'path';
+import swaggerUi from 'swagger-ui-express';
 
 {/*ANTES DE COLOCAR O PROJETO EM PRODUÇÃO FAZER TESTES SALVANDO DADOS NO CACHE
     PRA DIMINUIR O NUMERO DE CONSULTAR NO BD E DIMINUIR A LATÊNCIA */}
 
 const app = express();
-const port = process.env.PORT || 3000;
+const port = process.env.PORT;
 const swaggerDocument = YAML.load(path.resolve(__dirname, './docs/swagger.yaml'));
+const apiUrl = `http://localhost:${port}`;
+swaggerDocument.servers = [{ url: apiUrl, description: 'API Server' }];
 
 app.set('trust proxy', 1);
 
@@ -33,7 +35,7 @@ app.use(cookieParser());
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument))
 
 app.use(cors({
-  origin: 'http://localhost:5173',
+  origin: process.env.FRONTEND_URL,
   credentials: true
 }));
 

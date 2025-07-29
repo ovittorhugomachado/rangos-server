@@ -8,10 +8,6 @@ info:
   license:
     name: Vitor Hugo Alves Machado
 
-servers:
-  - url: http://localhost:3000
-    description: Local development
-
 tags:
   - name: Auth
   - name: Password
