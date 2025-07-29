@@ -1,4 +1,3 @@
-
 FROM node:21-bullseye
 
 WORKDIR /usr/src/app
@@ -17,4 +16,4 @@ RUN mkdir -p dist/docs && cp src/docs/swagger.yaml dist/docs/swagger.yaml
 
 EXPOSE 3000
 
-CMD npx prisma migrate deploy && node dist/server.js&& node dist/server.js
+CMD npx prisma migrate deploy && node dist/server.js

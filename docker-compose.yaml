@@ -4,13 +4,14 @@ services:
   app:
     build: .
     environment:
-      DATABASE_URL: "postgresql://postgres:senha_teste@db:5432/rangos?schema=public"
+      PORT: 3000
+      DATABASE_URL: "postgresql://postgres:senha_default@db:5432/rangos_default?schema=public"
       JWT_SECRET: jwt_secret_default
       REFRESH_SECRET: jwt_refresh_secret_default
       EMAIL_USER: jwt_email_user_default
       EMAIL_PASS: jwt_email_pass_default
-      APP_URL: http://localhost:3001
-      STORAGE_TYPE: s3
+      APP_URL: http://localhost:3000
+      STORAGE_TYPE: local
       AWS_ACCESS_KEY_ID: jwt_aws_access_key_id_default
       AWS_SECRET_ACCESS_KEY: jwt_aws_secret_access_key_default
       AWS_DEFAULT_REGION: us-east-1
@@ -18,16 +19,25 @@ services:
     ports:
       - "3000:3000"
     depends_on:
-      - db
+      db:
+        condition: service_healthy
 
   db:
     image: postgres:latest
     environment:
-      POSTGRES_PASSWORD: senha_teste
+      POSTGRES_PASSWORD: senha_default
       POSTGRES_USER: postgres
-      POSTGRES_DB: rangos
+      POSTGRES_DB: rangos_default
+    expose:
+      - "5432" 
     volumes:
       - db_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
 
 volumes:
   db_data:
