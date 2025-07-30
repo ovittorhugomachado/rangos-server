@@ -1,7 +1,7 @@
 import jwt from 'jsonwebtoken';
 
-const JWT_SECRET = process.env.JWT_SECRET || 'secreto';
-const REFRESH_SECRET = process.env.REFRESH_SECRET || 'refresh_secreto';
+const JWT_SECRET = process.env.JWT_SECRET || 'jwt_secret_default';
+const REFRESH_SECRET = process.env.REFRESH_SECRET || 'jwt_refresh_secret_default';
 
 export function generateTokens(payload: object) {
 

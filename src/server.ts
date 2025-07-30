@@ -22,9 +22,10 @@ import swaggerUi from 'swagger-ui-express';
     PRA DIMINUIR O NUMERO DE CONSULTAR NO BD E DIMINUIR A LATÊNCIA */}
 
 const app = express();
+const baseApiUrl = process.env.APP_URL
 const port = process.env.PORT;
 const swaggerDocument = YAML.load(path.resolve(__dirname, './docs/swagger.yaml'));
-const apiUrl = process.env.APP_URL || `http://localhost:${port}`;
+const apiUrl = `${baseApiUrl}:${port}`;
 swaggerDocument.servers = [{ url: apiUrl, description: 'API Server' }];
 
 app.set('trust proxy', 1);
@@ -35,7 +36,7 @@ app.use(cookieParser());
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument))
 
 app.use(cors({
-  origin: process.env.FRONTEND_URL,
+  origin: (_, callback) => callback(null, true),
   credentials: true
 }));
 

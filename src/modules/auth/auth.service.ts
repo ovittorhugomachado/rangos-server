@@ -7,8 +7,8 @@ import { stripNonDigits } from '../../utils/stripFormating';
 import { generateTokens } from './generate-tokens';
 import { ConflictError, UnauthorizedError, ValidationError } from '../../utils/errors';
 
-const JWT_SECRET = process.env.JWT_SECRET || 'secreto';
-const REFRESH_SECRET = process.env.REFRESH_SECRET || 'refresh_secreto';
+const JWT_SECRET = process.env.JWT_SECRET || 'jwt_secret_default';
+const REFRESH_SECRET = process.env.REFRESH_SECRET || 'jwt_refresh_secret_default';
 
 interface AccountData {
     restaurantName: string;
