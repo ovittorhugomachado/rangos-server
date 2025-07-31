@@ -12,6 +12,7 @@ export const updateProfileLogo = async (req: Request, res: Response): Promise<vo
 
         const fileUrl = (req.file as any).location || req.file?.path;
         if (!req.file || !fileUrl) {
+            console.log('Arquivo recebido (logo):', req.file);
             res.status(400).json({ error: 'Erro no processamento do arquivo' });
             return;
         }
@@ -33,6 +34,7 @@ export const updateProfileBanner = async (req: Request, res: Response): Promise<
     try {
         const fileUrl = (req.file as any).location || req.file?.path;
         if (!req.file || !fileUrl) {
+            console.log('Arquivo recebido (banner):', req.file);
             res.status(400).json({ error: 'Erro no processamento do arquivo' });
             return;
         }
@@ -51,6 +53,7 @@ export const updateMenuItemImage = async (req: Request, res: Response): Promise<
     try {
         const fileUrl = (req.file as any).location || req.file?.path;
         if (!req.file || !fileUrl) {
+            console.log('Arquivo recebido (menu item):', req.file);
             res.status(400).json({ error: 'Erro no processamento do arquivo' });
             return;
         }

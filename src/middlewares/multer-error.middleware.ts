@@ -8,6 +8,7 @@ function multerErrorHandler(err: any, req: Request, res: Response, next: NextFun
         if (err.message === 'Tipo de arquivo inválido.') {
             return res.status(400).json({ error: 'Tipo de arquivo inválido. Só é permitido imagem.' });
         }
+        console.error('Multer error:', err);
         return res.status(400).json({ error: err.message });
     }
     next();
