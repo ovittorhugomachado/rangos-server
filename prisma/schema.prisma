@@ -1,0 +1,210 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../node_modules/.prisma/client"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                  Int                  @id @default(autoincrement())
+  email               String               @unique
+  password            String
+  restaurantName      String
+  createdAt           DateTime             @default(now())
+  cnpj                String?
+  cpf                 String
+  ownersName          String
+  phoneNumber         String
+  refreshToken        String?
+  store               Store?
+  passwordResetTokens PasswordResetToken[]
+
+  @@map("users")
+}
+
+model Store {
+  id             Int            @id @default(autoincrement())
+  userId         Int            @unique
+  user           User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  restaurantName String?
+  phoneNumber    String?
+  address        String?
+  logoUrl        String?
+  bannerUrl      String?
+  delivery       Boolean        @default(true)
+  pickup         Boolean        @default(false)
+  openingHours   OpeningHour[]
+  style          StoreStyle?
+  createdAt      DateTime       @default(now())
+  MenuCategory   MenuCategory[]
+  orders         Order[]
+
+  @@map("stores")
+}
+
+model StoreStyle {
+  id              Int    @id @default(autoincrement())
+  primaryColor    String @default("#a6a6a6")
+  backgroundColor BackgroundColor @default(white)
+  textButtonColor TextButtonColor @default(black)
+  storeId         Int    @unique
+  store           Store  @relation(fields: [storeId], references: [id], onDelete: Cascade)
+
+  @@map("store_styles")
+}
+
+model OpeningHour {
+  storeId    Int
+  store      Store   @relation(fields: [storeId], references: [id], onDelete: Cascade)
+  day        WeekDay
+  isOpen     Boolean @default(false)
+  timeRanges Json?
+
+  @@id([storeId, day])
+  @@map("opening_hours")
+}
+
+model PasswordResetToken {
+  id        Int      @id @default(autoincrement())
+  token     String   @unique
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id])
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  @@map("password_reset_tokens")
+}
+
+model MenuCategory {
+  id        Int        @id @default(autoincrement())
+  name      String     @db.VarChar(100)
+  storeId   Int
+  store     Store      @relation(fields: [storeId], references: [id], onDelete: Cascade)
+  menuItems MenuItem[]
+  isActive  Boolean    @default(true)
+
+  @@map("menu_category")
+}
+
+model MenuItem {
+  id            Int                   @id @default(autoincrement())
+  name          String                @db.VarChar(150)
+  description   String?
+  price         Decimal?              @db.Decimal(10, 2)
+  photoUrl      String?
+  categoryId    Int
+  isAvailable   Boolean               @default(true)
+  menuCategory  MenuCategory          @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  optionsGroups MenuItemOptionGroup[]
+  orderItem     OrderItem[]
+
+  @@map("menu_item")
+}
+
+model MenuItemOptionGroup {
+  id         Int              @id @default(autoincrement())
+  title      String           @db.VarChar(100)
+  required   Boolean          @default(false)
+  menuItemId Int
+  menuItem   MenuItem         @relation(fields: [menuItemId], references: [id], onDelete: Cascade)
+  options    MenuItemOption[]
+
+  @@map("menu_item_options_group")
+}
+
+model MenuItemOption {
+  id                  Int                 @id @default(autoincrement())
+  name                String              @db.VarChar(100)
+  additionalPrice     Decimal?            @db.Decimal(10, 2)
+  optionGroupId       Int
+  MenuItemOptionGroup MenuItemOptionGroup @relation(fields: [optionGroupId], references: [id], onDelete: Cascade)
+  orderItemOptions    OrderItemOption[]
+
+  @@map("menu_item_options")
+}
+
+model Order {
+  id                      Int           @id @default(autoincrement())
+  storeId                 Int
+  store                   Store         @relation(fields: [storeId], references: [id], onDelete: Cascade)
+  customerName            String
+  customerPhone           String
+  address                 String?
+  deliveryType            DeliveryType
+  paymentMethod           PaymentMethod
+  totalAmount             Decimal       @db.Decimal(10, 2)
+  status                  OrderStatus    @default(aguardando_aprovacao)
+  createdAt               DateTime      @default(now())
+  orderItems              OrderItem[]
+  cancellationScheduledAt DateTime? 
+  expectedStatus          String? 
+
+  @@map("orders")
+}
+
+model OrderItem {
+  id         Int               @id @default(autoincrement())
+  orderId    Int
+  menuItemId Int
+  quantity   Int               @default(1)
+  note       String?
+  menuItem   MenuItem          @relation(fields: [menuItemId], references: [id])
+  order      Order             @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  options    OrderItemOption[]
+
+  @@map("order_items")
+}
+
+model OrderItemOption {
+  id          Int            @id @default(autoincrement())
+  orderItemId Int
+  optionId    Int
+  orderItem   OrderItem      @relation(fields: [orderItemId], references: [id], onDelete: Cascade)
+  option      MenuItemOption @relation(fields: [optionId], references: [id], onDelete: Cascade)
+
+  @@map("order_item_options")
+}
+
+enum BackgroundColor {
+  black
+  white
+}
+
+enum TextButtonColor {
+  black
+  white
+}
+
+enum WeekDay {
+  segunda
+  terca
+  quarta
+  quinta
+  sexta
+  sabado
+  domingo
+}
+
+enum DeliveryType {
+  delivery
+  pickup
+}
+
+enum PaymentMethod {
+  dinheiro
+  cartao
+  pix
+}
+
+enum OrderStatus {
+  aguardando_aprovacao
+  em_preparo
+  pronto_para_retirada
+  a_caminho
+  entregue
+  cancelado
+  cancelado_automaticamente
+}
