@@ -39,18 +39,18 @@ app.use(cors({
   credentials: true
 }));
 
-app.use('/', authRoutes);
-app.use('/', resetPasswordRoutes);
-app.use('/', userDataRouter);
-app.use('/', storeDataRoutes)
-app.use('/', uploadFile);
-app.use('/', updateSchedule);
-app.use('/', menuCategoriesRoutes);
-app.use('/', menuItemRoutes);
-app.use('/', ordersRoutes);
-app.use('/', manageOrdersRoutes);
-app.use('/', pageStyle);
-app.use('/uploads', express.static(path.resolve(__dirname, '..', 'tmp', 'uploads')));
+app.use('/api', authRoutes);
+app.use('/api', resetPasswordRoutes);
+app.use('/api', userDataRouter);
+app.use('/api', storeDataRoutes);
+app.use('/api', uploadFile);
+app.use('/api', updateSchedule);
+app.use('/api', menuCategoriesRoutes);
+app.use('/api', menuItemRoutes);
+app.use('/api', ordersRoutes);
+app.use('/api', manageOrdersRoutes);
+app.use('/api', pageStyle);
+app.use('/api/uploads', express.static(path.resolve(__dirname, '..', 'tmp', 'uploads')));
 
 app.use(express.static(path.join(__dirname, '..', 'dist')));
 
