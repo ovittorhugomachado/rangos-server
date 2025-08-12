@@ -54,8 +54,12 @@ app.use('/uploads', express.static(path.resolve(__dirname, '..', 'tmp', 'uploads
 
 app.use(express.static(path.join(__dirname, '..', 'dist')));
 
-app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, '..', 'dist', 'index.html'));
+app.get(/^\/(?!api|uploads).*/, (req, res, next) => {
+  try {
+    res.sendFile(path.join(__dirname, '..', 'dist', 'index.html'));
+  } catch (err) {
+    next(err);
+  }
 });
 
 app.listen(port, () => {
